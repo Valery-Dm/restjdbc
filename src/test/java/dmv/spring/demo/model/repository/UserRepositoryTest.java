@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,14 +15,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import dmv.spring.demo.model.entity.User;
+import dmv.spring.demo.model.exceptions.EntityAlreadyExistsException;
+import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 public class UserRepositoryTest {
 	
+	private static User user;
+	
 	@Autowired
 	private UserRepository target;
-	private static User user;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -35,32 +38,79 @@ public class UserRepositoryTest {
 		user.setRoles(emptySet());
 	}
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
-
-	@Test
-	public void findByEmail() {
-		User found = target.findByEmail("some@mail.com");
-		assertNotNull("found is null", found);
-		assertThat("wrong email", found.getEmail(), is(user.getEmail()));
-		assertThat("wrong last name", found.getLastName(), is(user.getLastName()));
+	@After
+	public void cleanUp() {
+		/*
+		 * These tests were done 'on best effort'.
+		 * We are not expecting test.user to be
+		 * existed in database at this point.
+		 * So, trying to remove.
+		 */
+		try {
+			target.delete(user);
+		} catch (EntityDoesNotExistException e) {
+			// There is nothing to do here
+		}
 	}
 	
 	@Test
 	public void crud() {
-		//target.delete(user);
-		target.create(user);
 		User found = target.findByEmail(user.getEmail());
-		//assertNotNull("user is null", found);
+		assertNull("user is not null", found);
+		
+		target.create(user);
+		found = target.findByEmail(user.getEmail());
+		assertNotNull("user is null", found);
+		assertThat("wrong email", found.getEmail(), is(user.getEmail()));
+		assertThat("wrong last name", found.getLastName(), is(user.getLastName()));
 		
 		user.setLastName("NewLast");
 		target.update(user);
-		//assertThat("wrong last name", found.getLastName(), is(user.getLastName()));
+		found = target.findByEmail(user.getEmail());
+		assertThat("wrong new last name", found.getLastName(), is(user.getLastName()));
 		
 		target.delete(user);
 		found = target.findByEmail(user.getEmail());
 		assertNull("user is not null", found);
 	}
+	
+	@Test(expected=EntityAlreadyExistsException.class)
+	public void createExisted() {
+		target.create(user);
+		target.create(user);
+	}
 
+	@Test(expected=EntityDoesNotExistException.class)
+	public void updateNotExisted() {
+		target.update(user);
+	}
+
+	@Test(expected=EntityDoesNotExistException.class)
+	public void deleteNotExisted() {
+		target.delete(user);
+	}
+	
+	@Test
+	public void findNull() {
+		User found = target.findByEmail(null);
+		assertNull("user is not null", found);
+
+		found = target.findByEmail("");
+		assertNull("user is not null", found);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void createNull() {
+		target.create(null);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void updateNull() {
+		target.update(null);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void deleteNull() {
+		target.delete(null);
+	}
 }
