@@ -12,27 +12,27 @@ import static dmv.spring.demo.model.entity.UserFields.*;
  */
 public enum UserQueries {
 
-	CREATE("INSERT INTO " + TABLE.getName() + " (" 
+	CREATE("INSERT INTO " + USER_TABLE.getName() + " (" 
 	        + EMAIL.getName() + ", " 
 			+ FIRST_NAME.getName() + ", " 
 			+ LAST_NAME.getName() + ", " 
 			+ MIDDLE_NAME.getName() + ", " 
 			+ PASSWORD.getName() 
 			+ ") values (?, ?, ?, ?, ?)"),
-	UPDARE("UPDATE " + TABLE.getName() + " SET "
+	UPDARE("UPDATE " + USER_TABLE.getName() + " SET "
 			+ FIRST_NAME.getName() + " = ?, " 
 			+ LAST_NAME.getName() + " = ?, " 
 			+ MIDDLE_NAME.getName() + " = ?, " 
 			+ PASSWORD.getName() + " = ? WHERE "
 			+ EMAIL.getName() + " = ?"),
-	DELETE("DELETE FROM " + TABLE.getName() +" WHERE "
+	DELETE("DELETE FROM " + USER_TABLE.getName() +" WHERE "
 			+ EMAIL.getName() + " = ?"),
 	FIND_BY_EMAIL("SELECT "
 			+ EMAIL.getName() + ", " 
 			+ FIRST_NAME.getName() + ", " 
 			+ LAST_NAME.getName() + ", " 
 			+ MIDDLE_NAME.getName() +
-			" FROM " + TABLE.getName() + " WHERE "
+			" FROM " + USER_TABLE.getName() + " WHERE "
 			+ EMAIL.getName() + " = ?");
 	
 	private String query;

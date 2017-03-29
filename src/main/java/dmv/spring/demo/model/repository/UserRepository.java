@@ -8,6 +8,7 @@ import dmv.spring.demo.model.exceptions.EntityAlreadyExistsException;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 
 /**
+ * CRUD operations for {@link User} entity
  * @author user
  */
 public interface UserRepository {

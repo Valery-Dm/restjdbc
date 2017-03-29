@@ -1,7 +1,7 @@
 /**
  * 
  */
-package dmv.spring.demo.model.repository;
+package dmv.spring.demo.model.repository.jdbc;
 
 import static dmv.spring.demo.model.entity.UserFields.EMAIL;
 import static dmv.spring.demo.model.entity.UserFields.FIRST_NAME;
@@ -24,6 +24,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -31,13 +32,15 @@ import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.entity.UserFields;
 import dmv.spring.demo.model.exceptions.EntityAlreadyExistsException;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
+import dmv.spring.demo.model.repository.UserRepository;
 
 /**
  * Querying table USER via JDBC according to
  * {@link UserRepository} specification
  * @author user
  */
-@Component
+@Repository
+@Transactional
 public class UserRepositoryJDBC implements UserRepository {
 
     private final Logger logger = getLogger(getClass());
@@ -46,6 +49,7 @@ public class UserRepositoryJDBC implements UserRepository {
 	private final SecureRandom random = new SecureRandom();
 	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+	/* Spring helper class for JDBC queries */
 	private final JdbcTemplate jdbcTemplate;
 
 	@Autowired
@@ -54,7 +58,6 @@ public class UserRepositoryJDBC implements UserRepository {
     }
 
 	@Override
-	@Transactional
 	public User findByEmail(String email) {
 		if (email == null || email.length() == 0)
 			return null;
@@ -70,7 +73,6 @@ public class UserRepositoryJDBC implements UserRepository {
 	}
 
 	@Override
-	@Transactional
 	public void create(User user) {
 		Assert.notNull(user, "Can't create user 'null'");
 		if (findByEmail(user.getEmail()) != null)
@@ -83,10 +85,9 @@ public class UserRepositoryJDBC implements UserRepository {
 	}
 
 	@Override
-	@Transactional
 	public boolean update(User user) {
 		Assert.notNull(user, "Can't update user 'null'");
-		// TODO check for modified values and update only those
+		// TODO check for modified Roles and update only those
 		User found = assertIfExisted(user);
 		if (jdbcTemplate.update(UPDARE.getQuery(), user.getFirstName(), 
 				user.getLastName(), user.getMiddleName(),
@@ -98,10 +99,10 @@ public class UserRepositoryJDBC implements UserRepository {
 	}
 
 	@Override
-	@Transactional
 	public boolean delete(User user) {
 		Assert.notNull(user, "Can't delete user 'null'");
-		assertIfExisted(user);
+		// TODO remove corresponding Roles
+		User found = assertIfExisted(user);
 		if (jdbcTemplate.update(DELETE.getQuery(), 
 				    user.getEmail()) > 0) {
 			logger.info(user.getEmail() + " was removed from DB");
