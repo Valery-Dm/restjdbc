@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
+import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -36,11 +37,6 @@ public class RoleRepositoryTest {
 		roleShortName = "ADM";
 		roleFullName= "Administrator";
 	}
-	
-	@After
-	public void cleanUp() {
-		role = null;
-	}
 
 	@Test
 	public void findByShortName() {
@@ -48,14 +44,15 @@ public class RoleRepositoryTest {
 		assertNotNull(role);
 		assertThat(role.getFullName(), is(roleFullName));
 	}
-	
-	@Test
-	public void findNull() {
-		role = target.findByShortName(null);
-		assertNull(role);
-		
-		role = target.findByShortName("");
-		assertNull(role);
+
+	@Test(expected=IllegalArgumentException.class)
+	public void findByShortNameNull() {
+		target.findByShortName(null);
+	}
+
+	@Test(expected=EntityDoesNotExistException.class)
+	public void findByShortNameWrong() {
+		target.findByShortName(roleFullName);
 	}
 	
 	@Test

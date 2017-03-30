@@ -24,13 +24,14 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
+import dmv.spring.demo.model.exceptions.AccessDataBaseException;
+import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 import dmv.spring.demo.model.repository.RoleRepository;
 
 /**
@@ -54,54 +55,67 @@ public class RoleRepositoryJDBC implements RoleRepository {
 
 	@Override
 	public Role findByShortName(String shortName) {
-		if (shortName == null || shortName.length() == 0)
-			return null;
+		Assert.notNull(shortName, "Can't find Role 'null'");
+		
 		Role role = null;
-		/* Pooled connection must not be closed */
-		Connection connection = getConnection();
-		try (PreparedStatement statement = 
+		try (Connection connection = getConnection();
+			 PreparedStatement statement = 
 			    		 connection.prepareStatement(FIND_BY_SHORT_NAME.getQuery())) {
+			
 			statement.setString(1, shortName);
-			ResultSet resultSet = statement.executeQuery();
-			role = mapRole(resultSet);
+			role = mapRole(statement.executeQuery());
+			
 		} catch (Exception e) {
-			logger.debug("There was a call findByShortName " + shortName +
-					", and it was not successful", e);
+			String msg = "There was a call findByShortName(" + shortName +
+					      "), and it was not successful";
+			logger.debug(msg, e);
+			throw new AccessDataBaseException(msg, e);
 		} 
+		
+		if (role == null)
+			throw new EntityDoesNotExistException("Role " + shortName + " does not exist");
 		return role;
 	}
 
 	@Override
 	public Set<User> getUsers(Role role) {
 		Assert.notNull(role, "Can't find Users with role 'null'");
+		
 		Set<User> users = new HashSet<>();
-		Connection connection = getConnection();
-	    try (PreparedStatement statement = 
+		try (Connection connection = getConnection();
+			 PreparedStatement statement = 
 		    		 connection.prepareStatement(SELECT_USERS_WITH_ROLE.getQuery())) {
+	    	
 			statement.setString(1, role.getShortName());
 			ResultSet resultSet = statement.executeQuery();
-			collect(users, resultSet);
+			collectUsers(users, resultSet);
+			
 		} catch (Exception e) {
-			logger.debug("There was a call for getUsers with role " + role +
-					", and it was not successful", e);
+			String msg = "There was a call for getUsers with role " + role +
+					", and it was not successful";
+			logger.debug(msg, e);
+			throw new AccessDataBaseException(msg, e);
 		} 
+	    
 		return users;
 	}
 
-	private Connection getConnection() {
-		return DataSourceUtils.getConnection(dataSource);
+	private Connection getConnection() throws SQLException {
+//		return DataSourceUtils.getConnection(dataSource);
+		return dataSource.getConnection();
 	}
 
 	private Role mapRole(ResultSet resultSet) throws SQLException {
-		Role role = new Role();
+		Role role = null;
 		if (resultSet.next()) {
+			role = new Role();
 			role.setShortName(resultSet.getString(SHORT_NAME.getName()));
 			role.setFullName(resultSet.getString(FULL_NAME.getName()));
 		}
 		return role;
 	}
 
-	private void collect(Set<User> users, ResultSet resultSet) throws SQLException {
+	private void collectUsers(Set<User> users, ResultSet resultSet) throws SQLException {
 		User user;
 		while (resultSet.next()) {
 			user = new User();
