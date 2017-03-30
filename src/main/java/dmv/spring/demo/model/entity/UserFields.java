@@ -6,7 +6,7 @@ package dmv.spring.demo.model.entity;
 /**
  * @author user
  */
-public enum UserFields {
+public enum UserFields implements EntityFields {
 			
 	USER_TABLE("`users_demo`.`USER`"), 
 	ID("ID"), EMAIL("EMAIL_ADRS"), 

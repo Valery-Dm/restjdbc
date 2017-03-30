@@ -3,33 +3,36 @@
  */
 package dmv.spring.demo.model.repository.jdbc;
 
-import static dmv.spring.demo.model.entity.UserFields.EMAIL;
-import static dmv.spring.demo.model.entity.UserFields.FIRST_NAME;
-import static dmv.spring.demo.model.entity.UserFields.LAST_NAME;
-import static dmv.spring.demo.model.entity.UserFields.MIDDLE_NAME;
+import static dmv.spring.demo.model.repository.jdbc.Mappers.ROLE_MAPPER;
+import static dmv.spring.demo.model.repository.jdbc.Mappers.USER_MAPPER;
 import static dmv.spring.demo.model.repository.jdbc.UserQueries.CREATE;
 import static dmv.spring.demo.model.repository.jdbc.UserQueries.DELETE;
 import static dmv.spring.demo.model.repository.jdbc.UserQueries.FIND_BY_EMAIL;
+import static dmv.spring.demo.model.repository.jdbc.UserQueries.FIND_USER_ROLES;
+import static dmv.spring.demo.model.repository.jdbc.UserQueries.GET_ID;
 import static dmv.spring.demo.model.repository.jdbc.UserQueries.UPDARE;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
-import dmv.spring.demo.model.entity.UserFields;
+import dmv.spring.demo.model.exceptions.AccessDataBaseException;
 import dmv.spring.demo.model.exceptions.EntityAlreadyExistsException;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 import dmv.spring.demo.model.repository.UserRepository;
@@ -47,6 +50,7 @@ public class UserRepositoryJDBC implements UserRepository {
 	
 	/* For password auto generation */
 	private final SecureRandom random = new SecureRandom();
+	/* For password hashing */
 	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 	/* Spring helper class for JDBC queries */
@@ -59,56 +63,133 @@ public class UserRepositoryJDBC implements UserRepository {
 
 	@Override
 	public User findByEmail(String email) {
-		if (email == null || email.length() == 0)
-			return null;
+		Assert.notNull(email, "Email can't be 'null'");
+		User user = null;
 		try {
-			User user = jdbcTemplate.queryForObject(
-					FIND_BY_EMAIL.getQuery(), USER_MAPPER, email);
-			return user;
+			
+			user = jdbcTemplate.queryForObject(FIND_BY_EMAIL.getQuery(), 
+					                           USER_MAPPER, email);
+			populateRoles(jdbcTemplate.query(FIND_USER_ROLES.getQuery(), 
+					                         ROLE_MAPPER, user.getId()), user);
+			
+		} catch (EmptyResultDataAccessException e) {
+			throw new EntityDoesNotExistException("User " + email + " does not exist");
 		} catch (Exception e) {
-			logger.debug("There was a lookup for user " + email +
-					", and it was not successful", e);
-			return null;
+			String msg = "There was a lookup for user " + email
+					+ ", and it was not successful";
+			processException(e, msg);
 		}
+		return user;
 	}
 
 	@Override
-	public void create(User user) {
+	public User create(User user) {
 		Assert.notNull(user, "Can't create user 'null'");
-		if (findByEmail(user.getEmail()) != null)
-			throw new EntityAlreadyExistsException("User " + user.getEmail() + " already exists");
-		if (jdbcTemplate.update(CREATE.getQuery(), 
+		try {
+			
+			jdbcTemplate.update(CREATE.getQuery(), 
 					user.getEmail(), user.getFirstName(), 
 					user.getLastName(), user.getMiddleName(),
-					getHashedPassword(user)) > 0)
-			logger.info(user.getEmail() + " was added to DB");
+					getHashedPassword(user));
+			// get auto-generated ID
+			user.setId(jdbcTemplate.queryForObject(GET_ID.getQuery(), 
+						                           Long.class, user.getEmail()));
+			addUserRoles(user);
+			logger.info(user + " was added to DB");
+			
+		} catch(DuplicateKeyException e) {
+			throw new EntityAlreadyExistsException(user + " already exists");
+		} catch (DataIntegrityViolationException e) {
+			throw new IllegalArgumentException(user + " has wrong information", e);
+		} catch (Exception e) {
+			String msg = "There was an attempt to insert " + user
+					+ ", and something went wrong";
+			processException(e, msg);
+		}
+		return user;
 	}
 
 	@Override
-	public boolean update(User user) {
+	public User update(User user) {
 		Assert.notNull(user, "Can't update user 'null'");
-		// TODO check for modified Roles and update only those
-		User found = assertIfExisted(user);
-		if (jdbcTemplate.update(UPDARE.getQuery(), user.getFirstName(), 
-				user.getLastName(), user.getMiddleName(),
-				getHashedPassword(user), user.getEmail()) > 0) {
-			logger.info(user.getEmail() + " was updated in DB");
+		User found = findByEmail(user.getEmail());
+		try {
+			updateUserDetails(user);
+			updateUserRoles(user, found);
+			logger.info(user + " was updated in DB");
+		} catch (DataIntegrityViolationException e) {
+			throw new IllegalArgumentException(user + " brings wrong information for update", e);
+		} catch (Exception e) {
+			String msg = "There was an attempt to update " + user
+					      + ", and something went wrong";
+			processException(e, msg);
+		}
+		return user;
+	}
+
+	@Override
+	public void delete(User user) {
+		Assert.notNull(user, "Can't delete user 'null'");
+		try {
+			
+			/* With Cascade deletion in ROLE_USERS table */
+			if (jdbcTemplate.update(DELETE.getQuery(), user.getEmail()) > 0) {
+				logger.info(user + " was removed from DB");
+				return;
+			}
+			
+		} catch (Exception e) {
+			String msg = "There was an attempt to remove " + user
+					      + ", and something went wrong";
+			processException(e, msg);
+		}
+		throw new EntityDoesNotExistException(user + " does not exist");
+	}
+
+	private void populateRoles(List<Role> query, User user) {
+		Set<Role> roles = new HashSet<>();
+		query.forEach(roles::add);
+		user.setRoles(roles);
+	}
+
+	private void addUserRoles(User user) {
+		Set<Role> roles = user.getRoles();
+		if (roles == null || roles.size() == 0)
+			return;
+		String query = "INSERT INTO `users_demo`.`ROLE_USERS` (ROLE_ID, USER_ID) VALUES";
+		StringBuilder builder = new StringBuilder(query);
+		roles.forEach(role -> 
+			builder.append(" ('")
+			       .append(role.getShortName())
+			       .append("', ")
+			       .append(user.getId())
+			       .append("), ")
+		);
+		builder.replace(builder.length() - 2, builder.length(), ";");
+		jdbcTemplate.update(builder.toString());
+	}
+
+	private boolean updateUserRoles(User user, User found) {
+		Set<Role> existingRoles = found.getRoles();
+		Set<Role> newRoles = user.getRoles();
+		if (!existingRoles.equals(newRoles)) {
+			deleteRoles(existingRoles, found.getId());
+			addUserRoles(user);
 			return true;
 		}
 		return false;
 	}
 
-	@Override
-	public boolean delete(User user) {
-		Assert.notNull(user, "Can't delete user 'null'");
-		// TODO remove corresponding Roles
-		User found = assertIfExisted(user);
-		if (jdbcTemplate.update(DELETE.getQuery(), 
-				    user.getEmail()) > 0) {
-			logger.info(user.getEmail() + " was removed from DB");
-			return true;
-		}
-		return false;
+	private boolean updateUserDetails(User user) {
+		return jdbcTemplate.update(UPDARE.getQuery(), 
+				       user.getFirstName(), user.getLastName(), 
+					   user.getMiddleName(), user.getEmail()) > 0;
+	}
+
+	private void deleteRoles(Set<Role> roles, Long id) {
+		if (roles == null || roles.size() == 0) return;
+		String query = "DELETE FROM `users_demo`.`ROLE_USERS` WHERE USER_ID = ?";
+		jdbcTemplate.update(query, id);
 	}
 
 	private String getHashedPassword(User user) {
@@ -125,24 +206,8 @@ public class UserRepositoryJDBC implements UserRepository {
 		return new BigInteger(130, random).toString(32);
 	}
 
-	private User assertIfExisted(User user) {
-		User found = findByEmail(user.getEmail());
-		if (found == null)
-			throw new EntityDoesNotExistException("User " + user.getEmail() + " does not exist");
-		return user;
+	private void processException(Exception e, String msg) {
+		logger.debug(msg, e);
+		throw new AccessDataBaseException(msg, e);
 	}
-	
-	private static String get(ResultSet resultSet, UserFields field) throws SQLException {
-		return resultSet.getString(field.getName());
-	}
-
-	private static final RowMapper<User> USER_MAPPER =
-	        (resultSet, rowNum) -> {
-	        	User user = new User();
-	        	user.setEmail(get(resultSet, EMAIL));
-	        	user.setFirstName(get(resultSet, FIRST_NAME));
-	        	user.setLastName(get(resultSet, LAST_NAME));
-	        	user.setMiddleName(get(resultSet, MIDDLE_NAME));
-	        	return user;
-	        };
 }

@@ -6,7 +6,7 @@ package dmv.spring.demo.model.entity;
 /**
  * @author user
  */
-public enum RoleFields {
+public enum RoleFields implements EntityFields {
 	ROLE_TABLE("`users_demo`.`ROLE`"),
 	SHORT_NAME("SHORT_NAME"),
 	FULL_NAME("FULL_NAME");
