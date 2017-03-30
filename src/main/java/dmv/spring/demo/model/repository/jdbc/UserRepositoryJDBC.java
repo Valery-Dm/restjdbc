@@ -11,7 +11,6 @@ import static dmv.spring.demo.model.repository.jdbc.UserQueries.FIND_BY_EMAIL;
 import static dmv.spring.demo.model.repository.jdbc.UserQueries.FIND_USER_ROLES;
 import static dmv.spring.demo.model.repository.jdbc.UserQueries.GET_ID;
 import static dmv.spring.demo.model.repository.jdbc.UserQueries.UPDARE;
-import static org.slf4j.LoggerFactory.getLogger;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -19,22 +18,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
-import dmv.spring.demo.model.exceptions.AccessDataBaseException;
-import dmv.spring.demo.model.exceptions.EntityAlreadyExistsException;
-import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 import dmv.spring.demo.model.repository.UserRepository;
 
 /**
@@ -42,11 +30,7 @@ import dmv.spring.demo.model.repository.UserRepository;
  * {@link UserRepository} specification
  * @author user
  */
-@Repository
-@Transactional
-public class UserRepositoryJDBC implements UserRepository {
-
-    private final Logger logger = getLogger(getClass());
+public class UserRepositoryJDBC {
 	
 	/* For password auto generation */
 	private final SecureRandom random = new SecureRandom();
@@ -56,96 +40,44 @@ public class UserRepositoryJDBC implements UserRepository {
 	/* Spring helper class for JDBC queries */
 	private final JdbcTemplate jdbcTemplate;
 
-	@Autowired
     public UserRepositoryJDBC(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-	@Override
 	public User findByEmail(String email) {
-		Assert.notNull(email, "Email can't be 'null'");
-		User user = null;
-		try {
-			
-			user = jdbcTemplate.queryForObject(FIND_BY_EMAIL.getQuery(), 
-					                           USER_MAPPER, email);
-			populateRoles(jdbcTemplate.query(FIND_USER_ROLES.getQuery(), 
-					                         ROLE_MAPPER, user.getId()), user);
-			
-		} catch (EmptyResultDataAccessException e) {
-			throw new EntityDoesNotExistException("User " + email + " does not exist");
-		} catch (Exception e) {
-			String msg = "There was a lookup for user " + email
-					+ ", and it was not successful";
-			processException(e, msg);
-		}
+		User user = jdbcTemplate.queryForObject(FIND_BY_EMAIL.getQuery(), 
+				                                USER_MAPPER, email);
+		populateRoles(jdbcTemplate.query(FIND_USER_ROLES.getQuery(), 
+				                         ROLE_MAPPER, user.getId()), user);
 		return user;
 	}
 
-	@Override
 	public User create(User user) {
-		Assert.notNull(user, "Can't create user 'null'");
-		try {
-			
-			jdbcTemplate.update(CREATE.getQuery(), 
-					user.getEmail(), user.getFirstName(), 
-					user.getLastName(), user.getMiddleName(),
-					getHashedPassword(user));
-			// get auto-generated ID
-			user.setId(jdbcTemplate.queryForObject(GET_ID.getQuery(), 
-						                           Long.class, user.getEmail()));
-			addUserRoles(user);
-			logger.info(user + " was added to DB");
-			
-		} catch(DuplicateKeyException e) {
-			throw new EntityAlreadyExistsException(user + " already exists");
-		} catch (DataIntegrityViolationException e) {
-			throw new IllegalArgumentException(user + " has wrong information", e);
-		} catch (Exception e) {
-			String msg = "There was an attempt to insert " + user
-					+ ", and something went wrong";
-			processException(e, msg);
-		}
+		jdbcTemplate.update(CREATE.getQuery(), 
+				user.getEmail(), user.getFirstName(), 
+				user.getLastName(), user.getMiddleName(),
+				getHashedPassword(user));
+		// get auto-generated ID
+		user.setId(jdbcTemplate.queryForObject(GET_ID.getQuery(), 
+				Long.class, user.getEmail()));
+		addUserRoles(user);
 		return user;
 	}
 
-	@Override
 	public User update(User user) {
-		Assert.notNull(user, "Can't update user 'null'");
 		User found = findByEmail(user.getEmail());
-		try {
-			updateUserDetails(user);
-			updateUserRoles(user, found);
-			logger.info(user + " was updated in DB");
-		} catch (DataIntegrityViolationException e) {
-			throw new IllegalArgumentException(user + " brings wrong information for update", e);
-		} catch (Exception e) {
-			String msg = "There was an attempt to update " + user
-					      + ", and something went wrong";
-			processException(e, msg);
-		}
+		updateUserDetails(user);
+		updateUserRoles(user, found);
 		return user;
 	}
 
-	@Override
-	public void delete(User user) {
-		Assert.notNull(user, "Can't delete user 'null'");
-		try {
-			
-			/* With Cascade deletion in ROLE_USERS table */
-			if (jdbcTemplate.update(DELETE.getQuery(), user.getEmail()) > 0) {
-				logger.info(user + " was removed from DB");
-				return;
-			}
-			
-		} catch (Exception e) {
-			String msg = "There was an attempt to remove " + user
-					      + ", and something went wrong";
-			processException(e, msg);
-		}
-		throw new EntityDoesNotExistException(user + " does not exist");
+	public boolean delete(User user) {
+		/* With Cascade deletion in ROLE_USERS table */
+		return (jdbcTemplate.update(DELETE.getQuery(), user.getEmail()) > 0);
 	}
 
+	/* Helper methods */
+	
 	private void populateRoles(List<Role> query, User user) {
 		Set<Role> roles = new HashSet<>();
 		query.forEach(roles::add);
@@ -204,10 +136,5 @@ public class UserRepositoryJDBC implements UserRepository {
 
 	private String generatePassword() {
 		return new BigInteger(130, random).toString(32);
-	}
-
-	private void processException(Exception e, String msg) {
-		logger.debug(msg, e);
-		throw new AccessDataBaseException(msg, e);
 	}
 }
