@@ -1,4 +1,5 @@
 SELECT 
+  `users_demo`.`USER`.`ID`,
   `users_demo`.`USER`.`EMAIL_ADRS`,
   `users_demo`.`USER`.`FIRST_NAME`,
   `users_demo`.`USER`.`LAST_NAME`,

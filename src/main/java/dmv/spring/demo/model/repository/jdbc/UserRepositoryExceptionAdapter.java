@@ -108,9 +108,8 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 			logger.debug(msg, e);
 			throw new AccessDataBaseException(msg, e);
 		}
-		if (deleted)
-			logger.info(user + " was removed from DB");
-		else
+		if (!deleted)
 			throw new EntityDoesNotExistException(user + " does not exist");
+		logger.info(user + " was removed from DB");
 	}
 }

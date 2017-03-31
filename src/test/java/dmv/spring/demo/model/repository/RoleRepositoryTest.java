@@ -2,13 +2,11 @@ package dmv.spring.demo.model.repository;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
-import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,7 +57,25 @@ public class RoleRepositoryTest {
 	public void getRoleUsers() {
 		role = target.findByShortName(roleShortName);
 		Set<User> users = target.getUsers(role);
+		//System.out.println(users);
+		/*
+		 * This test relies on fact that database is
+		 * not empty from the very beginning (real or 
+		 * demo users are already there, and at least
+		 * one Administrator is present)
+		 */
 		assertTrue(users.size() > 0);
+	}
+	
+	@Test
+	public void getRoleUsersShortNameAbsent() {
+		role = target.findByShortName(roleShortName);
+		role.setShortName(null);
+		Set<User> users = target.getUsers(role);
+		/*
+		 * Empty list is expected
+		 */
+		assertTrue(users.size() == 0);
 	}
 
 }

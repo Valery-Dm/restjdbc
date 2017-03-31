@@ -1,0 +1,3 @@
+SELECT `SHORT_NAME`, `FULL_NAME` 
+FROM `users_demo`.`ROLE`
+WHERE `SHORT_NAME` = ?;

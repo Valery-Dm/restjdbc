@@ -9,8 +9,8 @@ import static dmv.spring.demo.model.entity.UserFields.EMAIL;
 import static dmv.spring.demo.model.entity.UserFields.FIRST_NAME;
 import static dmv.spring.demo.model.entity.UserFields.LAST_NAME;
 import static dmv.spring.demo.model.entity.UserFields.MIDDLE_NAME;
-import static dmv.spring.demo.model.repository.jdbc.RoleQueries.FIND_BY_SHORT_NAME;
-import static dmv.spring.demo.model.repository.jdbc.RoleQueries.SELECT_USERS_WITH_ROLE;
+import static dmv.spring.demo.model.repository.jdbc.RoleQueriesSQL.ROLE_FIND_BY_SHORT_NAME;
+import static dmv.spring.demo.model.repository.jdbc.RoleQueriesSQL.ROLE_USERS_GET;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.sql.Connection;
@@ -60,7 +60,7 @@ public class RoleRepositoryJDBC implements RoleRepository {
 		Role role = null;
 		try (Connection connection = getConnection();
 			 PreparedStatement statement = 
-			    		 connection.prepareStatement(FIND_BY_SHORT_NAME.getQuery())) {
+			    		 connection.prepareStatement(ROLE_FIND_BY_SHORT_NAME.getQuery())) {
 			
 			statement.setString(1, shortName);
 			role = mapRole(statement.executeQuery());
@@ -84,7 +84,7 @@ public class RoleRepositoryJDBC implements RoleRepository {
 		Set<User> users = new HashSet<>();
 		try (Connection connection = getConnection();
 			 PreparedStatement statement = 
-		    		 connection.prepareStatement(SELECT_USERS_WITH_ROLE.getQuery())) {
+		    		 connection.prepareStatement(ROLE_USERS_GET.getQuery())) {
 	    	
 			statement.setString(1, role.getShortName());
 			ResultSet resultSet = statement.executeQuery();
@@ -119,6 +119,7 @@ public class RoleRepositoryJDBC implements RoleRepository {
 		User user;
 		while (resultSet.next()) {
 			user = new User();
+			user.setId(resultSet.getLong(1));
 			user.setEmail(resultSet.getString(EMAIL.getName()));
 			user.setFirstName(resultSet.getString(FIRST_NAME.getName()));
 			user.setLastName(resultSet.getString(LAST_NAME.getName()));

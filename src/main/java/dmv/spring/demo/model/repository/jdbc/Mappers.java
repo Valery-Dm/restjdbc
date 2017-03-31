@@ -48,4 +48,5 @@ public class Mappers {
 	        	user.setMiddleName(get(resultSet, MIDDLE_NAME));
 	        	return user;
 	        };
+	        
 }
