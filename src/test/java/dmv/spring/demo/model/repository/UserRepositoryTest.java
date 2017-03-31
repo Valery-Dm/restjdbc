@@ -171,6 +171,13 @@ public class UserRepositoryTest {
 	}
 
 	@Test
+	public void createWithoutEmail() {
+		user.setEmail(null);
+		exception.expect(IllegalArgumentException.class);
+		target.create(user);
+	}
+	
+	@Test
 	public void createExisted() {
 		target.create(user);
 		exception.expect(EntityAlreadyExistsException.class);

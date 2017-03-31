@@ -1,1 +1,2 @@
-DELETE FROM `users_demo`.`USER` WHERE EMAIL_ADRS = ?
+DELETE FROM `users_demo`.`USER` 
+WHERE `EMAIL_ADRS` = ?;

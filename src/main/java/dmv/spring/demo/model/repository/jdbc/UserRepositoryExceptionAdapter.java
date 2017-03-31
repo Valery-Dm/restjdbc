@@ -26,7 +26,7 @@ import dmv.spring.demo.model.repository.UserRepository;
  * Catching variety of {@link DataAccessException} or common
  * errors, logging them and convert into corresponding exceptions
  * of {@link UserRepository} interface. All methods are wrapped
- * with {@link Transactional} interface
+ * within {@link Transactional} interface
  * @author user
  */
 @Repository

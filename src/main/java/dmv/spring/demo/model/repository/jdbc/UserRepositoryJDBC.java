@@ -5,12 +5,7 @@ package dmv.spring.demo.model.repository.jdbc;
 
 import static dmv.spring.demo.model.repository.jdbc.Mappers.ROLE_MAPPER;
 import static dmv.spring.demo.model.repository.jdbc.Mappers.USER_MAPPER;
-import static dmv.spring.demo.model.repository.jdbc.UserQueries.CREATE;
-import static dmv.spring.demo.model.repository.jdbc.UserQueries.DELETE;
-import static dmv.spring.demo.model.repository.jdbc.UserQueries.FIND_BY_EMAIL;
-import static dmv.spring.demo.model.repository.jdbc.UserQueries.FIND_USER_ROLES;
-import static dmv.spring.demo.model.repository.jdbc.UserQueries.GET_ID;
-import static dmv.spring.demo.model.repository.jdbc.UserQueries.UPDARE;
+import static dmv.spring.demo.model.repository.jdbc.UserQueriesSQL.*;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -45,20 +40,20 @@ public class UserRepositoryJDBC {
     }
 
 	public User findByEmail(String email) {
-		User user = jdbcTemplate.queryForObject(FIND_BY_EMAIL.getQuery(), 
+		User user = jdbcTemplate.queryForObject(USER_FIND_BY_EMAIL.getQuery(), 
 				                                USER_MAPPER, email);
-		populateRoles(jdbcTemplate.query(FIND_USER_ROLES.getQuery(), 
+		populateRoles(jdbcTemplate.query(USER_ROLES_GET.getQuery(), 
 				                         ROLE_MAPPER, user.getId()), user);
 		return user;
 	}
 
 	public User create(User user) {
-		jdbcTemplate.update(CREATE.getQuery(), 
+		jdbcTemplate.update(USER_CREATE.getQuery(), 
 				user.getEmail(), user.getFirstName(), 
 				user.getLastName(), user.getMiddleName(),
 				getHashedPassword(user));
 		// get auto-generated ID
-		user.setId(jdbcTemplate.queryForObject(GET_ID.getQuery(), 
+		user.setId(jdbcTemplate.queryForObject(USER_GET_ID.getQuery(), 
 				Long.class, user.getEmail()));
 		addUserRoles(user);
 		return user;
@@ -73,7 +68,7 @@ public class UserRepositoryJDBC {
 
 	public boolean delete(User user) {
 		/* With Cascade deletion in ROLE_USERS table */
-		return (jdbcTemplate.update(DELETE.getQuery(), user.getEmail()) > 0);
+		return (jdbcTemplate.update(USER_DELETE.getQuery(), user.getEmail()) > 0);
 	}
 
 	/* Helper methods */
@@ -88,16 +83,15 @@ public class UserRepositoryJDBC {
 		Set<Role> roles = user.getRoles();
 		if (roles == null || roles.size() == 0)
 			return;
-		String query = "INSERT INTO `users_demo`.`ROLE_USERS` (ROLE_ID, USER_ID) VALUES";
-		StringBuilder builder = new StringBuilder(query);
+		StringBuilder builder = new StringBuilder(USER_ROLES_ADD.getQuery());
 		roles.forEach(role -> 
 			builder.append(" ('")
 			       .append(role.getShortName())
 			       .append("', ")
 			       .append(user.getId())
-			       .append("), ")
+			       .append("),")
 		);
-		builder.replace(builder.length() - 2, builder.length(), ";");
+		builder.replace(builder.length() - 1, builder.length(), ";");
 		jdbcTemplate.update(builder.toString());
 	}
 
@@ -113,15 +107,14 @@ public class UserRepositoryJDBC {
 	}
 
 	private boolean updateUserDetails(User user) {
-		return jdbcTemplate.update(UPDARE.getQuery(), 
+		return jdbcTemplate.update(USER_UPDARE.getQuery(), 
 				       user.getFirstName(), user.getLastName(), 
 					   user.getMiddleName(), user.getEmail()) > 0;
 	}
 
 	private void deleteRoles(Set<Role> roles, Long id) {
 		if (roles == null || roles.size() == 0) return;
-		String query = "DELETE FROM `users_demo`.`ROLE_USERS` WHERE USER_ID = ?";
-		jdbcTemplate.update(query, id);
+		jdbcTemplate.update(USER_ROLES_DELETE.getQuery(), id);
 	}
 
 	private String getHashedPassword(User user) {

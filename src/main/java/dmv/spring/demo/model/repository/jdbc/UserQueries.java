@@ -1,6 +1,3 @@
-/**
- * 
- */
 package dmv.spring.demo.model.repository.jdbc;
 
 import static dmv.spring.demo.model.entity.RoleFields.FULL_NAME;

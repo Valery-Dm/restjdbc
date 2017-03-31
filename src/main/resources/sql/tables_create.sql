@@ -7,8 +7,6 @@ CREATE TABLE `users_demo`.`ROLE` (
   `FULL_NAME` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`SHORT_NAME`));
 
-INSERT INTO `users_demo`.`ROLE` (SHORT_NAME, FULL_NAME)
-VALUES ('ADM', 'Administrator'), ('USR', 'User'), ('DEV', 'Developer');
 
 -- USER TABLE
 
@@ -40,3 +38,6 @@ CREATE TABLE `users_demo`.`ROLE_USERS` (
     REFERENCES `users_demo`.`ROLE` (`SHORT_NAME`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION);
+
+
+
