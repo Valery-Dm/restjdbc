@@ -43,6 +43,12 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
     }
     
 	@Override
+	public User findById(Long id) {
+		// TODO Implement find User by Id
+		return null;
+	}
+
+	@Override
 	@Transactional(readOnly=true)
 	public User findByEmail(String email) {
 		Assert.notNull(email, "Email can't be 'null'");
