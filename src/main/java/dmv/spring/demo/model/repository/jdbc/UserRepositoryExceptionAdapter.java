@@ -43,9 +43,19 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
     }
     
 	@Override
+	@Transactional(readOnly=true)
 	public User findById(Long id) {
-		// TODO Implement find User by Id
-		return null;
+		Assert.notNull(id, "Can't find user with id 'null'");
+		try {
+			return userRepository.findById(id);
+		} catch (EmptyResultDataAccessException e) {
+			throw new EntityDoesNotExistException("User with id " + id + " does not exist");
+		} catch (Exception e) {
+			String msg = "There was a lookup for user with id " + id
+					+ ", and it was not successful";
+			logger.debug(msg, e);
+			throw new AccessDataBaseException(msg, e);
+		}
 	}
 
 	@Override

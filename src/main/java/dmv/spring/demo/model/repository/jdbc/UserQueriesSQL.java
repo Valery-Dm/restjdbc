@@ -11,6 +11,7 @@ public enum UserQueriesSQL {
 	USER_UPDARE("user_update"),
 	USER_DELETE("user_delete"),
 	USER_FIND_BY_EMAIL("user_find_by_email"),
+	USER_FIND_BY_ID("user_find_by_id"),
 	USER_GET_ID("user_get_id"),
 	USER_ROLES_GET("user_roles_get"),
 	USER_ROLES_DELETE("user_roles_delete"),

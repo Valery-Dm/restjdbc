@@ -39,6 +39,14 @@ public class UserRepositoryJDBC {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+	public User findById(Long id) {
+		User user = jdbcTemplate.queryForObject(USER_FIND_BY_ID.getQuery(), 
+				                                USER_MAPPER, id);
+		populateRoles(jdbcTemplate.query(USER_ROLES_GET.getQuery(), 
+				                         ROLE_MAPPER, id), user);
+		return user;
+	}
+	
 	public User findByEmail(String email) {
 		User user = jdbcTemplate.queryForObject(USER_FIND_BY_EMAIL.getQuery(), 
 				                                USER_MAPPER, email);
@@ -130,4 +138,5 @@ public class UserRepositoryJDBC {
 	private String generatePassword() {
 		return new BigInteger(130, random).toString(32);
 	}
+
 }

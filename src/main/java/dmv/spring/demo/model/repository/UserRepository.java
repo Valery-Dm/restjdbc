@@ -14,6 +14,16 @@ import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
  */
 public interface UserRepository {
 	
+	/**
+	 * Find user by its unique identifier.
+	 * Will return existing user or throw an exception.
+	 * @param id User's id
+	 * @return User with given id
+	 * @throws IllegalArgumentException if argument is null
+	 * @throws EntityDoesNotExistException if user can't be found 
+	 * @throws AccessDataBaseException if operation was unsuccessful 
+	 *                                     due to internal error
+	 */
 	User findById(Long id);
 
 	/**

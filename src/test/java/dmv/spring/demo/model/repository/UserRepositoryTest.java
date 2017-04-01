@@ -44,6 +44,7 @@ public class UserRepositoryTest {
 	@Before
 	public void setUpBeforeClass() throws Exception {
 		user = new User();
+		user.setId(1L);
 		user.setEmail("test.user@mail.address");
 		user.setFirstName("First");
 		user.setLastName("Last");
@@ -75,13 +76,24 @@ public class UserRepositoryTest {
 	}
 	
 	@Test
+	public void findById() {
+		User found = null;
+		target.create(user);
+		found = target.findById(user.getId());
+		assertNotNull("user is null", found);
+		assertThat(found.getId(), is(user.getId()));
+		assertThat("wrong email", found.getEmail(), is(user.getEmail()));
+		assertThat("wrong last name", found.getLastName(), is(user.getLastName()));
+	}
+	
+	@Test
 	public void crud() {
 		User found = null;
 		
 		target.create(user);
 		found = target.findByEmail(user.getEmail());
 		assertNotNull("user is null", found);
-		assertTrue(found.getId() > 0);
+		assertThat(found.getId(), is(user.getId()));
 		assertThat("wrong email", found.getEmail(), is(user.getEmail()));
 		assertThat("wrong last name", found.getLastName(), is(user.getLastName()));
 		
@@ -153,15 +165,27 @@ public class UserRepositoryTest {
 	}
 	
 	@Test
-	public void findNull() {
+	public void findEmailNull() {
 		exception.expect(IllegalArgumentException.class);
 		target.findByEmail(null);
 	}
 	
 	@Test
-	public void findEmpty() {
+	public void findIdNull() {
+		exception.expect(IllegalArgumentException.class);
+		target.findById(null);
+	}
+	
+	@Test
+	public void findEmailEmpty() {
 		exception.expect(EntityDoesNotExistException.class);
 		target.findByEmail("");
+	}
+	
+	@Test
+	public void findIdWrong() {
+		exception.expect(EntityDoesNotExistException.class);
+		target.findById(-1L);
 	}
 	
 	@Test
