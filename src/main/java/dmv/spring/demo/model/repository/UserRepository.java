@@ -13,6 +13,8 @@ import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
  * @author user
  */
 public interface UserRepository {
+	
+	User findById(Long id);
 
 	/**
 	 * Find user by e-mail address.
