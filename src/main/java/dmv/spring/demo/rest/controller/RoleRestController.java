@@ -1,7 +1,7 @@
 /**
  * 
  */
-package dmv.spring.demo.restcontroller;
+package dmv.spring.demo.rest.controller;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -23,10 +23,10 @@ import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 import dmv.spring.demo.model.repository.RoleRepository;
-import dmv.spring.demo.restcontroller.representation.RoleDTO;
-import dmv.spring.demo.restcontroller.representation.UserLinkResource;
-import dmv.spring.demo.restcontroller.representation.assembler.RoleDTOAsm;
-import dmv.spring.demo.restcontroller.representation.assembler.UserLinkResourceAsm;
+import dmv.spring.demo.rest.representation.RoleDTO;
+import dmv.spring.demo.rest.representation.UserLinkResource;
+import dmv.spring.demo.rest.representation.assembler.RoleDTOAsm;
+import dmv.spring.demo.rest.representation.assembler.UserLinkResourceAsm;
 
 /**
  * {@link RoleRepository} Restful endpoints. 

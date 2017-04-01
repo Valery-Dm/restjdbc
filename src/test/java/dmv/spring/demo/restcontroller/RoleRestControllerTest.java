@@ -36,6 +36,7 @@ import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 import dmv.spring.demo.model.repository.RoleRepository;
+import dmv.spring.demo.rest.controller.RoleRestController;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

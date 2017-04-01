@@ -1,7 +1,7 @@
 /**
  * 
  */
-package dmv.spring.demo.restcontroller.representation;
+package dmv.spring.demo.rest.representation;
 
 import org.springframework.hateoas.ResourceSupport;
 

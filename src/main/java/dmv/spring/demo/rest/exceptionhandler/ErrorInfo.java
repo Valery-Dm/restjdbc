@@ -1,7 +1,7 @@
 /**
  * 
  */
-package dmv.spring.demo.restcontroller.exceptionhandler;
+package dmv.spring.demo.rest.exceptionhandler;
 
 /**
  * @author user

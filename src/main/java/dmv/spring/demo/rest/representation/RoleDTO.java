@@ -1,7 +1,7 @@
 /**
  * 
  */
-package dmv.spring.demo.restcontroller.representation;
+package dmv.spring.demo.rest.representation;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import dmv.spring.demo.model.entity.Role;
-import dmv.spring.demo.restcontroller.RoleRestController;
+import dmv.spring.demo.rest.controller.RoleRestController;
 
 /**
  * Data Transfer Object for {@link Role} entity

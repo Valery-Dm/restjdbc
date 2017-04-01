@@ -1,7 +1,7 @@
 /**
  * 
  */
-package dmv.spring.demo.restcontroller;
+package dmv.spring.demo.rest.controller;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.repository.UserRepository;
-import dmv.spring.demo.restcontroller.representation.UserDTO;
-import dmv.spring.demo.restcontroller.representation.assembler.UserDTOAsm;
+import dmv.spring.demo.rest.representation.UserDTO;
+import dmv.spring.demo.rest.representation.assembler.UserDTOAsm;
 
 /**
  * {@link UserRepository} Restful endpoints.

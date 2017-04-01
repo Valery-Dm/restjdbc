@@ -1,15 +1,15 @@
 /**
  * 
  */
-package dmv.spring.demo.restcontroller.representation.assembler;
+package dmv.spring.demo.rest.representation.assembler;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 
 import dmv.spring.demo.model.entity.User;
-import dmv.spring.demo.restcontroller.UserRestController;
-import dmv.spring.demo.restcontroller.representation.UserLinkResource;
+import dmv.spring.demo.rest.controller.UserRestController;
+import dmv.spring.demo.rest.representation.UserLinkResource;
 
 /**
  * @author user

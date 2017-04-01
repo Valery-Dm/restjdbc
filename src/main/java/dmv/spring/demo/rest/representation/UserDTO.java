@@ -1,7 +1,7 @@
 /**
  * 
  */
-package dmv.spring.demo.restcontroller.representation;
+package dmv.spring.demo.rest.representation;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.hateoas.ResourceSupport;
 
 import dmv.spring.demo.model.entity.User;
-import dmv.spring.demo.restcontroller.representation.assembler.RoleDTOAsm;
+import dmv.spring.demo.rest.representation.assembler.RoleDTOAsm;
 
 /**
  * Data transfer object for {@link User} entity

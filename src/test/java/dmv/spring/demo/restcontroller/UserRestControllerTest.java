@@ -35,6 +35,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.repository.UserRepository;
+import dmv.spring.demo.rest.controller.UserRestController;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
