@@ -26,6 +26,9 @@ public class UserDTOAsm extends ResourceAssemblerSupport<User, UserDTO> {
 		userDTO.add(linkTo(UserRestController.class)
 				.slash(user.getId())
 				.withSelfRel());
+//		Link link = linkTo(methodOn(UserRestController.class)
+//				.getRoleById(user.getId()))
+//		.withRel("roles");
 		return userDTO;
 	}
 

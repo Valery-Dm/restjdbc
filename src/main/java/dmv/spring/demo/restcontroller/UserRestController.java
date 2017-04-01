@@ -18,6 +18,7 @@ import dmv.spring.demo.restcontroller.representation.UserDTO;
 import dmv.spring.demo.restcontroller.representation.assembler.UserDTOAsm;
 
 /**
+ * {@link UserRepository} Restful endpoints.
  * @author user
  */
 @RestController
@@ -36,7 +37,8 @@ public class UserRestController {
 	
 	@RequestMapping(method = GET)
 	public ResponseEntity<UserDTO> getRoleByEmail(@RequestParam String email) {
-		return null;
-		
+		User user = userRepository.findByEmail(email);
+		return ResponseEntity.ok()
+				             .body(new UserDTOAsm().toResource(user));
 	}
 }

@@ -3,7 +3,6 @@ package dmv.spring.demo.restcontroller;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -13,8 +12,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.Charset;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -32,6 +32,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.repository.UserRepository;
 
@@ -56,13 +57,18 @@ public class UserRestControllerTest {
 	@InjectMocks
 	private UserRestController target;
 	
-	private static User user1;
-	private static User user2;
+	private static User userWithRoles;
+	private static User userAnonymous;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		user1 = mockUser(1L);
-		user2 = mockUser(2L);
+		userWithRoles = mockUser(1L);
+		userAnonymous = mockUser(2L);
+		
+		Set<Role> roles = new HashSet<>();
+		roles.add(new Role("ADM", "Administrator"));
+		roles.add(new Role("USR", "User"));
+		when(userWithRoles.getRoles()).thenReturn(roles);
 	}
 
 	@Before
@@ -72,14 +78,28 @@ public class UserRestControllerTest {
 
 	@Test
 	public void getUserById() throws Exception {
-		String selfLink = MAP + user1.getId();
+		String selfLink = MAP + userWithRoles.getId();
 		mockMvc.perform(get(selfLink)
 				       .accept(APPLICATION_JSON))
 		       .andExpect(status().isOk())
 		       .andExpect(content().contentType(contentType))
 		       .andDo(print())
-		       .andExpect(jsonPath("$.email", is(user1.getEmail())))
-		       .andExpect(jsonPath("$.firstName", is(user1.getFirstName())))
+		       .andExpect(jsonPath("$.email", is(userWithRoles.getEmail())))
+		       .andExpect(jsonPath("$.firstName", is(userWithRoles.getFirstName())))
+		       .andExpect(jsonPath("$._links[*].href", hasItem(endsWith(selfLink))));
+	}
+
+	@Test
+	public void getUserByEmail() throws Exception {
+		String url = MAP + "?email=" + userWithRoles.getEmail();
+		String selfLink = MAP + userWithRoles.getId();
+		mockMvc.perform(get(url)
+				       .accept(APPLICATION_JSON))
+		       .andExpect(status().isOk())
+		       .andExpect(content().contentType(contentType))
+		       .andDo(print())
+		       .andExpect(jsonPath("$.email", is(userWithRoles.getEmail())))
+		       .andExpect(jsonPath("$.firstName", is(userWithRoles.getFirstName())))
 		       .andExpect(jsonPath("$._links[*].href", hasItem(endsWith(selfLink))));
 	}
 
@@ -101,10 +121,14 @@ public class UserRestControllerTest {
 	}
 
 	private void configureRepository() {
-		when(userRepository.findById(user1.getId()))
-		.thenReturn(user1);
-		when(userRepository.findById(user2.getId()))
-		.thenReturn(user2);
+		when(userRepository.findById(userWithRoles.getId()))
+		.thenReturn(userWithRoles);
+		when(userRepository.findByEmail(userWithRoles.getEmail()))
+		.thenReturn(userWithRoles);
+		when(userRepository.findById(userAnonymous.getId()))
+		.thenReturn(userAnonymous);
+		when(userRepository.findByEmail(userAnonymous.getEmail()))
+		.thenReturn(userAnonymous);
 	}
 
 }

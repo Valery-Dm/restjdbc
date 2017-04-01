@@ -4,11 +4,12 @@
 package dmv.spring.demo.restcontroller.representation;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.hateoas.ResourceSupport;
 
-import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
+import dmv.spring.demo.restcontroller.representation.assembler.RoleDTOAsm;
 
 /**
  * Data transfer object for {@link User} entity
@@ -21,17 +22,7 @@ public class UserDTO extends ResourceSupport {
 	private final String firstName;
 	private final String lastName;
 	private final String middleName;
-	private final Set<Role> roles;
-	
-	public UserDTO(Long id, String email, String firstName, 
-			       String lastName, String middleName, Set<Role> roles) {
-		this.id = id;
-		this.email = email;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.middleName = middleName;
-		this.roles = roles;
-	}
+	private final Set<RoleDTO> roles;
 	
 	public UserDTO(User user) {
 		this.id = user.getId();
@@ -39,7 +30,10 @@ public class UserDTO extends ResourceSupport {
 		this.firstName = user.getFirstName();
 		this.lastName = user.getLastName();
 		this.middleName = user.getMiddleName();
-		this.roles = user.getRoles();
+		roles = user.getRoles()
+		    .stream()
+		    .map(role -> new RoleDTOAsm().toResource(role))
+		    .collect(Collectors.toSet());
 	}
 
 	public Long getUserId() {
@@ -62,7 +56,7 @@ public class UserDTO extends ResourceSupport {
 		return middleName;
 	}
 
-	public Set<Role> getRoles() {
+	public Set<RoleDTO> getRoles() {
 		return roles;
 	}
 	

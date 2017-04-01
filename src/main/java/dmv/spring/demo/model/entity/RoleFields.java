@@ -17,6 +17,7 @@ public enum RoleFields implements EntityFields {
 		this.name = name;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}

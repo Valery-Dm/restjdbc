@@ -41,6 +41,7 @@ public class RoleRestController {
 	
 	@RequestMapping(path="/{shortName}", method = GET)
 	public ResponseEntity<RoleDTO> getRole(@PathVariable String shortName) {
+		
 		Role role = roleRepository.findByShortName(shortName);
 		
 		return ResponseEntity.ok(new RoleDTOAsm().toResource(role));
@@ -49,6 +50,7 @@ public class RoleRestController {
 	@RequestMapping(path="/{shortName}/users", method = GET)
 	public ResponseEntity<Resources<UserLinkResource>> 
 	                    getUsers(@PathVariable String shortName, HttpServletRequest request) {
+		
 		Role role = roleRepository.findByShortName(shortName);
 		Set<User> users = roleRepository.getUsers(role);
 		
@@ -59,7 +61,8 @@ public class RoleRestController {
 		     .map(user -> new UserLinkResourceAsm().toResource(user))
 		     .collect(Collectors.toList());
 		
-		Link link = new Link(request.getRequestURI());
+		Link link = new Link(request.getRequestURL().toString());
+		
 		Resources<UserLinkResource> resources = new Resources<>(userLinks, link);
 
 		return ResponseEntity.ok(resources);
