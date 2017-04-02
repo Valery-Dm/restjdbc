@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package dmv.spring.demo.model.repository.jdbc;
 
@@ -8,7 +8,7 @@ package dmv.spring.demo.model.repository.jdbc;
  * @author user
  */
 public enum RoleQueriesSQL {
-	
+
 	ROLE_FIND_BY_SHORT_NAME("role_find_by_shortname"),
 	ROLE_USERS_GET("role_users_get");
 

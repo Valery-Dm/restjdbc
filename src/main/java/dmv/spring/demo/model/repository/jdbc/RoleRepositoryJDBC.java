@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package dmv.spring.demo.model.repository.jdbc;
 
@@ -42,9 +42,9 @@ import dmv.spring.demo.model.repository.RoleRepository;
 @Repository
 @Transactional(readOnly=true)
 public class RoleRepositoryJDBC implements RoleRepository {
-	
+
 	private final Logger logger = getLogger(getClass());
-	
+
 	/* Standard javax.sql source here */
 	private final DataSource dataSource;
 
@@ -56,22 +56,22 @@ public class RoleRepositoryJDBC implements RoleRepository {
 	@Override
 	public Role findByShortName(String shortName) {
 		Assert.notNull(shortName, "Can't find Role 'null'");
-		
+
 		Role role = null;
 		try (Connection connection = getConnection();
-			 PreparedStatement statement = 
+			 PreparedStatement statement =
 			    		 connection.prepareStatement(ROLE_FIND_BY_SHORT_NAME.getQuery())) {
-			
+
 			statement.setString(1, shortName);
 			role = mapRole(statement.executeQuery());
-			
+
 		} catch (Exception e) {
 			String msg = "There was a call findByShortName(" + shortName +
 					      "), and it was not successful";
 			logger.debug(msg, e);
 			throw new AccessDataBaseException(msg, e);
-		} 
-		
+		}
+
 		if (role == null)
 			throw new EntityDoesNotExistException("Role " + shortName + " does not exist");
 		return role;
@@ -80,23 +80,23 @@ public class RoleRepositoryJDBC implements RoleRepository {
 	@Override
 	public Set<User> getUsers(Role role) {
 		Assert.notNull(role, "Can't find Users with role 'null'");
-		
+
 		Set<User> users = new HashSet<>();
 		try (Connection connection = getConnection();
-			 PreparedStatement statement = 
+			 PreparedStatement statement =
 		    		 connection.prepareStatement(ROLE_USERS_GET.getQuery())) {
-	    	
+
 			statement.setString(1, role.getShortName());
 			ResultSet resultSet = statement.executeQuery();
 			collectUsers(users, resultSet);
-			
+
 		} catch (Exception e) {
 			String msg = "There was a call for getUsers with role " + role +
 					", and it was not successful";
 			logger.debug(msg, e);
 			throw new AccessDataBaseException(msg, e);
-		} 
-	    
+		}
+
 		return users;
 	}
 

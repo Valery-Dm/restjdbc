@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package dmv.spring.demo.model.repository.jdbc;
 
@@ -41,7 +41,7 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
     	userRepository = new UserRepositoryJDBC(jdbcTemplate);
     	logger = getLogger(getClass());
     }
-    
+
 	@Override
 	@Transactional(readOnly=true)
 	public User findById(Long id) {
@@ -90,7 +90,7 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 					+ ", and something went wrong";
 			logger.debug(msg, e);
 			throw new AccessDataBaseException(msg, e);
-		} 
+		}
 	}
 
 	@Override

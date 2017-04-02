@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package dmv.spring.demo.model.repository.jdbc;
 
@@ -26,7 +26,7 @@ import dmv.spring.demo.model.repository.UserRepository;
  * @author user
  */
 public class UserRepositoryJDBC {
-	
+
 	/* For password auto generation */
 	private final SecureRandom random = new SecureRandom();
 	/* For password hashing */
@@ -40,28 +40,28 @@ public class UserRepositoryJDBC {
     }
 
 	public User findById(Long id) {
-		User user = jdbcTemplate.queryForObject(USER_FIND_BY_ID.getQuery(), 
+		User user = jdbcTemplate.queryForObject(USER_FIND_BY_ID.getQuery(),
 				                                USER_MAPPER, id);
-		populateRoles(jdbcTemplate.query(USER_ROLES_GET.getQuery(), 
+		populateRoles(jdbcTemplate.query(USER_ROLES_GET.getQuery(),
 				                         ROLE_MAPPER, id), user);
 		return user;
 	}
-	
+
 	public User findByEmail(String email) {
-		User user = jdbcTemplate.queryForObject(USER_FIND_BY_EMAIL.getQuery(), 
+		User user = jdbcTemplate.queryForObject(USER_FIND_BY_EMAIL.getQuery(),
 				                                USER_MAPPER, email);
-		populateRoles(jdbcTemplate.query(USER_ROLES_GET.getQuery(), 
+		populateRoles(jdbcTemplate.query(USER_ROLES_GET.getQuery(),
 				                         ROLE_MAPPER, user.getId()), user);
 		return user;
 	}
 
 	public User create(User user) {
-		jdbcTemplate.update(USER_CREATE.getQuery(), 
-				user.getEmail(), user.getFirstName(), 
+		jdbcTemplate.update(USER_CREATE.getQuery(),
+				user.getEmail(), user.getFirstName(),
 				user.getLastName(), user.getMiddleName(),
 				getHashedPassword(user));
 		// get auto-generated ID
-		user.setId(jdbcTemplate.queryForObject(USER_GET_ID.getQuery(), 
+		user.setId(jdbcTemplate.queryForObject(USER_GET_ID.getQuery(),
 				Long.class, user.getEmail()));
 		addUserRoles(user);
 		return user;
@@ -80,7 +80,7 @@ public class UserRepositoryJDBC {
 	}
 
 	/* Helper methods */
-	
+
 	private void populateRoles(List<Role> query, User user) {
 		Set<Role> roles = new HashSet<>();
 		query.forEach(roles::add);
@@ -92,7 +92,7 @@ public class UserRepositoryJDBC {
 		if (roles == null || roles.size() == 0)
 			return;
 		StringBuilder builder = new StringBuilder(USER_ROLES_ADD.getQuery());
-		roles.forEach(role -> 
+		roles.forEach(role ->
 			builder.append(" ('")
 			       .append(role.getShortName())
 			       .append("', ")
@@ -115,8 +115,8 @@ public class UserRepositoryJDBC {
 	}
 
 	private boolean updateUserDetails(User user) {
-		return jdbcTemplate.update(USER_UPDARE.getQuery(), 
-				       user.getFirstName(), user.getLastName(), 
+		return jdbcTemplate.update(USER_UPDARE.getQuery(),
+				       user.getFirstName(), user.getLastName(),
 					   user.getMiddleName(), user.getEmail()) > 0;
 	}
 

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package dmv.spring.demo.model.repository.jdbc;
 
@@ -37,7 +37,7 @@ public class Mappers {
 				role.setFullName(get(resultSet, FULL_NAME));
 				return role;
 			};
-	
+
 	public static final RowMapper<User> USER_MAPPER =
 	        (resultSet, rowNum) -> {
 	        	User user = new User();
@@ -48,5 +48,5 @@ public class Mappers {
 	        	user.setMiddleName(get(resultSet, MIDDLE_NAME));
 	        	return user;
 	        };
-	        
+
 }

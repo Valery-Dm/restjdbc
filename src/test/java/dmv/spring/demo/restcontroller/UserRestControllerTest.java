@@ -52,22 +52,22 @@ import dmv.spring.demo.rest.controller.UserRestController;
 @AutoConfigureMockMvc
 @WithMockUser(username="admin",roles={"USER","ADMIN"})
 public class UserRestControllerTest {
-	
+
 	private static final String MAP = "/rest/users/";
-	private static final MediaType contentType = 
+	private static final MediaType contentType =
 			new MediaType(APPLICATION_JSON.getType(),
             APPLICATION_JSON.getSubtype(),
             Charset.forName("utf8"));
-	
+
 	@Autowired
 	private MockMvc mockMvc;
-	
+
 	@MockBean
 	private UserRepository userRepository;
-	
+
 	@InjectMocks
 	private UserRestController target;
-	
+
 	private static User userWithRoles;
 	private static User userWithoutRoles;
 	private static User userNotExisted;
@@ -79,13 +79,13 @@ public class UserRestControllerTest {
 		userUpdated = mockUser(1L);
 		userWithoutRoles = mockUser(2L);
 		userNotExisted = mockUser(3L);
-		
+
 		Set<Role> roles = new HashSet<>();
 		roles.add(new Role("ADM", "Administrator"));
 		roles.add(new Role("USR", "User"));
 //		when(userWithRoles.getRoles()).thenReturn(roles);
 		userWithRoles.setRoles(roles);
-		
+
 		Set<Role> updateRoles = new HashSet<>();
 		updateRoles.add(new Role("ADM", "Administrator"));
 		userUpdated.setRoles(updateRoles);
@@ -132,7 +132,7 @@ public class UserRestControllerTest {
 		       .andExpect(jsonPath("$.firstName", is(userWithRoles.getFirstName())))
 		       .andExpect(jsonPath("$._links[*].href", hasItem(endsWith(selfLink))));
 	}
-	
+
 	@Test
 	public void getNotExistedUserByEmail() throws Exception {
 		mockMvc.perform(get(buildURL(userNotExisted.getEmail()))
@@ -220,18 +220,18 @@ public class UserRestControllerTest {
 		       .andExpect(content().contentType(contentType))
 		       .andDo(print());
 	}
-	
+
 	@Ignore
 	@Test
 	@WithAnonymousUser
 	public void testAnonym() {
-		
+
 		//TODO implement anonymous test (security tests)
 	}
-	
-	
+
+
 	/*     Helper methods     */
-	
+
 	private String buildURL(Long id) {
 		return MAP + id;
 	}
@@ -239,7 +239,7 @@ public class UserRestControllerTest {
 	private String buildURL(String email) throws UnsupportedEncodingException {
 		return MAP + "?email=" + encodeEmail(email);
 	}
-	
+
 	private String encodeEmail(String email) throws UnsupportedEncodingException {
 		return encode(email, "UTF-8");
 	}

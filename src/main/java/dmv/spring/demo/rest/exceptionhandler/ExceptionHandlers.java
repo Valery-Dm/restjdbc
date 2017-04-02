@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package dmv.spring.demo.rest.exceptionhandler;
 
@@ -25,14 +25,14 @@ public class ExceptionHandlers {
 
 	@ExceptionHandler(EntityDoesNotExistException.class)
 	@ResponseStatus(NOT_FOUND)
-	public @ResponseBody ErrorInfo notFound(HttpServletRequest req, 
+	public @ResponseBody ErrorInfo notFound(HttpServletRequest req,
 			                                EntityDoesNotExistException ex) {
 		return new ErrorInfo(req.getRequestURI(), ex);
 	}
-	
+
 	@ExceptionHandler(EntityAlreadyExistsException.class)
 	@ResponseStatus(CONFLICT)
-	public @ResponseBody ErrorInfo conflict(HttpServletRequest req, 
+	public @ResponseBody ErrorInfo conflict(HttpServletRequest req,
 			                                EntityAlreadyExistsException ex) {
 		return new ErrorInfo(req.getRequestURI(), ex);
 	}

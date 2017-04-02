@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package dmv.spring.demo.model.entity;
 
@@ -11,7 +11,7 @@ public class Role {
 	private String shortName;
 	private String fullName;
 	/* Does not contain Set<User> by default */
-	
+
 	public Role() {}
 	public Role(String shortName, String fullName) {
 		this.shortName = shortName;

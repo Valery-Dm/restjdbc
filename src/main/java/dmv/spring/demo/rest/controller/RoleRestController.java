@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package dmv.spring.demo.rest.controller;
 
@@ -29,7 +29,7 @@ import dmv.spring.demo.rest.representation.assembler.RoleDTOAsm;
 import dmv.spring.demo.rest.representation.assembler.UserLinkResourceAsm;
 
 /**
- * {@link RoleRepository} Restful endpoints. 
+ * {@link RoleRepository} Restful endpoints.
  * @author user
  */
 @RestController
@@ -38,31 +38,31 @@ public class RoleRestController {
 
 	@Autowired
 	private RoleRepository roleRepository;
-	
+
 	@RequestMapping(path="/{shortName}", method = GET)
 	public ResponseEntity<RoleDTO> getRole(@PathVariable String shortName) {
-		
+
 		Role role = roleRepository.findByShortName(shortName);
-		
+
 		return ResponseEntity.ok(new RoleDTOAsm().toResource(role));
 	}
-	
+
 	@RequestMapping(path="/{shortName}/users", method = GET)
-	public ResponseEntity<Resources<UserLinkResource>> 
+	public ResponseEntity<Resources<UserLinkResource>>
 	                    getUsers(@PathVariable String shortName, HttpServletRequest request) {
-		
+
 		Role role = roleRepository.findByShortName(shortName);
 		Set<User> users = roleRepository.getUsers(role);
-		
+
 		if (users.isEmpty())
 			throw new EntityDoesNotExistException("Role " + shortName + " has no users assigned to it");
-		
+
 		List<UserLinkResource> userLinks = users.stream()
 		     .map(user -> new UserLinkResourceAsm().toResource(user))
 		     .collect(Collectors.toList());
-		
+
 		Link link = new Link(request.getRequestURL().toString());
-		
+
 		Resources<UserLinkResource> resources = new Resources<>(userLinks, link);
 
 		return ResponseEntity.ok(resources);

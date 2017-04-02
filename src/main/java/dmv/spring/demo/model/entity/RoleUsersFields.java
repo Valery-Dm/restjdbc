@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package dmv.spring.demo.model.entity;
 
@@ -11,7 +11,7 @@ public enum RoleUsersFields {
 	RU_TABLE("`users_demo`.`ROLE_USERS`"),
 	ROLE_ID("ROLE_ID"),
 	USER_ID("USER_ID");
-	
+
 	private String name;
 
 	private RoleUsersFields(String name) {

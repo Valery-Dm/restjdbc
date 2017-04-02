@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package dmv.spring.demo.rest.exceptionhandler;
 
@@ -8,7 +8,7 @@ package dmv.spring.demo.rest.exceptionhandler;
  *
  */
 public class ErrorInfo {
-	
+
     public final String url;
     public final String ex;
 

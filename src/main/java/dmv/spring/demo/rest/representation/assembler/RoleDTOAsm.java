@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package dmv.spring.demo.rest.representation.assembler;
 
@@ -17,8 +17,8 @@ import dmv.spring.demo.rest.representation.RoleDTO;
  * @author user
  */
 public class RoleDTOAsm extends ResourceAssemblerSupport<Role, RoleDTO> {
-	
-	private static final String USERS = "users"; 
+
+	private static final String USERS = "users";
 
 	public RoleDTOAsm() {
 		super(RoleRestController.class, RoleDTO.class);
@@ -27,7 +27,7 @@ public class RoleDTOAsm extends ResourceAssemblerSupport<Role, RoleDTO> {
 	@Override
 	public RoleDTO toResource(Role role) {
 		RoleDTO roleDTO = new RoleDTO(role);
-		ControllerLinkBuilder link = 
+		ControllerLinkBuilder link =
 				linkTo(RoleRestController.class)
 				.slash(roleDTO.getShortName());
 		roleDTO.add(link.withSelfRel());
@@ -35,6 +35,6 @@ public class RoleDTOAsm extends ResourceAssemblerSupport<Role, RoleDTO> {
 				.withRel(USERS));
 		return roleDTO;
 	}
-	
+
 
 }

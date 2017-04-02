@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package dmv.spring.demo.rest.representation;
 

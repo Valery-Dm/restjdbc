@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package dmv.spring.demo.model.repository.jdbc;
 
@@ -18,7 +18,7 @@ import org.slf4j.Logger;
  *
  */
 public class FileReader {
-	
+
 	private static final Path dir = Paths.get("src/main/resources/sql/");
 
 	private static final Logger logger = getLogger(FileReader.class);

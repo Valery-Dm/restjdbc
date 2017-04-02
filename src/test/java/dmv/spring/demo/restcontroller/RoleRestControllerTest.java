@@ -43,28 +43,28 @@ import dmv.spring.demo.rest.controller.RoleRestController;
 @AutoConfigureMockMvc
 @WithMockUser(username="admin",roles={"USER","ADMIN"})
 public class RoleRestControllerTest {
-	
+
 	private static final String MAP = "/rest/roles/";
 	private static final String USERS = "/users";
-	private static final MediaType contentType = 
+	private static final MediaType contentType =
 			new MediaType(APPLICATION_JSON.getType(),
             APPLICATION_JSON.getSubtype(),
             Charset.forName("utf8"));
-	
+
 	@Autowired
 	private MockMvc mockMvc;
-	
+
 	private static Role roleAdm;
 	private static Role roleDev;
 	private static Role roleAbs;
-	
+
 	private static Set<User> usersAdm;
 	private static User userAdm1;
 	private static User userAdm2;
-	
+
 	@MockBean
 	private RoleRepository roleRepository;
-	
+
 	@InjectMocks
 	private RoleRestController target;
 
@@ -114,7 +114,7 @@ public class RoleRestControllerTest {
 	       .andExpect(content().contentType(contentType))
 	       .andDo(print());
 	}
-	
+
 	@Test
 	public void getRoleUsersEmpty() throws Exception {
 		mockMvc.perform(get(MAP + roleDev.getShortName() + USERS)
@@ -123,7 +123,7 @@ public class RoleRestControllerTest {
 	       .andExpect(content().contentType(contentType))
 	       .andDo(print());
 	}
-	
+
 	@Test
 	public void getAbsentRoleUsers() throws Exception {
 		mockMvc.perform(get(MAP + roleAbs.getShortName() + USERS)
@@ -140,7 +140,7 @@ public class RoleRestControllerTest {
 		.thenReturn(roleDev);
 		when(roleRepository.findByShortName(roleAbs.getShortName()))
 		.thenThrow(new EntityDoesNotExistException("Test 404 exception"));
-		
+
 		when(roleRepository.getUsers(roleAdm)).thenReturn(usersAdm);
 		when(roleRepository.getUsers(roleDev)).thenReturn(emptySet());
 		when(roleRepository.getUsers(roleAbs))
@@ -154,7 +154,7 @@ public class RoleRestControllerTest {
 		userAdm2 = Mockito.mock(User.class);
 		when(userAdm2.getEmail()).thenReturn("admin2@mail");
 		when(userAdm2.getId()).thenReturn(2L);
-		
+
 		usersAdm = new HashSet<>();
 		usersAdm.add(userAdm1);
 		usersAdm.add(userAdm2);

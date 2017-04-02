@@ -25,7 +25,7 @@ public class RoleRepositoryTest {
 	private static Role role;
 	private static String roleShortName;
 	private static String roleFullName;
-	
+
 	@Autowired
 	private RoleRepository target;
 
@@ -52,7 +52,7 @@ public class RoleRepositoryTest {
 	public void findByShortNameWrong() {
 		target.findByShortName(roleFullName);
 	}
-	
+
 	@Test
 	public void getRoleUsers() {
 		role = target.findByShortName(roleShortName);
@@ -60,13 +60,13 @@ public class RoleRepositoryTest {
 		//System.out.println(users);
 		/*
 		 * This test relies on fact that database is
-		 * not empty from the very beginning (real or 
+		 * not empty from the very beginning (real or
 		 * demo users are already there, and at least
 		 * one Administrator is present)
 		 */
 		assertTrue(users.size() > 0);
 	}
-	
+
 	@Test
 	public void getRoleUsersShortNameAbsent() {
 		role = target.findByShortName(roleShortName);

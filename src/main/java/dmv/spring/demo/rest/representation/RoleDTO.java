@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package dmv.spring.demo.rest.representation;
 
@@ -26,19 +26,19 @@ public class RoleDTO extends ResourceSupport {
 	@NotNull
 	@Size(max=3)
 	private final String shortName;
-	
+
 	@NotNull
 	@Size(max=50)
 	private final String fullName;
-	
+
 	@JsonCreator
-	public RoleDTO(@JsonProperty("shortname") String shortName, 
+	public RoleDTO(@JsonProperty("shortname") String shortName,
 			       @JsonProperty("fullname") String fullName) {
 		this.shortName = shortName;
 		this.fullName = fullName;
 		createLinks(shortName);
 	}
-	
+
 	public RoleDTO(Role role) {
 		shortName = role.getShortName();
 		fullName = role.getFullName();
@@ -59,12 +59,12 @@ public class RoleDTO extends ResourceSupport {
 	}
 
 	private void createLinks(String shortName) {
-		ControllerLinkBuilder link = 
+		ControllerLinkBuilder link =
 				linkTo(RoleRestController.class)
 				.slash(shortName);
 		add(link.withSelfRel());
 		add(link.slash("users")
 				.withRel("role:users"));
 	}
-	
+
 }

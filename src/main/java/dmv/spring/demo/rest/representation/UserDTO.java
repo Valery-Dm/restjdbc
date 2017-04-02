@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package dmv.spring.demo.rest.representation;
 
@@ -25,7 +25,7 @@ public class UserDTO extends ResourceSupport {
 	private final String lastName;
 	private final String middleName;
 	private final Set<RoleLinkResource> roles;
-	
+
 	public UserDTO(User user) {
 		this.id = user.getId();
 		this.email = user.getEmail();
@@ -39,7 +39,7 @@ public class UserDTO extends ResourceSupport {
 			    .collect(Collectors.toSet());
 		else roles = emptySet();
 	}
-	
+
 	public Long getUserId() {
 		return id;
 	}
@@ -63,5 +63,5 @@ public class UserDTO extends ResourceSupport {
 	public Set<RoleLinkResource> getRoles() {
 		return roles;
 	}
-	
+
 }

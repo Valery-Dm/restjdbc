@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package dmv.spring.demo.model.entity;
 
@@ -31,7 +31,7 @@ public class User {
 	private String middleName;
 	private String password;
 	private Set<Role> roles;
-	
+
 	public Long getId() {
 		return id;
 	}

@@ -6,7 +6,7 @@ package dmv.spring.demo.model.repository.jdbc;
  * @author user
  */
 public enum UserQueriesSQL {
-	
+
 	USER_CREATE("user_create"),
 	USER_UPDARE("user_update"),
 	USER_DELETE("user_delete"),
@@ -16,7 +16,7 @@ public enum UserQueriesSQL {
 	USER_ROLES_GET("user_roles_get"),
 	USER_ROLES_DELETE("user_roles_delete"),
 	USER_ROLES_ADD("user_roles_add");
-	
+
 	private String query;
 
 	private UserQueriesSQL(String filename) {
