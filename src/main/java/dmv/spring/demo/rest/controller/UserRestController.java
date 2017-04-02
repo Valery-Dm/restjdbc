@@ -3,14 +3,28 @@
  */
 package dmv.spring.demo.rest.controller;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.util.UriUtils.decode;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.repository.UserRepository;
@@ -24,21 +38,54 @@ import dmv.spring.demo.rest.representation.assembler.UserDTOAsm;
 @RestController
 @RequestMapping("/rest/users")
 public class UserRestController {
+	
 
 	@Autowired
 	private UserRepository userRepository;
 	
-	@RequestMapping(path="/{userId}", method = GET)
-	public ResponseEntity<UserDTO> getRoleById(@PathVariable Long userId) {
+	@GetMapping(path="/{userId}")
+	public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
 		User user = userRepository.findById(userId);
 		return ResponseEntity.ok()
 				             .body(new UserDTOAsm().toResource(user));
 	}
 	
-	@RequestMapping(method = GET)
-	public ResponseEntity<UserDTO> getRoleByEmail(@RequestParam String email) {
-		User user = userRepository.findByEmail(email);
+	@GetMapping
+	public ResponseEntity<UserDTO> getUserByEmail(@RequestParam String email) 
+			                             throws UnsupportedEncodingException {
+		User user = userRepository.findByEmail(decode(email, "UTF-8"));
 		return ResponseEntity.ok()
 				             .body(new UserDTOAsm().toResource(user));
+	}
+	
+	@PostMapping
+	public ResponseEntity<UserDTO> createUser(@RequestBody @Valid User user,
+			                                  HttpServletRequest request,
+                                              UriComponentsBuilder uriBuilder) throws URISyntaxException {
+		// User with generated Id
+		User created = userRepository.create(user);
+		URI location = uriBuilder.path(request.getRequestURI() + "/{id}")
+				                 .buildAndExpand(created.getId())
+				                 .toUri();
+		return ResponseEntity.created(location)
+	                         .body(new UserDTOAsm().toResource(created));
+	}
+	
+	@PutMapping(path="/{userId}")
+	public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId, 
+			                                  @RequestBody @Valid User user,
+			                                  HttpServletRequest request) throws URISyntaxException {
+		// User fields: id, email and password - won't be updated by this request
+		User updated = userRepository.update(user);
+		String requestUrl = request.getRequestURL().toString();
+		return ResponseEntity.created(new URI(requestUrl))
+	                         .body(new UserDTOAsm().toResource(updated));
+	}
+	
+	@DeleteMapping(path="/{userId}")
+	public ResponseEntity<UserDTO> deleteUser(@PathVariable Long userId) {
+		User user = userRepository.findById(userId);
+		userRepository.delete(user);
+		return ResponseEntity.noContent().build();
 	}
 }

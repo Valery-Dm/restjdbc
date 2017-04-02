@@ -12,8 +12,8 @@ import dmv.spring.demo.rest.controller.UserRestController;
 import dmv.spring.demo.rest.representation.UserLinkResource;
 
 /**
+ * Assembles {@link UserLinkResource}
  * @author user
- *
  */
 public class UserLinkResourceAsm extends ResourceAssemblerSupport<User, UserLinkResource> {
 

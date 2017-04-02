@@ -6,7 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.web.util.UriUtils.encode;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -84,6 +86,17 @@ public class UserRepositoryTest {
 		assertThat(found.getId(), is(user.getId()));
 		assertThat("wrong email", found.getEmail(), is(user.getEmail()));
 		assertThat("wrong last name", found.getLastName(), is(user.getLastName()));
+	}
+	
+	@Test
+	public void findByEmail() throws Exception {
+		User found = null;
+		target.create(user);
+		found = target.findByEmail(user.getEmail());
+		assertNotNull("user is null", found);
+		assertThat(found.getId(), is(user.getId()));
+		assertThat("wrong email", found.getEmail(), is(user.getEmail()));
+		assertThat("wrong last name", found.getFirstName(), is(user.getFirstName()));
 	}
 	
 	@Test

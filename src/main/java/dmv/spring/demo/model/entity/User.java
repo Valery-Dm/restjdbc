@@ -5,15 +5,29 @@ package dmv.spring.demo.model.entity;
 
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
+
 /**
+ * User entity POJO
  * @author user
  */
 public class User {
 
 	private Long id;
+	@NotNull
+	@Size(min = 5, max = 70)
+	@Email
 	private String email;
+	@NotNull
+	@Size(min = 1, max = 45)
 	private String firstName;
+	@NotNull
+	@Size(min = 1, max = 70)
 	private String lastName;
+	@Size(max = 45)
 	private String middleName;
 	private String password;
 	private Set<Role> roles;

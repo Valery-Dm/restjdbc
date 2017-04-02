@@ -17,8 +17,8 @@ import dmv.spring.demo.model.exceptions.EntityAlreadyExistsException;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 
 /**
+ * Maps Exceptions to HTTP codes
  * @author user
- *
  */
 @RestControllerAdvice
 public class ExceptionHandlers {
@@ -36,6 +36,4 @@ public class ExceptionHandlers {
 			                                EntityAlreadyExistsException ex) {
 		return new ErrorInfo(req.getRequestURI(), ex);
 	}
-	
-	//TODO add Validator exceptions
 }
