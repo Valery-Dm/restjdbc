@@ -1,11 +1,8 @@
-/**
- *
- */
 package dmv.spring.demo.rest.exceptionhandler;
 
 /**
- * @author user
- *
+ * Error info collector to be returned as JSON
+ * @author dmv
  */
 public class ErrorInfo {
 

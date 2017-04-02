@@ -1,11 +1,9 @@
-/**
- *
- */
 package dmv.spring.demo.model.exceptions;
 
 /**
- * @author user
- *
+ * Describes the situation when update or retrieval or deletion
+ * is not possible because specified entity does not exist in database
+ * @author dmv
  */
 public class EntityDoesNotExistException extends RuntimeException {
 

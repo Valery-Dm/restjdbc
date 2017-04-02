@@ -1,6 +1,3 @@
-/**
- *
- */
 package dmv.spring.demo.model.repository.jdbc;
 
 import static dmv.spring.demo.model.repository.jdbc.Mappers.ROLE_MAPPER;
@@ -23,7 +20,7 @@ import dmv.spring.demo.model.repository.UserRepository;
 /**
  * Querying table USER via JDBC according to
  * {@link UserRepository} specification
- * @author user
+ * @author dmv
  */
 public class UserRepositoryJDBC {
 

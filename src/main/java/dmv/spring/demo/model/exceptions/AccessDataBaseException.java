@@ -1,11 +1,9 @@
-/**
- *
- */
 package dmv.spring.demo.model.exceptions;
 
 /**
- * @author user
- *
+ * Stands for Internal (or system) errors that could happen 
+ * when a repository service accesses the database
+ * @author dmv
  */
 public class AccessDataBaseException extends RuntimeException {
 

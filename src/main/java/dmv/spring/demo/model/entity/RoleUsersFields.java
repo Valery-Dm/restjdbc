@@ -1,11 +1,8 @@
-/**
- *
- */
 package dmv.spring.demo.model.entity;
 
 /**
  * 'ROLE_USERS' table and column names
- * @author user
+ * @author dmv
  */
 public enum RoleUsersFields {
 	RU_TABLE("`users_demo`.`ROLE_USERS`"),

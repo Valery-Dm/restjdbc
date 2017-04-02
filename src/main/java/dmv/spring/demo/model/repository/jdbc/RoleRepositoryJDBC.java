@@ -1,6 +1,3 @@
-/**
- *
- */
 package dmv.spring.demo.model.repository.jdbc;
 
 import static dmv.spring.demo.model.entity.RoleFields.FULL_NAME;
@@ -37,7 +34,7 @@ import dmv.spring.demo.model.repository.RoleRepository;
 /**
  * Querying table ROLE via JDBC according to
  * {@link RoleRepository} specification
- * @author user
+ * @author dmv
  */
 @Repository
 @Transactional(readOnly=true)

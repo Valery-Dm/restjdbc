@@ -1,6 +1,3 @@
-/**
- *
- */
 package dmv.spring.demo.rest.controller;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -30,7 +27,7 @@ import dmv.spring.demo.rest.representation.assembler.UserLinkResourceAsm;
 
 /**
  * {@link RoleRepository} Restful endpoints.
- * @author user
+ * @author dmv
  */
 @RestController
 @RequestMapping("/rest/roles")
@@ -41,9 +38,7 @@ public class RoleRestController {
 
 	@RequestMapping(path="/{shortName}", method = GET)
 	public ResponseEntity<RoleDTO> getRole(@PathVariable String shortName) {
-
 		Role role = roleRepository.findByShortName(shortName);
-
 		return ResponseEntity.ok(new RoleDTOAsm().toResource(role));
 	}
 
@@ -54,6 +49,10 @@ public class RoleRestController {
 		Role role = roleRepository.findByShortName(shortName);
 		Set<User> users = roleRepository.getUsers(role);
 
+		/*
+		 * It's a bit lame. Maybe it'll be better moving this exception onto
+		 * persistence layer
+		 */
 		if (users.isEmpty())
 			throw new EntityDoesNotExistException("Role " + shortName + " has no users assigned to it");
 

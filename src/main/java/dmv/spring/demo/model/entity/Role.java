@@ -4,7 +4,9 @@
 package dmv.spring.demo.model.entity;
 
 /**
- * @author user
+ * Role entity POJO. Means what role user has:
+ * administrator or user or whatever
+ * @author dmv
  */
 public class Role {
 

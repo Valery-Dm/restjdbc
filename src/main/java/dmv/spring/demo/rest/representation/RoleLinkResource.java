@@ -1,6 +1,3 @@
-/**
- *
- */
 package dmv.spring.demo.rest.representation;
 
 import org.springframework.hateoas.ResourceSupport;
@@ -10,7 +7,7 @@ import dmv.spring.demo.model.entity.Role;
 /**
  * {@link Role} representation with full name and self link only.
  * To be used in Lists
- * @author user
+ * @author dmv
  */
 public class RoleLinkResource extends ResourceSupport {
 

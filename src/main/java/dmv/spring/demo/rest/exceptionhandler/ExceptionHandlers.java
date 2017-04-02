@@ -1,6 +1,3 @@
-/**
- *
- */
 package dmv.spring.demo.rest.exceptionhandler;
 
 import static org.springframework.http.HttpStatus.CONFLICT;
@@ -17,8 +14,8 @@ import dmv.spring.demo.model.exceptions.EntityAlreadyExistsException;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 
 /**
- * Maps Exceptions to HTTP codes
- * @author user
+ * Maps Persistence Layer Exceptions to HTTP codes
+ * @author dmv
  */
 @RestControllerAdvice
 public class ExceptionHandlers {

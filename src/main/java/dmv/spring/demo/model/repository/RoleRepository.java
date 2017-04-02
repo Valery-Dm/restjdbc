@@ -1,6 +1,3 @@
-/**
- *
- */
 package dmv.spring.demo.model.repository;
 
 import java.util.Set;
@@ -12,7 +9,7 @@ import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 
 /**
  * User's {@link Role} and its basic methods
- * @author user
+ * @author dmv
  */
 public interface RoleRepository {
 

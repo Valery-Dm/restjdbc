@@ -1,11 +1,9 @@
-/**
- *
- */
 package dmv.spring.demo.model.exceptions;
 
 /**
- * @author user
- *
+ * Describes situations when new entity creation is not possible
+ * because of existence of another one with the same unique fields
+ * @author dmv
  */
 public class EntityAlreadyExistsException extends RuntimeException {
 

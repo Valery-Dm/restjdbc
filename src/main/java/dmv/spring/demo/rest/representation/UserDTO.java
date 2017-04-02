@@ -1,6 +1,3 @@
-/**
- *
- */
 package dmv.spring.demo.rest.representation;
 
 import static java.util.Collections.emptySet;
@@ -15,7 +12,7 @@ import dmv.spring.demo.rest.representation.assembler.RoleLinkResourceAsm;
 
 /**
  * Data transfer object for {@link User} entity
- * @author user
+ * @author dmv
  */
 public class UserDTO extends ResourceSupport {
 

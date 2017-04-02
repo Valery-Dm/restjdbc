@@ -1,10 +1,8 @@
-/**
- *
- */
 package dmv.spring.demo.model.entity;
 
 /**
- * @author user
+ * SQL Fields (or Columns) that User type has
+ * @author dmv
  */
 public enum UserFields implements EntityFields {
 

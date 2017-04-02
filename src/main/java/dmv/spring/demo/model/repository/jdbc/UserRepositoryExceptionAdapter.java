@@ -1,6 +1,3 @@
-/**
- *
- */
 package dmv.spring.demo.model.repository.jdbc;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -27,7 +24,7 @@ import dmv.spring.demo.model.repository.UserRepository;
  * errors, logging them and convert into corresponding exceptions
  * of {@link UserRepository} interface. All methods are wrapped
  * within {@link Transactional} interface
- * @author user
+ * @author dmv
  */
 @Repository
 @Transactional

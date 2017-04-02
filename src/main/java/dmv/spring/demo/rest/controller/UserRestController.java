@@ -1,6 +1,3 @@
-/**
- *
- */
 package dmv.spring.demo.rest.controller;
 
 import static org.springframework.web.util.UriUtils.decode;
@@ -24,7 +21,7 @@ import dmv.spring.demo.rest.representation.assembler.UserDTOAsm;
 
 /**
  * {@link UserRepository} Restful endpoints.
- * @author user
+ * @author dmv
  */
 @RestController
 @RequestMapping("/rest/users")
@@ -66,7 +63,8 @@ public class UserRestController {
 	public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId,
 			                                  @RequestBody @Valid User user,
 			                                  HttpServletRequest request) throws URISyntaxException {
-		// User fields: id, email and password - won't be updated by this request
+		// User fields: id, email and password - won't be updated by this request.
+		// But they will be validated anyway and may cause errors
 		User updated = userRepository.update(user);
 		String requestUrl = request.getRequestURL().toString();
 		return ResponseEntity.created(new URI(requestUrl))

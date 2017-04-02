@@ -1,10 +1,8 @@
-/**
- *
- */
 package dmv.spring.demo.model.entity;
 
 /**
- * @author user
+ * SQL Fields (or Columns) that Role type has
+ * @author dmv
  */
 public enum RoleFields implements EntityFields {
 	ROLE_TABLE("`users_demo`.`ROLE`"),

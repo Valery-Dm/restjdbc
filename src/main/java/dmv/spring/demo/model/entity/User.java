@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.Email;
 
 /**
  * User entity POJO
- * @author user
+ * @author dmv
  */
 public class User {
 

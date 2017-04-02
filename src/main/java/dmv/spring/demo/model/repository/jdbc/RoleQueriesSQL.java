@@ -1,11 +1,8 @@
-/**
- *
- */
 package dmv.spring.demo.model.repository.jdbc;
 
 /**
  * Queries to work with 'ROLE' table
- * @author user
+ * @author dmv
  */
 public enum RoleQueriesSQL {
 
@@ -15,7 +12,7 @@ public enum RoleQueriesSQL {
 	private String query;
 
 	private RoleQueriesSQL(String filename) {
-		query= FileReader.readSQLFile(filename);
+		query= SQLResourceReader.readSQLFile(filename);
 	}
 
 	public String getQuery() {

@@ -1,6 +1,3 @@
-/**
- *
- */
 package dmv.spring.demo.model.repository.jdbc;
 
 import static dmv.spring.demo.model.entity.RoleFields.FULL_NAME;
@@ -13,6 +10,7 @@ import static dmv.spring.demo.model.entity.UserFields.MIDDLE_NAME;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 import dmv.spring.demo.model.entity.EntityFields;
@@ -20,8 +18,8 @@ import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
 
 /**
- * @author user
- *
+ * Entity mappers for {@link JdbcTemplate}
+ * @author dmv
  */
 public class Mappers {
 

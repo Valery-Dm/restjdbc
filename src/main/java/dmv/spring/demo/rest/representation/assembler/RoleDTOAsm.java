@@ -1,6 +1,3 @@
-/**
- *
- */
 package dmv.spring.demo.rest.representation.assembler;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -14,7 +11,7 @@ import dmv.spring.demo.rest.representation.RoleDTO;
 
 /**
  * Assembles representational object for {@link Role} entity
- * @author user
+ * @author dmv
  */
 public class RoleDTOAsm extends ResourceAssemblerSupport<Role, RoleDTO> {
 

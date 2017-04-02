@@ -1,6 +1,3 @@
-/**
- *
- */
 package dmv.spring.demo.rest.representation.assembler;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -12,7 +9,8 @@ import dmv.spring.demo.rest.controller.UserRestController;
 import dmv.spring.demo.rest.representation.UserDTO;
 
 /**
- * @author user
+ * Assembles {@link UserDTO} 
+ * @author dmv
  */
 public class UserDTOAsm extends ResourceAssemblerSupport<User, UserDTO> {
 

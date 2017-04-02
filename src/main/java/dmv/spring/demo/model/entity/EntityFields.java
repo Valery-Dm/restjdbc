@@ -1,11 +1,9 @@
-/**
- *
- */
 package dmv.spring.demo.model.entity;
 
 /**
- * @author user
- *
+ * Common type for Entity SQL Fields 
+ * (To be used in queries)
+ * @author dmv
  */
 public interface EntityFields {
 

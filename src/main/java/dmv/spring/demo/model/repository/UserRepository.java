@@ -1,6 +1,3 @@
-/**
- *
- */
 package dmv.spring.demo.model.repository;
 
 import dmv.spring.demo.model.entity.User;
@@ -10,7 +7,7 @@ import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 
 /**
  * CRUD operations for {@link User} entity
- * @author user
+ * @author dmv
  */
 public interface UserRepository {
 
