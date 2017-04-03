@@ -1,4 +1,4 @@
-package dmv.spring.demo.restcontroller;
+package dmv.spring.demo.rest.controller;
 
 import static java.util.Collections.emptySet;
 import static org.hamcrest.CoreMatchers.endsWith;
