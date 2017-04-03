@@ -35,23 +35,32 @@ public class UserRepositoryJDBC {
     public UserRepositoryJDBC(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
+    
+    /**
+	 * @see UserRepositoryExceptionAdapter#findById(Long)
+	 */
 	public User findById(Long id) {
 		User user = jdbcTemplate.queryForObject(USER_FIND_BY_ID.getQuery(),
 				                                USER_MAPPER, id);
-		populateRoles(jdbcTemplate.query(USER_ROLES_GET.getQuery(),
+		populateUserRoles(jdbcTemplate.query(USER_ROLES_GET.getQuery(),
 				                         ROLE_MAPPER, id), user);
 		return user;
 	}
 
+    /**
+	 * @see UserRepositoryExceptionAdapter#findByEmail(String)
+	 */
 	public User findByEmail(String email) {
 		User user = jdbcTemplate.queryForObject(USER_FIND_BY_EMAIL.getQuery(),
 				                                USER_MAPPER, email);
-		populateRoles(jdbcTemplate.query(USER_ROLES_GET.getQuery(),
+		populateUserRoles(jdbcTemplate.query(USER_ROLES_GET.getQuery(),
 				                         ROLE_MAPPER, user.getId()), user);
 		return user;
 	}
 
+    /**
+	 * @see UserRepositoryExceptionAdapter#create(User)
+	 */
 	public User create(User user) {
 		jdbcTemplate.update(USER_CREATE.getQuery(),
 				user.getEmail(), user.getFirstName(),
@@ -60,17 +69,32 @@ public class UserRepositoryJDBC {
 		// get auto-generated ID
 		user.setId(jdbcTemplate.queryForObject(USER_GET_ID.getQuery(),
 				Long.class, user.getEmail()));
-		addUserRoles(user);
+		persistUserRoles(user.getRoles(), user.getId());
 		return user;
 	}
 
+    /**
+	 * @see UserRepositoryExceptionAdapter#update(User)
+	 */
 	public User update(User user) {
-		User found = findByEmail(user.getEmail());
-		updateUserDetails(user);
+		/*
+		 * Because REST 'update' operation is exposed on rest/users/{userId}
+		 * endpoint, therefore findById method is at high priority.
+		 */
+		User found;
+		if (user.getId() != null)
+			found = findById(user.getId());
+		else
+			found = findByEmail(user.getEmail());
+		
+		updateUserDetails(user, found);
 		updateUserRoles(user, found);
-		return user;
+		return found;
 	}
 
+    /**
+	 * @see UserRepositoryExceptionAdapter#delete(User)
+	 */
 	public boolean delete(User user) {
 		/* With Cascade deletion in ROLE_USERS table */
 		return (jdbcTemplate.update(USER_DELETE.getQuery(), user.getEmail()) > 0);
@@ -78,14 +102,13 @@ public class UserRepositoryJDBC {
 
 	/* Helper methods */
 
-	private void populateRoles(List<Role> query, User user) {
+	private void populateUserRoles(List<Role> query, User user) {
 		Set<Role> roles = new HashSet<>();
 		query.forEach(roles::add);
 		user.setRoles(roles);
 	}
 
-	private void addUserRoles(User user) {
-		Set<Role> roles = user.getRoles();
+	private void persistUserRoles(Set<Role> roles, Long id) {
 		if (roles == null || roles.size() == 0)
 			return;
 		StringBuilder builder = new StringBuilder(USER_ROLES_ADD.getQuery());
@@ -93,31 +116,33 @@ public class UserRepositoryJDBC {
 			builder.append(" ('")
 			       .append(role.getShortName())
 			       .append("', ")
-			       .append(user.getId())
+			       .append(id)
 			       .append("),")
 		);
 		builder.replace(builder.length() - 1, builder.length(), ";");
 		jdbcTemplate.update(builder.toString());
 	}
 
-	private boolean updateUserRoles(User user, User found) {
+	private void updateUserRoles(User user, User found) {
 		Set<Role> existingRoles = found.getRoles();
 		Set<Role> newRoles = user.getRoles();
 		if (!existingRoles.equals(newRoles)) {
-			deleteRoles(existingRoles, found.getId());
-			addUserRoles(user);
-			return true;
+			deleteUserRoles(existingRoles, found.getId());
+			persistUserRoles(newRoles, found.getId());
 		}
-		return false;
+		found.setRoles(newRoles);
 	}
 
-	private boolean updateUserDetails(User user) {
+	private boolean updateUserDetails(User recieved, User found) {
+		found.setFirstName(recieved.getFirstName());
+		found.setLastName(recieved.getLastName());
+		found.setMiddleName(recieved.getMiddleName());
 		return jdbcTemplate.update(USER_UPDARE.getQuery(),
-				       user.getFirstName(), user.getLastName(),
-					   user.getMiddleName(), user.getEmail()) > 0;
+								found.getFirstName(), found.getLastName(),
+								found.getMiddleName(), found.getEmail()) > 0;
 	}
 
-	private void deleteRoles(Set<Role> roles, Long id) {
+	private void deleteUserRoles(Set<Role> roles, Long id) {
 		if (roles == null || roles.size() == 0) return;
 		jdbcTemplate.update(USER_ROLES_DELETE.getQuery(), id);
 	}

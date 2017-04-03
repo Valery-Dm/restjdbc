@@ -29,6 +29,15 @@ User fields are:
 No ORM allowed for Persistence layer
 
 ### Usage:
-Download and run jar
+Download jar file (latest version) from root directory.
+And run it from command line 
+> java -jar restjdbc-{version}.jar 
 
-Swagger documentation for REST API is available at http://localhost:8080/swagger-ui.html
+Then, open browser.
+Swagger documentation for REST API is available at:
+
+Swagger UI
+> http://localhost:8080/swagger-ui.html
+
+Swagger REST
+> http://localhost:8080/v2/api-docs

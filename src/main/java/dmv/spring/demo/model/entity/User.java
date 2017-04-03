@@ -10,12 +10,15 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * User entity POJO
  * @author dmv
  */
 public class User {
 
+	@JsonIgnore
 	private Long id;
 	@NotNull
 	@Size(min = 5, max = 70)

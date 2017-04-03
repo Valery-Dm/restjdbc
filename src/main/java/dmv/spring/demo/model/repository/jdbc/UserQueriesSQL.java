@@ -1,5 +1,7 @@
 package dmv.spring.demo.model.repository.jdbc;
 
+import dmv.spring.demo.model.repository.jdbc.sql.SQLResourceReader;
+
 /**
  * SQL native queries located on disk will be read up
  * into corresponding fields.
@@ -20,7 +22,7 @@ public enum UserQueriesSQL {
 	private String query;
 
 	private UserQueriesSQL(String filename) {
-		query= SQLResourceReader.readSQLFile(filename);
+		query= SQLResourceReader.READER.readSQLFile(filename);
 	}
 
 	public String getQuery() {

@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration;
@@ -17,15 +16,12 @@ import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import com.fasterxml.classmate.TypeResolver;
 
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.builders.ResponseMessageBuilder;
-import springfox.documentation.schema.ModelRef;
 import springfox.documentation.schema.WildcardType;
 import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.AuthorizationScope;
@@ -45,9 +41,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableHypermediaSupport(type = {HypermediaType.HAL})
 @PropertySource("classpath:UserRestController.properties")
 public class RestjdbcApplication {
-	
-	@Value("${getUserById.notes}")
-	String s;
 
 	public static void main(String[] args) {
 		SpringApplication.run(RestjdbcApplication.class, args);
@@ -71,18 +64,9 @@ public class RestjdbcApplication {
 								typeResolver.resolve(ResponseEntity.class, WildcardType.class)),
 								typeResolver.resolve(WildcardType.class)))
 				.useDefaultResponseMessages(false)
-				.globalResponseMessage(RequestMethod.GET,
-						newArrayList(new ResponseMessageBuilder()
-								.code(500)
-								.message("Internal server error")
-								.responseModel(new ModelRef("Error"))
-								.build(), new ResponseMessageBuilder()
-								.code(404)
-								.message("Resource is not found on server")
-								.build()))
 				.securitySchemes(newArrayList(apiKey()))
 				.securityContexts(newArrayList(securityContext()))
-				.enableUrlTemplating(true);
+				.enableUrlTemplating(false);
 	}
 
 	@Autowired

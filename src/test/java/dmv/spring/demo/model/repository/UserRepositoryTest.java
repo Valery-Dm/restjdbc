@@ -38,7 +38,7 @@ public class UserRepositoryTest {
 	private UserRepository target;
 
 	@Before
-	public void setUpBeforeClass() throws Exception {
+	public void setUp() throws Exception {
 		user = new User();
 		user.setId(1L);
 		user.setEmail("test.user@mail.address");
@@ -238,6 +238,7 @@ public class UserRepositoryTest {
 
 	@Test
 	public void updateNotExisted() {
+		user.setId(null);
 		exception.expect(EntityDoesNotExistException.class);
 		target.update(user);
 	}
