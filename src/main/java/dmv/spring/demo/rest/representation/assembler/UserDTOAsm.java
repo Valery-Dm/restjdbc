@@ -9,7 +9,7 @@ import dmv.spring.demo.rest.controller.UserRestController;
 import dmv.spring.demo.rest.representation.UserDTO;
 
 /**
- * Assembles {@link UserDTO} 
+ * Assembles {@link UserDTO}
  * @author dmv
  */
 public class UserDTOAsm extends ResourceAssemblerSupport<User, UserDTO> {

@@ -1,7 +1,7 @@
 package dmv.spring.demo.model.exceptions;
 
 /**
- * Stands for Internal (or system) errors that could happen 
+ * Stands for Internal (or system) errors that could happen
  * when a repository service accesses the database
  * @author dmv
  */

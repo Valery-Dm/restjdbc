@@ -78,6 +78,9 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 			User createdUser = userRepository.create(user);
 			logger.info(createdUser.getEmail() + " was added to DB");
 			return createdUser;
+		} catch (EntityDoesNotExistException e) {
+			// In this case: user has wrong roles
+			throw new IllegalArgumentException(e);
 		} catch(DuplicateKeyException e) {
 			throw new EntityAlreadyExistsException(user.getEmail() + " already exists");
 		} catch (DataIntegrityViolationException e) {
@@ -97,6 +100,9 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 			User updatedUser = userRepository.update(user);
 			logger.info(updatedUser.getEmail() + " was updated in DB");
 			return updatedUser;
+		} catch (EntityDoesNotExistException e) {
+			// In this case: user has wrong roles
+			throw new IllegalArgumentException(e);
 		} catch (EmptyResultDataAccessException e) {
 			throw new EntityDoesNotExistException(user + " does not exist");
 		} catch (DataIntegrityViolationException e) {

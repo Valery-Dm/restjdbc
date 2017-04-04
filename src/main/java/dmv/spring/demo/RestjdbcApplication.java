@@ -45,9 +45,9 @@ public class RestjdbcApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(RestjdbcApplication.class, args);
 	}
-	
+
 	/* Swagger mess */
-	
+
 	@Bean
 	public Docket restJdbcApi() {
 		return new Docket(DocumentationType.SWAGGER_2)
@@ -100,8 +100,8 @@ public class RestjdbcApplication {
 				"test-app-realm",
 				"test-app",
 				"apiKey",
-				ApiKeyVehicle.HEADER, 
-				"api_key", 
+				ApiKeyVehicle.HEADER,
+				"api_key",
 				"," /*scope separator*/);
 	}
 
@@ -117,5 +117,5 @@ public class RestjdbcApplication {
 				true,         // showRequestHeaders    => true | false
 				60000L);      // requestTimeout => in milliseconds, defaults to null (uses jquery xh timeout)
 	}
-	
+
 }

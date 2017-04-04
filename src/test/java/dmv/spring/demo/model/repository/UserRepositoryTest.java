@@ -3,6 +3,7 @@ package dmv.spring.demo.model.repository;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -80,6 +81,7 @@ public class UserRepositoryTest {
 		assertThat(found.getId(), is(user.getId()));
 		assertThat("wrong email", found.getEmail(), is(user.getEmail()));
 		assertThat("wrong last name", found.getLastName(), is(user.getLastName()));
+		assertThat(found.getRoles(), is(user.getRoles()));
 	}
 
 	@Test
@@ -91,6 +93,7 @@ public class UserRepositoryTest {
 		assertThat(found.getId(), is(user.getId()));
 		assertThat("wrong email", found.getEmail(), is(user.getEmail()));
 		assertThat("wrong last name", found.getFirstName(), is(user.getFirstName()));
+		assertThat(found.getRoles(), is(user.getRoles()));
 	}
 
 	@Test
@@ -134,6 +137,7 @@ public class UserRepositoryTest {
 		target.create(user);
 		found = target.findByEmail(user.getEmail());
 		assertTrue(found.getRoles().size() == 0);
+		assertThat(found.getRoles(), is(Collections.emptySet()));
 	}
 
 	@Test
@@ -144,7 +148,7 @@ public class UserRepositoryTest {
 		/* Auto-generated password expected */
 		created = target.create(user);
 		String password = created.getPassword();
-		assertTrue(password != null && password.length() > 0);
+		assertTrue("no password generated", password != null && password.length() > 0);
 	}
 
 	@Test
@@ -264,6 +268,57 @@ public class UserRepositoryTest {
 		Set<Role> updatedRoles = updated.getRoles();
 		assertTrue(updatedRoles.contains(devRole));
 		assertFalse(updatedRoles.contains(usrRole));
+	}
+
+	@Test
+	public void updateWithIncompleteRoles() {
+		User updated = null;
+		
+		user.getRoles().clear();
+		target.create(user);
+		
+		Role incomplete = new Role("DEV", null);
+		user.getRoles().add(incomplete);
+		updated = target.update(user);
+		
+		Set<Role> updatedRoles = updated.getRoles();
+		// Now we're expecting the complete Role object
+		assertTrue(updatedRoles.contains(devRole));
+		// This one was not added
+		assertFalse(updatedRoles.contains(usrRole));
+	}
+
+	@Test
+	public void createWithWrongRoles() {
+		exception.expect(IllegalArgumentException.class);
+		
+		Role wrong = new Role("WRG", null);
+		user.getRoles().add(wrong);
+		target.create(user);
+	}
+
+	@Test
+	public void updateWithWrongRoles() {
+		exception.expect(IllegalArgumentException.class);
+		
+		user.getRoles().clear();
+		target.create(user);
+		
+		Role wrong = new Role("WRG", null);
+		user.getRoles().add(wrong);
+		target.update(user);
+	}
+
+	@Test
+	public void updateWithWrongLongRoles() {
+		exception.expect(IllegalArgumentException.class);
+		
+		user.getRoles();
+		target.create(user);
+		
+		Role wrong = new Role("WRONG_BECAUSE_TOO_LONG", null);
+		user.getRoles().add(wrong);
+		target.update(user);
 	}
 
 	@Test

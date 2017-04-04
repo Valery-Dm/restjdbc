@@ -2,19 +2,21 @@ package dmv.spring.demo.model.repository.jdbc;
 
 import static dmv.spring.demo.model.repository.jdbc.Mappers.ROLE_MAPPER;
 import static dmv.spring.demo.model.repository.jdbc.Mappers.USER_MAPPER;
-import static dmv.spring.demo.model.repository.jdbc.UserQueriesSQL.*;
+import static dmv.spring.demo.model.repository.jdbc.sql.RoleQueriesSQL.ROLE_FIND_BY_SHORT_NAME;
+import static dmv.spring.demo.model.repository.jdbc.sql.UserQueriesSQL.*;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
+import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 import dmv.spring.demo.model.repository.UserRepository;
 
 /**
@@ -35,15 +37,14 @@ public class UserRepositoryJDBC {
     public UserRepositoryJDBC(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-    
+
     /**
 	 * @see UserRepositoryExceptionAdapter#findById(Long)
 	 */
 	public User findById(Long id) {
 		User user = jdbcTemplate.queryForObject(USER_FIND_BY_ID.getQuery(),
 				                                USER_MAPPER, id);
-		populateUserRoles(jdbcTemplate.query(USER_ROLES_GET.getQuery(),
-				                         ROLE_MAPPER, id), user);
+		populateUserRoles(user);
 		return user;
 	}
 
@@ -53,8 +54,7 @@ public class UserRepositoryJDBC {
 	public User findByEmail(String email) {
 		User user = jdbcTemplate.queryForObject(USER_FIND_BY_EMAIL.getQuery(),
 				                                USER_MAPPER, email);
-		populateUserRoles(jdbcTemplate.query(USER_ROLES_GET.getQuery(),
-				                         ROLE_MAPPER, user.getId()), user);
+		populateUserRoles(user);
 		return user;
 	}
 
@@ -62,6 +62,7 @@ public class UserRepositoryJDBC {
 	 * @see UserRepositoryExceptionAdapter#create(User)
 	 */
 	public User create(User user) {
+		getRoles(user);
 		jdbcTemplate.update(USER_CREATE.getQuery(),
 				user.getEmail(), user.getFirstName(),
 				user.getLastName(), user.getMiddleName(),
@@ -77,6 +78,7 @@ public class UserRepositoryJDBC {
 	 * @see UserRepositoryExceptionAdapter#update(User)
 	 */
 	public User update(User user) {
+		getRoles(user);
 		/*
 		 * Because REST 'update' operation is exposed on rest/users/{userId}
 		 * endpoint, therefore findById method is at high priority.
@@ -86,7 +88,7 @@ public class UserRepositoryJDBC {
 			found = findById(user.getId());
 		else
 			found = findByEmail(user.getEmail());
-		
+
 		updateUserDetails(user, found);
 		updateUserRoles(user, found);
 		return found;
@@ -102,12 +104,41 @@ public class UserRepositoryJDBC {
 
 	/* Helper methods */
 
-	private void populateUserRoles(List<Role> query, User user) {
-		Set<Role> roles = new HashSet<>();
-		query.forEach(roles::add);
-		user.setRoles(roles);
+	/*
+	 * The Role object received by REST API may contain wrong
+	 * or incomplete information.
+	 */
+	private void getRoles(User user) {
+		Set<Role> receivedRoles = user.getRoles();
+		if (receivedRoles == null || receivedRoles.size() == 0)
+			return;
+		Set<Role> foundRoles = new HashSet<>(receivedRoles.size());
+		// Populate user with complete Role objects from DB
+		receivedRoles.forEach(role -> {
+			try {
+				foundRoles.add(
+						jdbcTemplate.queryForObject(
+								ROLE_FIND_BY_SHORT_NAME.getQuery(),
+								ROLE_MAPPER, role.getShortName()));
+			} catch (EmptyResultDataAccessException e) {
+				throw new EntityDoesNotExistException("Role " + role.getShortName() + " does not exist");
+			}
+		});
+		user.setRoles(foundRoles);
 	}
 
+	/*
+	 * Get existing user roles from DB and set them to User object
+	 */
+	private void populateUserRoles(User user) {
+		user.setRoles(new HashSet<>(jdbcTemplate.query(
+				                    USER_ROLES_GET.getQuery(),
+                                    ROLE_MAPPER, user.getId())));
+	}
+
+	/*
+	 * Save user roles to DB
+	 */
 	private void persistUserRoles(Set<Role> roles, Long id) {
 		if (roles == null || roles.size() == 0)
 			return;
@@ -123,6 +154,11 @@ public class UserRepositoryJDBC {
 		jdbcTemplate.update(builder.toString());
 	}
 
+	/*
+	 * Update user roles in DB.
+	 * There are two operations in a row:
+	 * delete existing user roles and then add replacements
+	 */
 	private void updateUserRoles(User user, User found) {
 		Set<Role> existingRoles = found.getRoles();
 		Set<Role> newRoles = user.getRoles();

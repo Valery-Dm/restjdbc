@@ -42,7 +42,7 @@ public interface UserRepository {
 	 * must be provided; 'email' must be unique
 	 * @param user A new user to persist
 	 * @return persisted user on success
-	 * @throws IllegalArgumentException if user is null or has incomplete information
+	 * @throws IllegalArgumentException if user is null or has incomplete or wrong information
 	 * @throws EntityAlreadyExistsException if user with the same
 	 *                                      email already exists
 	 * @throws AccessDataBaseException if operation was unsuccessful
@@ -56,7 +56,7 @@ public interface UserRepository {
 	 * these are different operations).
 	 * @param user An existing user with new profile
 	 * @return true update was successful
-	 * @throws IllegalArgumentException if user is null or has incomplete information
+	 * @throws IllegalArgumentException if user is null or has incomplete or wrong information
 	 * @throws EntityDoesNotExistException if user can't be found
 	 * @throws AccessDataBaseException if operation was unsuccessful
 	 *                                     due to internal error

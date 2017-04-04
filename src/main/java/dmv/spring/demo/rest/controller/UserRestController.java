@@ -34,7 +34,7 @@ public class UserRestController {
 	@Autowired
 	private UserRepository userRepository;
 
-	@ApiOperation(value="Find user by id", notes="Usually these kind of links will be created by API for cross-referencing, but you can use it manually if you know the exact id of user which info-page you need to get")
+	@ApiOperation(value="Find user by id", notes="Usually these kind of links will be created by API for cross-referencing, but you can use it manually if you know the exact id of user which info-page you need to get. Password won't be returned by this query")
 	@ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of user", response = UserDTO.class),
             @ApiResponse(code = 404, message = "User with given id was not found") })
@@ -45,7 +45,7 @@ public class UserRestController {
 				             .body(new UserDTOAsm().toResource(user));
 	}
 
-	@ApiOperation(value="Find user by email address", notes="Specify url encoded email address for this query. Example (say, user address is some.user@mail.address): http://localhost:8080/rest/users/?email=some.user%40mail.address")
+	@ApiOperation(value="Find user by email address", notes="Specify url encoded email address for this query. Example (say, user address is some.user@mail.address): /rest/users/?email=some.user%40mail.address. Password won't be returned by this query")
 	@ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of user", response = UserDTO.class),
             @ApiResponse(code = 404, message = "User with given email was not found") })
@@ -58,7 +58,7 @@ public class UserRestController {
 				             .body(new UserDTOAsm().toResource(user));
 	}
 
-	@ApiOperation(value="Create new user", notes="This endpoint accepts json-formatted object with user details. Fields: email (valid email address, maximum 70 characters), firstName (maximum 45 characters), lastName (maximum 70 characters) - are required. MiddleName, Password and userRoles are optional (password will be generated if absent and returned)")
+	@ApiOperation(value="Create new user", notes="This endpoint accepts json-formatted object with user details. Fields: email (valid email address, maximum 70 characters), firstName (maximum 45 characters), lastName (maximum 70 characters) - are required. MiddleName, Password and userRoles are optional (password will be generated if absent and returned, provided password won't be returned back)")
 	@ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successful creation of given user", response = UserDTO.class),
             @ApiResponse(code = 409, message = "User with the same email is already exists"),
@@ -75,7 +75,7 @@ public class UserRestController {
 		return ResponseEntity.created(location)
 	                         .body(new UserDTOAsm().toResource(created));
 	}
-	
+
 	@ApiOperation(value="Update existing user details", notes="Only firstName, lastName, middleName or userRoles will be updated via this query. It's not supposed for changing email and/or password")
 	@ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successful update of user", response = UserDTO.class),

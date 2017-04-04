@@ -16,9 +16,9 @@ import org.slf4j.Logger;
  * @author dmv
  */
 public class SQLResourceReader {
-	
+
 	public static final SQLResourceReader READER = new SQLResourceReader();
-	
+
 	private static final Logger logger = getLogger(SQLResourceReader.class);
 
 	public String readSQLFile(String filename) {

@@ -38,7 +38,7 @@ public class RoleRestController {
 
 	@Autowired
 	private RoleRepository roleRepository;
-	
+
 	@ApiOperation(value="Find role by its short name", notes="The short name is a special (and unique) acronym for each role. Example: ADM for Administrator, USR for User, DEV for Developer etc.")
 	@ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of role", response = RoleDTO.class),
