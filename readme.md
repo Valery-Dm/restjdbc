@@ -1,5 +1,6 @@
 ## User's directory Restful web-service
-Technologies used: Spring Boot (on Tomcat), Spring REST, JDBC, MySQL
+Technologies used: Spring Boot (on Tomcat), Spring REST, JDBC, 
+MySQL (vesrion 5.7), Java (version 1.8)
 
 Not yet implemented: Spring Security 
 

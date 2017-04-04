@@ -1,5 +1,6 @@
 ## Пользовательский Restful веб-сервис
-Используемые технологии: Spring Boot (on Tomcat), Spring REST, JDBC, MySQL
+Используемые технологии: Spring Boot (on Tomcat), Spring REST, JDBC, 
+MySQL (версия 5.7), Java (версия 1.8)
 
 Пока не применены: Spring Security 
 
