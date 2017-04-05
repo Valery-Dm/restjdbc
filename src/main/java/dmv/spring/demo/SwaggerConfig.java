@@ -29,7 +29,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * Swagger documenting tool configuration
- * 
+ *
  * @author dmv
  */
 @Configuration
@@ -81,7 +81,7 @@ public class SwaggerConfig {
 				"none", // docExpansion => none | list
 				"alpha", // apiSorter => alpha
 				"schema", // defaultModelRendering => schema
-				UiConfiguration.Constants.DEFAULT_SUBMIT_METHODS, 
+				UiConfiguration.Constants.DEFAULT_SUBMIT_METHODS,
 				false, // enableJsonEditor => true | false
 				true, // showRequestHeaders => true | false
 				60000L); // requestTimeout => in milliseconds, defaults to null

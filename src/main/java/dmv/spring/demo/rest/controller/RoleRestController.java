@@ -58,7 +58,7 @@ public class RoleRestController {
 	@RequestMapping(path="/{shortName}/users", method = GET)
 	public ResponseEntity<Resources<UserLinkResource>> getUsers(
     		@ApiParam(value="short role's name: ADM for Administrator, USR for User, DEV for Developer etc.")
-    		@PathVariable String shortName, 
+    		@PathVariable String shortName,
     		              HttpServletRequest request) {
 
 		Role role = roleRepository.findByShortName(shortName);

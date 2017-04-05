@@ -36,7 +36,6 @@ import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 import dmv.spring.demo.model.repository.RoleRepository;
-import dmv.spring.demo.rest.controller.RoleRestController;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -119,8 +118,7 @@ public class RoleRestControllerTest {
 	public void getRoleUsersEmpty() throws Exception {
 		mockMvc.perform(get(MAP + roleDev.getShortName() + USERS)
 			       .accept(APPLICATION_JSON))
-		   .andExpect(status().isNotFound())
-	       .andExpect(content().contentType(contentType))
+		   .andExpect(status().isNoContent())
 	       .andDo(print());
 	}
 

@@ -37,7 +37,7 @@ public class UserRestController {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private RoleRepository roleRepository;
 
@@ -94,12 +94,12 @@ public class UserRestController {
 			                                  HttpServletRequest request) throws URISyntaxException {
 		// Simple defense from forgery requests
 		user.setId(userId);
-		
+
 		// It's a Domain Tier's responsibility to provide legal and well formed requests to the Persistence layer.
 		getUserRoles(user);
-		
+
 		User updated = userRepository.update(user);
-		
+
 		String requestUrl = request.getRequestURL().toString();
 		return ResponseEntity.created(new URI(requestUrl))
 	                         .body(new UserDTOAsm().toResource(updated));
@@ -121,7 +121,7 @@ public class UserRestController {
 		Set<Role> received = user.getRoles();
 		if (received == null || received.size() == 0) return;
 		Set<Role> actual = new HashSet<>();
-		received.forEach(role -> 
+		received.forEach(role ->
 		              actual.add(roleRepository.findByShortName(role.getShortName())));
 		user.setRoles(actual);
 	}

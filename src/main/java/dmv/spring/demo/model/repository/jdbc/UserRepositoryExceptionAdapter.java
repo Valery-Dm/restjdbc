@@ -93,16 +93,17 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 	@Override
 	public User update(User user) {
 		Assert.notNull(user, "Can't update user 'null'");
+		Assert.notNull(user.getId(), "Can't update user with id 'null'");
 		try {
 			User updatedUser = userRepository.update(user);
-			logger.info(updatedUser.getEmail() + " was updated in DB");
+			logger.info(updatedUser.getId() + " was updated in DB");
 			return updatedUser;
 		} catch (EmptyResultDataAccessException e) {
-			throw new EntityDoesNotExistException(user + " does not exist");
+			throw new EntityDoesNotExistException(user.getId() + " does not exist");
 		} catch (DataIntegrityViolationException e) {
-			throw new IllegalArgumentException(user + " brings wrong information for update", e);
+			throw new IllegalArgumentException(user.getId() + " brings wrong information for update", e);
 		} catch (Exception e) {
-			String msg = "There was an attempt to update " + user.getEmail()
+			String msg = "There was an attempt to update " + user.getId()
 					      + ", and something went wrong";
 			logger.debug(msg, e);
 			throw new AccessDataBaseException(msg, e);
@@ -112,17 +113,18 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 	@Override
 	public void delete(User user) {
 		Assert.notNull(user, "Can't delete user 'null'");
+		Assert.notNull(user.getId(), "Can't delete user with id 'null'");
 		boolean deleted = false;
 		try {
 			deleted = userRepository.delete(user);
 		} catch (Exception e) {
-			String msg = "There was an attempt to remove " + user
+			String msg = "There was an attempt to remove " + user.getId()
 					      + ", and something went wrong";
 			logger.debug(msg, e);
 			throw new AccessDataBaseException(msg, e);
 		}
 		if (!deleted)
-			throw new EntityDoesNotExistException(user + " does not exist");
-		logger.info(user + " was removed from DB");
+			throw new EntityDoesNotExistException(user.getId() + " does not exist");
+		logger.info(user.getId() + " was removed from DB");
 	}
 }

@@ -44,7 +44,7 @@ public class UserRepositoryTest {
 	public void setUp() throws Exception {
 		userId = 1L;
 		email = "test.user@mail.address";
-		
+
 		user = new User();
 		user.setId(userId);
 		user.setEmail(email);
@@ -81,21 +81,21 @@ public class UserRepositoryTest {
 	@Test
 	public void successfulCRUDOperations() {
 		User found = null;
-	
+
 		target.create(user);
 		found = target.findByEmail(user.getEmail());
 		assertNotNull("user is null", found);
 		assertThat(found.getId(), is(user.getId()));
 		assertThat("wrong email", found.getEmail(), is(user.getEmail()));
 		assertThat("wrong last name", found.getLastName(), is(user.getLastName()));
-	
+
 		user.setLastName("newLastName");
 		user.setMiddleName(null);
 		target.update(user);
 		found = target.findByEmail(user.getEmail());
 		assertThat("wrong new last name", found.getLastName(), is(user.getLastName()));
 		assertNull(found.getMiddleName());
-	
+
 		target.delete(user);
 		exception.expect(EntityDoesNotExistException.class);
 		target.findByEmail(user.getEmail());
@@ -136,13 +136,13 @@ public class UserRepositoryTest {
 		User adminDev = target.findByEmail("demo.admin.dev@spring.demo");
 		assertNotNull(adminDev);
 		assertThat(adminDev.getFirstName(), is("Vasily"));
-	
+
 		Set<Role> roles = adminDev.getRoles();
-	
+
 		Set<String> shortNames = roles.stream()
 		     .map(role -> role.getShortName())
 		     .collect(Collectors.toSet());
-	
+
 		assertThat(roles.size(), is(2));
 		assertTrue(shortNames.contains("ADM"));
 		assertTrue(shortNames.contains("DEV"));
@@ -244,7 +244,7 @@ public class UserRepositoryTest {
 	@Test
 	public void createWithoutRoles() {
 		User found = null;
-	
+
 		user.setRoles(null);
 		target.create(user);
 		found = target.findByEmail(user.getEmail());
@@ -269,7 +269,7 @@ public class UserRepositoryTest {
 	@Test
 	public void createWithNullNameRoles() {
 		exception.expect(IllegalArgumentException.class);
-		
+
 		Role wrong = new Role(null, "some role");
 		user.getRoles().add(wrong);
 		target.create(user);
@@ -278,7 +278,7 @@ public class UserRepositoryTest {
 	@Test
 	public void createWithTooLongNameRoles() {
 		exception.expect(IllegalArgumentException.class);
-		
+
 		Role wrong = new Role("THE_NAME_IS_TOO_LONG", "some role");
 		user.getRoles().add(wrong);
 		target.create(user);
@@ -300,7 +300,7 @@ public class UserRepositoryTest {
 	@Test
 	public void updateNullId() {
 		user.setId(null);
-		exception.expect(EntityDoesNotExistException.class);
+		exception.expect(IllegalArgumentException.class);
 		target.update(user);
 	}
 
@@ -346,14 +346,14 @@ public class UserRepositoryTest {
 	@Test
 	public void updateWithIncompleteRoles() {
 		User updated = null;
-		
+
 		user.getRoles().clear();
 		target.create(user);
-		
+
 		Role incomplete = new Role("DEV", null);
 		user.getRoles().add(incomplete);
 		updated = target.update(user);
-		
+
 		Set<Role> updatedRoles = updated.getRoles();
 		// We're expecting complete role in answer
 		assertTrue(updatedRoles.contains(devRole));
@@ -400,10 +400,10 @@ public class UserRepositoryTest {
 	@Test
 	public void updateWithTooLongNameRoles() {
 		exception.expect(IllegalArgumentException.class);
-		
+
 		user.getRoles();
 		target.create(user);
-		
+
 		Role wrong = new Role("WRONG_BECAUSE_TOO_LONG", null);
 		user.getRoles().add(wrong);
 		target.update(user);
@@ -418,7 +418,7 @@ public class UserRepositoryTest {
 	@Test
 	public void deleteWithoutId() {
 		target.create(user);
-		exception.expect(EntityDoesNotExistException.class);
+		exception.expect(IllegalArgumentException.class);
 		user.setId(null);
 		target.delete(user);
 	}

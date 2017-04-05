@@ -45,7 +45,6 @@ import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.exceptions.EntityAlreadyExistsException;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 import dmv.spring.demo.model.repository.UserRepository;
-import dmv.spring.demo.rest.controller.UserRestController;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -273,13 +272,13 @@ public class UserRestControllerTest {
 			userUpdated = mockUser(1L);
 			userWithoutRoles = mockUser(2L);
 			userNotExisted = mockUser(3L);
-	
+
 			Set<Role> roles = new HashSet<>();
 			roles.add(new Role("ADM", "Administrator"));
 			roles.add(new Role("USR", "User"));
 	//		when(userWithRoles.getRoles()).thenReturn(roles);
 			userWithRoles.setRoles(roles);
-	
+
 			Set<Role> updateRoles = new HashSet<>();
 			updateRoles.add(new Role("ADM", "Administrator"));
 			userUpdated.setRoles(updateRoles);

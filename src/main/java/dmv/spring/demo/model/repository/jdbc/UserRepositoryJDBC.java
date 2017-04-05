@@ -18,9 +18,9 @@ import dmv.spring.demo.model.repository.UserRepository;
 
 /**
  * Querying table USER via JDBC according to
- * {@link UserRepository} specification. 
+ * {@link UserRepository} specification.
  * This class is not a Repository by itself.
- * Methods of this class are wrapped within 
+ * Methods of this class are wrapped within
  * {@link UserRepositoryExceptionAdapter} right now.
  * @author dmv
  */

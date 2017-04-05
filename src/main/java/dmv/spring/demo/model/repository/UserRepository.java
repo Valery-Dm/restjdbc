@@ -46,11 +46,12 @@ public interface UserRepository {
 	 * the created object.
 	 * <p>
 	 * For user's roles only 'shortName' parameter is needed.
-	 * If it is absent or the role with given name does not exist 
+	 * If it is absent or the role with given name does not exist
 	 * in database the {@link IllegalArgumentException} will be thrown.
 	 * @param user A new user to persist
 	 * @return persisted user on success
-	 * @throws IllegalArgumentException if user is null or has incomplete or wrong information
+	 * @throws IllegalArgumentException if user or its id is null or user has 
+	 *                                  incomplete or wrong information
 	 * @throws EntityAlreadyExistsException if user with the same
 	 *                                      email already exists
 	 * @throws AccessDataBaseException if operation was unsuccessful
@@ -64,11 +65,12 @@ public interface UserRepository {
 	 * these are different operations).
 	 * <p>
 	 * For user's roles only 'shortName' parameter is needed.
-	 * If it is absent or the role with given name does not exist 
+	 * If it is absent or the role with given name does not exist
 	 * in database the {@link IllegalArgumentException} will be thrown.
 	 * @param user An existing user with new profile
 	 * @return true update was successful
-	 * @throws IllegalArgumentException if user is null or has incomplete or wrong information
+	 * @throws IllegalArgumentException if user or its id is null or user has 
+	 *                                  incomplete or wrong information
 	 * @throws EntityDoesNotExistException if user can't be found
 	 * @throws AccessDataBaseException if operation was unsuccessful
 	 *                                     due to internal error
@@ -78,7 +80,7 @@ public interface UserRepository {
 	/**
 	 * Will delete existing user (found by id) from persistence layer
 	 * @param user An existing user
-	 * @throws IllegalArgumentException if user is null
+	 * @throws IllegalArgumentException if user or its id is null
 	 * @throws EntityDoesNotExistException if user can't be found
 	 * @throws AccessDataBaseException if operation was unsuccessful
 	 *                                     due to internal error

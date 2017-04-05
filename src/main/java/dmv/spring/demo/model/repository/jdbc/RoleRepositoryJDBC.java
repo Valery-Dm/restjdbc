@@ -43,9 +43,9 @@ import dmv.spring.demo.model.repository.RoleRepository;
 public class RoleRepositoryJDBC implements RoleRepository {
 
 	private final Logger logger = getLogger(getClass());
-	
+
 	/*
-	 * There are just three Roles available. 
+	 * There are just three Roles available.
 	 * Simple caching solution would suffice
 	 */
 	private Map<String, Role> cache = new HashMap<>();
@@ -62,7 +62,7 @@ public class RoleRepositoryJDBC implements RoleRepository {
 	public Role findByShortName(String shortName) {
 		Assert.notNull(shortName, "Can't find Role 'null'");
 		shortName = shortName.toUpperCase();
-		
+
 		Role role = cache.get(shortName);
 		if (role == null) {
 			// Synchronization is not necessary for real-world scenarios.
@@ -74,10 +74,10 @@ public class RoleRepositoryJDBC implements RoleRepository {
 					try (Connection connection = getConnection();
 							PreparedStatement statement =
 									connection.prepareStatement(ROLE_FIND_BY_SHORT_NAME.getQuery())) {
-						
+
 						statement.setString(1, shortName);
 						role = mapRole(statement.executeQuery());
-						
+
 					} catch (Exception e) {
 						String msg = "There was a call findByShortName(" + shortName +
 								"), and it was not successful";
