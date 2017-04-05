@@ -38,10 +38,10 @@ public class RoleRestController {
 
 	@Autowired
 	private RoleRepository roleRepository;
-	
+
 	@Autowired
 	private RoleDTOAsm roleDTOAsm;
-	
+
 	@Autowired
 	private UserLinkResourceAsm userLinkAsm;
 

@@ -40,7 +40,7 @@ public class UserRestController {
 
 	@Autowired
 	private RoleRepository roleRepository;
-	
+
 	@Autowired
 	private UserDTOAsm userDTOAsm;
 

@@ -21,7 +21,7 @@ import dmv.spring.demo.rest.representation.UserDTO;
  */
 @Component
 public class UserDTOAsm extends ResourceAssemblerSupport<User, UserDTO> {
-	
+
 	@Autowired
 	private RoleLinkResourceAsm roleLinkAsm;
 

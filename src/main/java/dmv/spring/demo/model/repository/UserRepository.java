@@ -50,7 +50,7 @@ public interface UserRepository {
 	 * in database the {@link IllegalArgumentException} will be thrown.
 	 * @param user A new user to persist
 	 * @return persisted user on success
-	 * @throws IllegalArgumentException if user or its id is null or user has 
+	 * @throws IllegalArgumentException if user or its id is null or user has
 	 *                                  incomplete or wrong information
 	 * @throws EntityAlreadyExistsException if user with the same
 	 *                                      email already exists
@@ -69,7 +69,7 @@ public interface UserRepository {
 	 * in database the {@link IllegalArgumentException} will be thrown.
 	 * @param user An existing user with new profile
 	 * @return true update was successful
-	 * @throws IllegalArgumentException if user or its id is null or user has 
+	 * @throws IllegalArgumentException if user or its id is null or user has
 	 *                                  incomplete or wrong information
 	 * @throws EntityDoesNotExistException if user can't be found
 	 * @throws AccessDataBaseException if operation was unsuccessful

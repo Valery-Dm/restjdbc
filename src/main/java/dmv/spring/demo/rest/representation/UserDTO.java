@@ -1,21 +1,17 @@
 package dmv.spring.demo.rest.representation;
 
-import static java.util.Collections.emptySet;
-
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.hateoas.ResourceSupport;
 
 import dmv.spring.demo.model.entity.User;
-import dmv.spring.demo.rest.representation.assembler.RoleLinkResourceAsm;
 
 /**
  * Data transfer object for {@link User} entity
  * @author dmv
  */
 public class UserDTO extends ResourceSupport {
-	
+
 	private final Long userId;
 	private final String email;
 	private final String firstName;
