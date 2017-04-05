@@ -9,6 +9,7 @@ import java.sql.SQLException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -38,14 +39,20 @@ public class ExceptionHandlers {
 			                                EntityAlreadyExistsException ex) {
 		return new ErrorInfo(req.getRequestURI(), ex);
 	}
-
+	
 	@ExceptionHandler(IllegalArgumentException.class)
 	@ResponseStatus(BAD_REQUEST)
 	public @ResponseBody ErrorInfo badRequest(HttpServletRequest req,
 			                                  IllegalArgumentException ex) {
 		return new ErrorInfo(req.getRequestURI(), ex);
 	}
-
+	
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	@ResponseStatus(BAD_REQUEST)
+	public @ResponseBody ErrorInfo badRequest(HttpServletRequest req,
+			                                  MethodArgumentNotValidException ex) {
+		return new ErrorInfo(req.getRequestURI(), ex);
+	}
 	/*
 	 * SQL connection problems mostly
 	 */
