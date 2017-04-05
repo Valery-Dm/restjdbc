@@ -65,7 +65,7 @@ public class RoleRestControllerTest {
 	private RoleRepository roleRepository;
 
 	@InjectMocks
-	private RoleRestController target;
+	private RoleRestApiDocs target;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {

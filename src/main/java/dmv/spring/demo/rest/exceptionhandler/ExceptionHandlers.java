@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -59,7 +60,14 @@ public class ExceptionHandlers {
 			                                  IllegalArgumentException ex) {
 		return new ErrorInfo(req.getRequestURI(), ex);
 	}
-
+	
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	@ResponseStatus(BAD_REQUEST)
+	public @ResponseBody ErrorInfo malformedJSON(HttpServletRequest req,
+			                                     HttpMessageNotReadableException ex) {
+		return new ErrorInfo(req.getRequestURI(), ex.getMostSpecificCause().getLocalizedMessage());
+    }
+	
 	/*
 	 * Simplify Spring validation error output
 	 */

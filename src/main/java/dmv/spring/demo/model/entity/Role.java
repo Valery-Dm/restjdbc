@@ -1,19 +1,24 @@
 package dmv.spring.demo.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import io.swagger.annotations.ApiModelProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Role entity POJO. Means what role user has:
  * administrator or user or whatever
  * @author dmv
  */
-public class Role {
+public class Role implements RoleApiDocs {
 
-	@ApiModelProperty(value="Short name for users role. There are 3 available now: ADM, USR, DEV", required=true, example="USR")
+	@NotNull
+	@Size(min=3, max=3)
 	private String shortName;
+	
 	@JsonIgnore
+	@NotNull
+	@Size(max=50)
 	private String fullName;
 	/* Does not contain Set<User> by default */
 
@@ -28,13 +33,14 @@ public class Role {
 	public String getFullName() {
 		return fullName;
 	}
+	@Override
 	public void setShortName(String shortName) {
 		this.shortName = shortName;
 	}
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}
-	// For defensive copying
+	// For polymorphic defensive copying
 	public Role copy() {
 		return new Role(shortName, fullName);
 	}

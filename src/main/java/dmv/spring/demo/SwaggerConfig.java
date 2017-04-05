@@ -28,7 +28,7 @@ import springfox.documentation.swagger.web.UiConfiguration;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * Swagger documenting tool configuration
+ * Swagger (API documenting tool) configuration
  *
  * @author dmv
  */
@@ -38,15 +38,22 @@ public class SwaggerConfig {
 
 	@Bean
 	public Docket restJdbcApi() {
-		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
-				.paths(PathSelectors.any()).build().pathMapping("/")
-				.directModelSubstitute(LocalDate.class, String.class).genericModelSubstitutes(ResponseEntity.class)
+		return new Docket(DocumentationType.SWAGGER_2)
+				.select()
+				.apis(RequestHandlerSelectors.any())
+				.paths(PathSelectors.any())
+				.build()
+				.pathMapping("/")
+				.directModelSubstitute(LocalDate.class, String.class)
+				.genericModelSubstitutes(ResponseEntity.class)
 				.alternateTypeRules(newRule(
 						typeResolver.resolve(DeferredResult.class,
-								typeResolver.resolve(ResponseEntity.class, WildcardType.class)),
+						typeResolver.resolve(ResponseEntity.class, WildcardType.class)),
 						typeResolver.resolve(WildcardType.class)))
-				.useDefaultResponseMessages(false).securitySchemes(newArrayList(apiKey()))
-				.securityContexts(newArrayList(securityContext())).enableUrlTemplating(false);
+				.useDefaultResponseMessages(false)
+				.securitySchemes(newArrayList(apiKey()))
+				.securityContexts(newArrayList(securityContext()))
+				.enableUrlTemplating(false);
 	}
 
 	@Autowired
@@ -57,7 +64,9 @@ public class SwaggerConfig {
 	}
 
 	private SecurityContext securityContext() {
-		return SecurityContext.builder().securityReferences(defaultAuth()).forPaths(PathSelectors.regex("/anyPath.*"))
+		return SecurityContext.builder()
+				.securityReferences(defaultAuth())
+				.forPaths(PathSelectors.regex("/anyPath.*"))
 				.build();
 	}
 
@@ -70,14 +79,21 @@ public class SwaggerConfig {
 
 	@Bean
 	SecurityConfiguration security() {
-		return new SecurityConfiguration("test-app-client-id", "test-app-client-secret", "test-app-realm", "test-app",
-				"apiKey", ApiKeyVehicle.HEADER, "api_key",
+		return new SecurityConfiguration(
+				"test-app-client-id", 
+				"test-app-client-secret", 
+				"test-app-realm", 
+				"test-app",
+				"apiKey", 
+				ApiKeyVehicle.HEADER, 
+				"api_key",
 				"," /* scope separator */);
 	}
 
 	@Bean
 	UiConfiguration uiConfig() {
-		return new UiConfiguration("validatorUrl", // url
+		return new UiConfiguration(
+				"validatorUrl", // url
 				"none", // docExpansion => none | list
 				"alpha", // apiSorter => alpha
 				"schema", // defaultModelRendering => schema

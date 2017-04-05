@@ -23,10 +23,6 @@ import dmv.spring.demo.rest.representation.RoleDTO;
 import dmv.spring.demo.rest.representation.UserLinkResource;
 import dmv.spring.demo.rest.representation.assembler.RoleDTOAsm;
 import dmv.spring.demo.rest.representation.assembler.UserLinkResourceAsm;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 /**
  * {@link RoleRepository} Restful endpoints.
@@ -34,7 +30,7 @@ import io.swagger.annotations.ApiResponses;
  */
 @RestController
 @RequestMapping(path="/rest/roles", produces="application/json")
-public class RoleRestController {
+public class RoleRestController implements RoleRestApiDocs {
 
 	@Autowired
 	private RoleRepository roleRepository;
@@ -45,27 +41,19 @@ public class RoleRestController {
 	@Autowired
 	private UserLinkResourceAsm userLinkAsm;
 
-	@ApiOperation(value="Find role by its short name", notes="The short name is a special (and unique) acronym for each role.")
-	@ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful retrieval of role", response = RoleDTO.class),
-            @ApiResponse(code = 404, message = "Role with given name does not exist") })
+	@Override
 	@RequestMapping(path="/{shortName}", method = GET)
-	public ResponseEntity<RoleDTO> getRole(
-			@ApiParam(value="short role's name: ADM for Administrator, USR for User, DEV for Developer etc.", required=true)
-			@PathVariable String shortName) {
+	public ResponseEntity<RoleDTO> getRole(@PathVariable String shortName) {
+		
 		Role role = roleRepository.findByShortName(shortName);
 		return ResponseEntity.ok(roleDTOAsm.toResource(role));
 	}
 
-	@ApiOperation(value="Find users with given role", notes="Returns a list of users that have specified role")
-	@ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful retrieval of users", response = Resources.class),
-            @ApiResponse(code = 204, message = "Users with given role were not found") })
+	@Override
 	@RequestMapping(path="/{shortName}/users", method = GET)
 	public ResponseEntity<Resources<UserLinkResource>> getUsers(
-    		@ApiParam(value="short role's name: ADM for Administrator, USR for User, DEV for Developer etc.", required=true)
-    		@PathVariable String shortName,
-    		              HttpServletRequest request) {
+			    		              @PathVariable String shortName,
+			    		              HttpServletRequest request) {
 
 		Role role = roleRepository.findByShortName(shortName);
 		Set<User> users = roleRepository.getUsers(role);
@@ -76,9 +64,7 @@ public class RoleRestController {
 		List<UserLinkResource> userLinks = users.stream()
 		     .map(user -> userLinkAsm.toResource(user))
 		     .collect(Collectors.toList());
-
 		Link link = new Link(request.getRequestURL().toString());
-
 		Resources<UserLinkResource> resources = new Resources<>(userLinks, link);
 
 		return ResponseEntity.ok(resources);
