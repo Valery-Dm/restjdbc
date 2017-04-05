@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,24 +22,28 @@ import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 @SpringBootTest
 public class RoleRepositoryTest {
 
-	private static Role role;
-	private static String roleShortName;
-	private static String roleFullName;
+	private Role role;
+	private String roleShortName;
+	private String roleFullName;
 
 	@Autowired
 	private RoleRepository target;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		/* Pre-existing role */
 		roleShortName = "ADM";
 		roleFullName= "Administrator";
+		role = null;
 	}
 
 	@Test
 	public void findByShortName() {
-		role = target.findByShortName(roleShortName);
+		int T = 1;
+		while (T-- > 0)
+			role = target.findByShortName(roleShortName);
 		assertNotNull(role);
+		assertThat(role.getShortName(), is(roleShortName));
 		assertThat(role.getFullName(), is(roleFullName));
 	}
 
@@ -57,7 +61,6 @@ public class RoleRepositoryTest {
 	public void getRoleUsers() {
 		role = target.findByShortName(roleShortName);
 		Set<User> users = target.getUsers(role);
-		//System.out.println(users);
 		/*
 		 * This test relies on fact that database is
 		 * not empty from the very beginning (real or
@@ -70,12 +73,19 @@ public class RoleRepositoryTest {
 	@Test
 	public void getRoleUsersShortNameAbsent() {
 		role = target.findByShortName(roleShortName);
-		role.setShortName(null);
+		role.setShortName(roleFullName);
 		Set<User> users = target.getUsers(role);
 		/*
 		 * Empty list is expected
 		 */
 		assertTrue(users.size() == 0);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void getRoleUsersShortNameNull() {
+		role = target.findByShortName(roleShortName);
+		role.setShortName(null);
+		target.getUsers(role);
 	}
 
 }

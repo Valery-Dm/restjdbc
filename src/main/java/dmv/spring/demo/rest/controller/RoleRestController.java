@@ -65,7 +65,7 @@ public class RoleRestController {
 		Set<User> users = roleRepository.getUsers(role);
 
 		if (users.isEmpty())
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.noContent().build();
 
 		List<UserLinkResource> userLinks = users.stream()
 		     .map(user -> new UserLinkResourceAsm().toResource(user))

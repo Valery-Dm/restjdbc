@@ -34,6 +34,10 @@ public class Role {
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}
+	// For defensive copying
+	public Role copy() {
+		return new Role(shortName, fullName);
+	}
 	@Override
 	public String toString() {
 		return "Role [shortName=" + shortName + ", fullName=" + fullName + "]";

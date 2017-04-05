@@ -15,7 +15,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.sql.DataSource;
 
@@ -41,6 +43,12 @@ import dmv.spring.demo.model.repository.RoleRepository;
 public class RoleRepositoryJDBC implements RoleRepository {
 
 	private final Logger logger = getLogger(getClass());
+	
+	/*
+	 * There are just three Roles available. 
+	 * Simple caching solution would suffice
+	 */
+	private Map<String, Role> cache = new ConcurrentHashMap<>();
 
 	/* Standard javax.sql source here */
 	private final DataSource dataSource;
@@ -53,30 +61,42 @@ public class RoleRepositoryJDBC implements RoleRepository {
 	@Override
 	public Role findByShortName(String shortName) {
 		Assert.notNull(shortName, "Can't find Role 'null'");
-
-		Role role = null;
-		try (Connection connection = getConnection();
-			 PreparedStatement statement =
-			    		 connection.prepareStatement(ROLE_FIND_BY_SHORT_NAME.getQuery())) {
-
-			statement.setString(1, shortName);
-			role = mapRole(statement.executeQuery());
-
-		} catch (Exception e) {
-			String msg = "There was a call findByShortName(" + shortName +
-					      "), and it was not successful";
-			logger.debug(msg, e);
-			throw new AccessDataBaseException(msg, e);
+		shortName = shortName.toUpperCase();
+		
+		Role role = cache.get(shortName);
+		if (role == null) {
+			// Synchronization is not necessary for real-world scenarios.
+			// And there is just a small improvement in synthetic tests.
+			// But this is a demo application, so let it be.
+			synchronized (cache) {
+				role = cache.get(shortName);
+				if (role == null) {
+					try (Connection connection = getConnection();
+							PreparedStatement statement =
+									connection.prepareStatement(ROLE_FIND_BY_SHORT_NAME.getQuery())) {
+						
+						statement.setString(1, shortName);
+						role = mapRole(statement.executeQuery());
+						
+					} catch (Exception e) {
+						String msg = "There was a call findByShortName(" + shortName +
+								"), and it was not successful";
+						logger.debug(msg, e);
+						throw new AccessDataBaseException(msg, e);
+					}
+					if (role == null)
+						throw new EntityDoesNotExistException("Role " + shortName + " does not exist");
+					cache.putIfAbsent(shortName, role);
+				}
+			}
 		}
-
-		if (role == null)
-			throw new EntityDoesNotExistException("Role " + shortName + " does not exist");
-		return role;
+		return role.copy();
 	}
 
 	@Override
 	public Set<User> getUsers(Role role) {
 		Assert.notNull(role, "Can't find Users with role 'null'");
+		Assert.notNull(role.getShortName(), "Can't find Users with role that has shortname 'null'");
 
 		Set<User> users = new HashSet<>();
 		try (Connection connection = getConnection();

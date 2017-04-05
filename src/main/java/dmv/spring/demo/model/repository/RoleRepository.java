@@ -15,7 +15,7 @@ public interface RoleRepository {
 
 	/**
 	 * Find and return Role object from database
-	 * with given short name.
+	 * with given short name (case insensitive).
 	 * @param shortName Special acronym
 	 * @return found Role object
 	 * @throws IllegalArgumentException if argument is null
@@ -26,7 +26,7 @@ public interface RoleRepository {
 	Role findByShortName(String shortName);
 
 	/**
-	 * Return all users that share given Role, or empty Set
+	 * Return all users that share given Role, or empty Set.
 	 * @return all users with specified Role or empty Set
 	 * @throws IllegalArgumentException if argument is null
 	 * @throws AccessDataBaseException for DB issues

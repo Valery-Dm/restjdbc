@@ -79,7 +79,7 @@ public class UserRestController {
 	@ApiOperation(value="Update existing user details", notes="Only firstName, lastName, middleName or userRoles will be updated via this query. It's not supposed for changing email and/or password. But you are still required to provide valid email address")
 	@ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successful update of user", response = UserDTO.class),
-            @ApiResponse(code = 400, message = "User details laks required field or are not in valid form"),
+            @ApiResponse(code = 400, message = "User details lack required field or are not in valid form"),
             @ApiResponse(code = 404, message = "User with given id was not found") })
 	@PutMapping(path="/{userId}")
 	public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId,
