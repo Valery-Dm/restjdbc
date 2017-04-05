@@ -6,7 +6,9 @@ import dmv.spring.demo.model.exceptions.EntityAlreadyExistsException;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 
 /**
- * CRUD operations for {@link User} entity
+ * CRUD operations for {@link User} entity.
+ * For all methods where receiving the User object as a parameter
+ * user id field is mandatory, otherwise that user can't be treated.
  * @author dmv
  */
 public interface UserRepository {
@@ -36,10 +38,16 @@ public interface UserRepository {
 	User findByEmail(String email);
 
 	/**
-	 * Will store new user on persistence layer.
+	 * Will store new user on persistence layer. Id will be generated and returned.
 	 * <p>
 	 * User constraints: fields 'email', 'first name' and 'last name'
-	 * must be provided; 'email' must be unique
+	 * must be provided; 'email' must be unique.
+	 * If password was not given it will be generated and returned with
+	 * the created object.
+	 * <p>
+	 * For user's roles only 'shortName' parameter is needed.
+	 * If it is absent or the role with given name does not exist 
+	 * in database the {@link IllegalArgumentException} will be thrown.
 	 * @param user A new user to persist
 	 * @return persisted user on success
 	 * @throws IllegalArgumentException if user is null or has incomplete or wrong information
@@ -51,9 +59,13 @@ public interface UserRepository {
 	User create(User user);
 
 	/**
-	 * Will update existing user (found by email) with given
+	 * Will update existing user (found by id) with given
 	 * user details (password and email fields are omitted,
 	 * these are different operations).
+	 * <p>
+	 * For user's roles only 'shortName' parameter is needed.
+	 * If it is absent or the role with given name does not exist 
+	 * in database the {@link IllegalArgumentException} will be thrown.
 	 * @param user An existing user with new profile
 	 * @return true update was successful
 	 * @throws IllegalArgumentException if user is null or has incomplete or wrong information
@@ -64,7 +76,7 @@ public interface UserRepository {
 	User update(User user);
 
 	/**
-	 * Will delete existing user (found by email) from persistence layer
+	 * Will delete existing user (found by id) from persistence layer
 	 * @param user An existing user
 	 * @throws IllegalArgumentException if user is null
 	 * @throws EntityDoesNotExistException if user can't be found

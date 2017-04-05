@@ -2,7 +2,6 @@ package dmv.spring.demo.model.repository.jdbc;
 
 import static dmv.spring.demo.model.repository.jdbc.Mappers.ROLE_MAPPER;
 import static dmv.spring.demo.model.repository.jdbc.Mappers.USER_MAPPER;
-import static dmv.spring.demo.model.repository.jdbc.sql.RoleQueriesSQL.ROLE_FIND_BY_SHORT_NAME;
 import static dmv.spring.demo.model.repository.jdbc.sql.UserQueriesSQL.*;
 
 import java.math.BigInteger;
@@ -10,18 +9,19 @@ import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
-import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 import dmv.spring.demo.model.repository.UserRepository;
 
 /**
  * Querying table USER via JDBC according to
- * {@link UserRepository} specification
+ * {@link UserRepository} specification. 
+ * This class is not a Repository by itself.
+ * Methods of this class are wrapped within 
+ * {@link UserRepositoryExceptionAdapter} right now.
  * @author dmv
  */
 public class UserRepositoryJDBC {
@@ -62,7 +62,6 @@ public class UserRepositoryJDBC {
 	 * @see UserRepositoryExceptionAdapter#create(User)
 	 */
 	public User create(User user) {
-		getRoles(user);
 		jdbcTemplate.update(USER_CREATE.getQuery(),
 				user.getEmail(), user.getFirstName(),
 				user.getLastName(), user.getMiddleName(),
@@ -71,6 +70,7 @@ public class UserRepositoryJDBC {
 		user.setId(jdbcTemplate.queryForObject(USER_GET_ID.getQuery(),
 				Long.class, user.getEmail()));
 		persistUserRoles(user.getRoles(), user.getId());
+		populateUserRoles(user);
 		return user;
 	}
 
@@ -78,19 +78,14 @@ public class UserRepositoryJDBC {
 	 * @see UserRepositoryExceptionAdapter#update(User)
 	 */
 	public User update(User user) {
-		getRoles(user);
 		/*
 		 * Because REST 'update' operation is exposed on rest/users/{userId}
 		 * endpoint, therefore findById method is at high priority.
 		 */
-		User found;
-		if (user.getId() != null)
-			found = findById(user.getId());
-		else
-			found = findByEmail(user.getEmail());
-
+		User found = findById(user.getId());
 		updateUserDetails(user, found);
 		updateUserRoles(user, found);
+		populateUserRoles(found);
 		return found;
 	}
 
@@ -98,37 +93,19 @@ public class UserRepositoryJDBC {
 	 * @see UserRepositoryExceptionAdapter#delete(User)
 	 */
 	public boolean delete(User user) {
+		/*
+		 * Because REST 'delete' operation is exposed on rest/users/{userId}
+		 * endpoint, therefore findById method is at high priority.
+		 */
 		/* With Cascade deletion in ROLE_USERS table */
-		return (jdbcTemplate.update(USER_DELETE.getQuery(), user.getEmail()) > 0);
+		return (jdbcTemplate.update(USER_DELETE.getQuery(), user.getId()) > 0);
 	}
 
 	/* Helper methods */
 
 	/*
-	 * The Role object received by REST API may contain wrong
-	 * or incomplete information.
-	 */
-	private void getRoles(User user) {
-		Set<Role> receivedRoles = user.getRoles();
-		if (receivedRoles == null || receivedRoles.size() == 0)
-			return;
-		Set<Role> foundRoles = new HashSet<>(receivedRoles.size());
-		// Populate user with complete Role objects from DB
-		receivedRoles.forEach(role -> {
-			try {
-				foundRoles.add(
-						jdbcTemplate.queryForObject(
-								ROLE_FIND_BY_SHORT_NAME.getQuery(),
-								ROLE_MAPPER, role.getShortName()));
-			} catch (EmptyResultDataAccessException e) {
-				throw new EntityDoesNotExistException("Role " + role.getShortName() + " does not exist");
-			}
-		});
-		user.setRoles(foundRoles);
-	}
-
-	/*
 	 * Get existing user roles from DB and set them to User object
+	 * that will be returned as found or created
 	 */
 	private void populateUserRoles(User user) {
 		user.setRoles(new HashSet<>(jdbcTemplate.query(
@@ -170,12 +147,13 @@ public class UserRepositoryJDBC {
 	}
 
 	private boolean updateUserDetails(User recieved, User found) {
+		// update fields for the answer
 		found.setFirstName(recieved.getFirstName());
 		found.setLastName(recieved.getLastName());
 		found.setMiddleName(recieved.getMiddleName());
 		return jdbcTemplate.update(USER_UPDARE.getQuery(),
 								found.getFirstName(), found.getLastName(),
-								found.getMiddleName(), found.getEmail()) > 0;
+								found.getMiddleName(), found.getId()) > 0;
 	}
 
 	private void deleteUserRoles(Set<Role> roles, Long id) {

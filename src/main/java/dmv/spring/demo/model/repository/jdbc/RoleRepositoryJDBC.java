@@ -14,10 +14,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.sql.DataSource;
 
@@ -48,7 +48,7 @@ public class RoleRepositoryJDBC implements RoleRepository {
 	 * There are just three Roles available. 
 	 * Simple caching solution would suffice
 	 */
-	private Map<String, Role> cache = new ConcurrentHashMap<>();
+	private Map<String, Role> cache = new HashMap<>();
 
 	/* Standard javax.sql source here */
 	private final DataSource dataSource;
@@ -86,7 +86,7 @@ public class RoleRepositoryJDBC implements RoleRepository {
 					}
 					if (role == null)
 						throw new EntityDoesNotExistException("Role " + shortName + " does not exist");
-					cache.putIfAbsent(shortName, role);
+					cache.put(shortName, role);
 				}
 			}
 		}
