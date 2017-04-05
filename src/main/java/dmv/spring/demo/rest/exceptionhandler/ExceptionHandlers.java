@@ -6,9 +6,12 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,7 +23,7 @@ import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 
 /**
  * Maps Persistence Layer Exceptions to HTTP codes.
- * Also other errors will be caught.
+ * Also other errors will be caught and mapped.
  * @author dmv
  */
 @RestControllerAdvice
@@ -40,19 +43,6 @@ public class ExceptionHandlers {
 		return new ErrorInfo(req.getRequestURI(), ex);
 	}
 
-	@ExceptionHandler(IllegalArgumentException.class)
-	@ResponseStatus(BAD_REQUEST)
-	public @ResponseBody ErrorInfo badRequest(HttpServletRequest req,
-			                                  IllegalArgumentException ex) {
-		return new ErrorInfo(req.getRequestURI(), ex);
-	}
-
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	@ResponseStatus(BAD_REQUEST)
-	public @ResponseBody ErrorInfo badRequest(HttpServletRequest req,
-			                                  MethodArgumentNotValidException ex) {
-		return new ErrorInfo(req.getRequestURI(), ex);
-	}
 	/*
 	 * SQL connection problems mostly
 	 */
@@ -62,4 +52,36 @@ public class ExceptionHandlers {
 			                                 SQLException ex) {
 		return new ErrorInfo(req.getRequestURI(), ex);
 	}
+
+	@ExceptionHandler(IllegalArgumentException.class)
+	@ResponseStatus(BAD_REQUEST)
+	public @ResponseBody ErrorInfo badRequest(HttpServletRequest req,
+			                                  IllegalArgumentException ex) {
+		return new ErrorInfo(req.getRequestURI(), ex);
+	}
+
+	/*
+	 * Simplify Spring validation error output
+	 */
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	@ResponseStatus(BAD_REQUEST)
+	public @ResponseBody ErrorInfo methodArgumentNotValidException(HttpServletRequest req,
+                                                   MethodArgumentNotValidException ex) {
+        BindingResult result = ex.getBindingResult();
+        List<FieldError> fieldErrors = result.getFieldErrors();
+        return new ErrorInfo(req.getRequestURI(), processFieldErrors(fieldErrors));
+    }
+
+    private String processFieldErrors(List<FieldError> fieldErrors) {
+    	if (fieldErrors == null || fieldErrors.size() == 0) return "unknown cause";
+        StringBuilder builder = new StringBuilder();
+        for (FieldError fieldError: fieldErrors) {
+            builder.append(fieldError.getField())
+            .append(": ")
+            .append(fieldError.getDefaultMessage())
+            .append("; ");
+        }
+        builder.delete(builder.length() - 2, builder.length());
+        return builder.toString();
+    }
 }
