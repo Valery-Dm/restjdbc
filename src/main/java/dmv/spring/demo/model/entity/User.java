@@ -12,6 +12,8 @@ import org.hibernate.validator.constraints.Email;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * User entity POJO
  * @author dmv
@@ -20,19 +22,31 @@ public class User {
 
 	@JsonIgnore
 	private Long id;
+	
+	@ApiModelProperty(value="Unique e-mail address (min=3,max=70)", required=true, example="some@mail.com")
 	@NotNull
 	@Size(min = 5, max = 70)
 	@Email
 	private String email;
+	
+	@ApiModelProperty(value="first name (min=1,max=45)", required=true, example="Ivan")
 	@NotNull
 	@Size(min = 1, max = 45)
 	private String firstName;
+	
+	@ApiModelProperty(value="last name (min=1,max=70)", required=true, example="Grozny")
 	@NotNull
 	@Size(min = 1, max = 70)
 	private String lastName;
+	
+	@ApiModelProperty(value="middle name (min=1,max=45)", example="Vasilievich")
 	@Size(max = 45)
 	private String middleName;
+	
+	@ApiModelProperty(value="password will be generated if not given", example="pa$$word")
 	private String password;
+	
+	@ApiModelProperty(value="user roles as list")
 	private Set<Role> roles;
 
 	public Long getId() {

@@ -58,7 +58,7 @@ public class UserRestController {
 				             .body(new UserDTOAsm().toResource(user));
 	}
 
-	@ApiOperation(value="Create new user", notes="This endpoint accepts json-formatted object with user details. Fields: email (valid email address, maximum 70 characters), firstName (maximum 45 characters), lastName (maximum 70 characters) - are required. MiddleName, Password and userRoles are optional (password will be generated if absent and returned, provided password won't be returned back)")
+	@ApiOperation(value="Create new user", notes="This endpoint accepts json-formatted object with user details. See Data Type below (tab 'Model') for additional information")
 	@ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successful creation of given user", response = UserDTO.class),
             @ApiResponse(code = 409, message = "User with the same email is already exists"),
@@ -76,7 +76,7 @@ public class UserRestController {
 	                         .body(new UserDTOAsm().toResource(created));
 	}
 
-	@ApiOperation(value="Update existing user details", notes="Only firstName, lastName, middleName or userRoles will be updated via this query. It's not supposed for changing email and/or password")
+	@ApiOperation(value="Update existing user details", notes="Only firstName, lastName, middleName or userRoles will be updated via this query. It's not supposed for changing email and/or password. But you are still required to provide valid email address")
 	@ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successful update of user", response = UserDTO.class),
             @ApiResponse(code = 400, message = "User details laks required field or are not in valid form"),

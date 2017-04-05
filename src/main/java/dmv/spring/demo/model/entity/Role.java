@@ -1,7 +1,8 @@
-/**
- *
- */
 package dmv.spring.demo.model.entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Role entity POJO. Means what role user has:
@@ -10,7 +11,9 @@ package dmv.spring.demo.model.entity;
  */
 public class Role {
 
+	@ApiModelProperty(value="Short name for users role. There are 3 available now: ADM, USR, DEV", required=true, example="USR")
 	private String shortName;
+	@JsonIgnore
 	private String fullName;
 	/* Does not contain Set<User> by default */
 

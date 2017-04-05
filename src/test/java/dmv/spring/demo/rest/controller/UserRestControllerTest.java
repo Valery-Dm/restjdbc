@@ -75,21 +75,7 @@ public class UserRestControllerTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		userWithRoles = mockUser(1L);
-		userUpdated = mockUser(1L);
-		userWithoutRoles = mockUser(2L);
-		userNotExisted = mockUser(3L);
-
-		Set<Role> roles = new HashSet<>();
-		roles.add(new Role("ADM", "Administrator"));
-		roles.add(new Role("USR", "User"));
-//		when(userWithRoles.getRoles()).thenReturn(roles);
-		userWithRoles.setRoles(roles);
-
-		Set<Role> updateRoles = new HashSet<>();
-		updateRoles.add(new Role("ADM", "Administrator"));
-		userUpdated.setRoles(updateRoles);
-		userUpdated.setMiddleName("MiddleName");
+		createUsers();
 	}
 
 	@Before
@@ -281,6 +267,24 @@ public class UserRestControllerTest {
 		user.setLastName("Surname" + id);
 		return user;
 	}
+
+	private static void createUsers() {
+			userWithRoles = mockUser(1L);
+			userUpdated = mockUser(1L);
+			userWithoutRoles = mockUser(2L);
+			userNotExisted = mockUser(3L);
+	
+			Set<Role> roles = new HashSet<>();
+			roles.add(new Role("ADM", "Administrator"));
+			roles.add(new Role("USR", "User"));
+	//		when(userWithRoles.getRoles()).thenReturn(roles);
+			userWithRoles.setRoles(roles);
+	
+			Set<Role> updateRoles = new HashSet<>();
+			updateRoles.add(new Role("ADM", "Administrator"));
+			userUpdated.setRoles(updateRoles);
+			userUpdated.setMiddleName("MiddleName");
+		}
 
 	private void configureRepository() throws Exception {
 		when(userRepository.findById(userWithRoles.getId()))

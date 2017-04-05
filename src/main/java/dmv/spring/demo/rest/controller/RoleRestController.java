@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
-import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 import dmv.spring.demo.model.repository.RoleRepository;
 import dmv.spring.demo.rest.representation.RoleDTO;
 import dmv.spring.demo.rest.representation.UserLinkResource;
 import dmv.spring.demo.rest.representation.assembler.RoleDTOAsm;
 import dmv.spring.demo.rest.representation.assembler.UserLinkResourceAsm;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
@@ -39,12 +39,14 @@ public class RoleRestController {
 	@Autowired
 	private RoleRepository roleRepository;
 
-	@ApiOperation(value="Find role by its short name", notes="The short name is a special (and unique) acronym for each role. Example: ADM for Administrator, USR for User, DEV for Developer etc.")
+	@ApiOperation(value="Find role by its short name", notes="The short name is a special (and unique) acronym for each role.")
 	@ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of role", response = RoleDTO.class),
             @ApiResponse(code = 404, message = "Role with given name does not exist") })
 	@RequestMapping(path="/{shortName}", method = GET)
-	public ResponseEntity<RoleDTO> getRole(@PathVariable String shortName) {
+	public ResponseEntity<RoleDTO> getRole(
+			@ApiParam(value="short role's name: ADM for Administrator, USR for User, DEV for Developer etc.")
+			@PathVariable String shortName) {
 		Role role = roleRepository.findByShortName(shortName);
 		return ResponseEntity.ok(new RoleDTOAsm().toResource(role));
 	}
@@ -52,19 +54,18 @@ public class RoleRestController {
 	@ApiOperation(value="Find users with given role", notes="Returns a list of users that have specified role")
 	@ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of users", response = Resources.class),
-            @ApiResponse(code = 404, message = "Users with given role were not found") })
+            @ApiResponse(code = 204, message = "Users with given role were not found") })
 	@RequestMapping(path="/{shortName}/users", method = GET)
-	public ResponseEntity<Resources<UserLinkResource>>
-	                    getUsers(@PathVariable String shortName, HttpServletRequest request) {
+	public ResponseEntity<Resources<UserLinkResource>> getUsers(
+    		@ApiParam(value="short role's name: ADM for Administrator, USR for User, DEV for Developer etc.")
+    		@PathVariable String shortName, 
+    		              HttpServletRequest request) {
 
 		Role role = roleRepository.findByShortName(shortName);
 		Set<User> users = roleRepository.getUsers(role);
 
-		/*
-		 * It's a bit lame. Maybe it'll be better moving this exception onto persistence layer
-		 */
 		if (users.isEmpty())
-			throw new EntityDoesNotExistException("Role " + shortName + " has no users assigned to it");
+			return ResponseEntity.notFound().build();
 
 		List<UserLinkResource> userLinks = users.stream()
 		     .map(user -> new UserLinkResourceAsm().toResource(user))
