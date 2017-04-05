@@ -15,7 +15,7 @@ import dmv.spring.demo.rest.representation.assembler.RoleLinkResourceAsm;
  * @author dmv
  */
 public class UserDTO extends ResourceSupport {
-
+	
 	private final Long userId;
 	private final String email;
 	private final String firstName;
@@ -24,19 +24,14 @@ public class UserDTO extends ResourceSupport {
 	private final String pasword;
 	private final Set<RoleLinkResource> roles;
 
-	public UserDTO(User user) {
+	public UserDTO(User user, Set<RoleLinkResource> roles) {
 		this.userId = user.getId();
 		this.email = user.getEmail();
 		this.firstName = user.getFirstName();
 		this.lastName = user.getLastName();
 		this.middleName = user.getMiddleName();
 		this.pasword = user.getPassword();
-		if (user.getRoles() != null)
-			roles = user.getRoles()
-			    .stream()
-			    .map(role -> new RoleLinkResourceAsm().toResource(role))
-			    .collect(Collectors.toSet());
-		else roles = emptySet();
+		this.roles = roles;
 	}
 
 	public Long getUserId() {

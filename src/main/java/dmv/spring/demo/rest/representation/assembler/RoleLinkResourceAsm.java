@@ -3,6 +3,7 @@ package dmv.spring.demo.rest.representation.assembler;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
+import org.springframework.stereotype.Component;
 
 import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.rest.controller.RoleRestController;
@@ -12,6 +13,7 @@ import dmv.spring.demo.rest.representation.RoleLinkResource;
  * Assembles {@link RoleLinkResource}
  * @author dmv
  */
+@Component
 public class RoleLinkResourceAsm extends ResourceAssemblerSupport<Role, RoleLinkResource> {
 
 	public RoleLinkResourceAsm() {

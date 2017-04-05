@@ -4,6 +4,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
+import org.springframework.stereotype.Component;
 
 import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.rest.controller.RoleRestController;
@@ -13,6 +14,7 @@ import dmv.spring.demo.rest.representation.RoleDTO;
  * Assembles representational object for {@link Role} entity
  * @author dmv
  */
+@Component
 public class RoleDTOAsm extends ResourceAssemblerSupport<Role, RoleDTO> {
 
 	private static final String USERS = "users";

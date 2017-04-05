@@ -40,6 +40,9 @@ public class UserRestController {
 
 	@Autowired
 	private RoleRepository roleRepository;
+	
+	@Autowired
+	private UserDTOAsm userDTOAsm;
 
 	@ApiOperation(value="Find user by id", notes="Usually these kind of links will be created by API for cross-referencing, but you can use it manually if you know the exact id of user which info-page you need to get. Password won't be returned by this query")
 	@ApiResponses(value = {
@@ -49,7 +52,7 @@ public class UserRestController {
 	public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
 		User user = userRepository.findById(userId);
 		return ResponseEntity.ok()
-				             .body(new UserDTOAsm().toResource(user));
+				             .body(userDTOAsm.toResource(user));
 	}
 
 	@ApiOperation(value="Find user by email address", notes="Specify url encoded email address for this query. Example (say, user address is some.user@mail.address): /rest/users/?email=some.user%40mail.address. Password won't be returned by this query")
@@ -62,7 +65,7 @@ public class UserRestController {
 			@RequestParam @Valid String email) throws UnsupportedEncodingException {
 		User user = userRepository.findByEmail(decode(email, "UTF-8"));
 		return ResponseEntity.ok()
-				             .body(new UserDTOAsm().toResource(user));
+				             .body(userDTOAsm.toResource(user));
 	}
 
 	@ApiOperation(value="Create new user", notes="This endpoint accepts json-formatted object with user details. See Data Type below (tab 'Model') for additional information")
@@ -80,7 +83,7 @@ public class UserRestController {
 				                 .buildAndExpand(created.getId())
 				                 .toUri();
 		return ResponseEntity.created(location)
-	                         .body(new UserDTOAsm().toResource(created));
+	                         .body(userDTOAsm.toResource(created));
 	}
 
 	@ApiOperation(value="Update existing user details", notes="Only firstName, lastName, middleName or userRoles will be updated via this query. It's not supposed for changing email and/or password. But you are still required to provide valid email address")
@@ -102,7 +105,7 @@ public class UserRestController {
 
 		String requestUrl = request.getRequestURL().toString();
 		return ResponseEntity.created(new URI(requestUrl))
-	                         .body(new UserDTOAsm().toResource(updated));
+	                         .body(userDTOAsm.toResource(updated));
 	}
 
 	@ApiOperation(value="Delete existing user", notes="Specified user will be completely removed from database")

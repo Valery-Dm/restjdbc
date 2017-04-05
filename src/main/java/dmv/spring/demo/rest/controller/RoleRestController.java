@@ -38,6 +38,12 @@ public class RoleRestController {
 
 	@Autowired
 	private RoleRepository roleRepository;
+	
+	@Autowired
+	private RoleDTOAsm roleDTOAsm;
+	
+	@Autowired
+	private UserLinkResourceAsm userLinkAsm;
 
 	@ApiOperation(value="Find role by its short name", notes="The short name is a special (and unique) acronym for each role.")
 	@ApiResponses(value = {
@@ -45,10 +51,10 @@ public class RoleRestController {
             @ApiResponse(code = 404, message = "Role with given name does not exist") })
 	@RequestMapping(path="/{shortName}", method = GET)
 	public ResponseEntity<RoleDTO> getRole(
-			@ApiParam(value="short role's name: ADM for Administrator, USR for User, DEV for Developer etc.")
+			@ApiParam(value="short role's name: ADM for Administrator, USR for User, DEV for Developer etc.", required=true)
 			@PathVariable String shortName) {
 		Role role = roleRepository.findByShortName(shortName);
-		return ResponseEntity.ok(new RoleDTOAsm().toResource(role));
+		return ResponseEntity.ok(roleDTOAsm.toResource(role));
 	}
 
 	@ApiOperation(value="Find users with given role", notes="Returns a list of users that have specified role")
@@ -57,7 +63,7 @@ public class RoleRestController {
             @ApiResponse(code = 204, message = "Users with given role were not found") })
 	@RequestMapping(path="/{shortName}/users", method = GET)
 	public ResponseEntity<Resources<UserLinkResource>> getUsers(
-    		@ApiParam(value="short role's name: ADM for Administrator, USR for User, DEV for Developer etc.")
+    		@ApiParam(value="short role's name: ADM for Administrator, USR for User, DEV for Developer etc.", required=true)
     		@PathVariable String shortName,
     		              HttpServletRequest request) {
 
@@ -68,7 +74,7 @@ public class RoleRestController {
 			return ResponseEntity.noContent().build();
 
 		List<UserLinkResource> userLinks = users.stream()
-		     .map(user -> new UserLinkResourceAsm().toResource(user))
+		     .map(user -> userLinkAsm.toResource(user))
 		     .collect(Collectors.toList());
 
 		Link link = new Link(request.getRequestURL().toString());
