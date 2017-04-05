@@ -33,20 +33,20 @@ No ORM allowed for Persistence layer
 First, prepare local instance of MySQL database (available at localhost:3306).
 
 
-Create the working schema with tables using file 
-> src/main/resources/tables_create.sql
+Create the working schema with tables using 
+[this file](src/main/resources/sql/tables_create.sql)
 
-Create new user for this app using file
-> src/main/resources/db\_user\_create.sql
+Create new user for this app using 
+[this file](src/main/resources/sql/db_user_create.sql)
 
-Insert demo entries using file
-> src/main/resources/demo\_entries\_insert.sql
+Insert demo entries using file 
+[this file](src/main/resources/sql/demo_entries_insert.sql)
 
 Download jar file (latest version) from root directory.
 And run it from command line 
 > java -jar restjdbc-{version}.jar 
 
-Then, if no errors are in output, open browser.
+Then open browser.
 Swagger documentation for REST API is available at:
 
 Swagger UI
