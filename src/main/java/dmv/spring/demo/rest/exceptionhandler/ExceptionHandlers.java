@@ -18,7 +18,8 @@ import dmv.spring.demo.model.exceptions.EntityAlreadyExistsException;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 
 /**
- * Maps Persistence Layer Exceptions to HTTP codes
+ * Maps Persistence Layer Exceptions to HTTP codes.
+ * Also other errors will be caught.
  * @author dmv
  */
 @RestControllerAdvice
