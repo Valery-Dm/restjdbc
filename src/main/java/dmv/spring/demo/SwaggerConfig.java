@@ -80,12 +80,12 @@ public class SwaggerConfig {
 	@Bean
 	SecurityConfiguration security() {
 		return new SecurityConfiguration(
-				"test-app-client-id", 
-				"test-app-client-secret", 
-				"test-app-realm", 
+				"test-app-client-id",
+				"test-app-client-secret",
+				"test-app-realm",
 				"test-app",
-				"apiKey", 
-				ApiKeyVehicle.HEADER, 
+				"apiKey",
+				ApiKeyVehicle.HEADER,
 				"api_key",
 				"," /* scope separator */);
 	}

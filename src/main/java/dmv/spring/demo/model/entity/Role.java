@@ -15,7 +15,7 @@ public class Role implements RoleApiDocs {
 	@NotNull
 	@Size(min=3, max=3)
 	private String shortName;
-	
+
 	@JsonIgnore
 	@NotNull
 	@Size(max=50)

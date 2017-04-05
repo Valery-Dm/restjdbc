@@ -43,7 +43,7 @@ public class UserRestController implements UserRestApiDocs {
 	@Override
 	@GetMapping(path="/{userId}")
 	public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
-		
+
 		User user = userRepository.findById(userId);
 		return ResponseEntity.ok()
 				             .body(userDTOAsm.toResource(user));
@@ -51,9 +51,9 @@ public class UserRestController implements UserRestApiDocs {
 
 	@Override
 	@GetMapping
-	public ResponseEntity<UserDTO> getUserByEmail(@RequestParam @Valid String email) 
+	public ResponseEntity<UserDTO> getUserByEmail(@RequestParam @Valid String email)
 			                                      throws UnsupportedEncodingException {
-		
+
 		User user = userRepository.findByEmail(decode(email, "UTF-8"));
 		return ResponseEntity.ok()
 				             .body(userDTOAsm.toResource(user));
@@ -63,7 +63,7 @@ public class UserRestController implements UserRestApiDocs {
 	@PostMapping
 	public ResponseEntity<UserDTO> createUser(@RequestBody @Valid User user,
 			                                  HttpServletRequest request,
-                                              UriComponentsBuilder uriBuilder) 
+                                              UriComponentsBuilder uriBuilder)
                                             		  throws URISyntaxException {
 		// It's a Domain Tier's responsibility to provide legal and well formed requests to the Persistence layer.
 		getUserRoles(user);
@@ -80,7 +80,7 @@ public class UserRestController implements UserRestApiDocs {
 	@PutMapping(path="/{userId}")
 	public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId,
 			                                  @RequestBody @Valid User user,
-			                                  HttpServletRequest request) 
+			                                  HttpServletRequest request)
 			                                		  throws URISyntaxException {
 		// Simple defense from forgery requests
 		user.setId(userId);
@@ -98,7 +98,7 @@ public class UserRestController implements UserRestApiDocs {
 	@Override
 	@DeleteMapping(path="/{userId}")
 	public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
-		
+
 		User user = userRepository.findById(userId);
 		userRepository.delete(user);
 		return ResponseEntity.noContent().build();

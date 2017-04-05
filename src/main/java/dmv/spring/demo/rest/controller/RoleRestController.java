@@ -44,7 +44,7 @@ public class RoleRestController implements RoleRestApiDocs {
 	@Override
 	@RequestMapping(path="/{shortName}", method = GET)
 	public ResponseEntity<RoleDTO> getRole(@PathVariable String shortName) {
-		
+
 		Role role = roleRepository.findByShortName(shortName);
 		return ResponseEntity.ok(roleDTOAsm.toResource(role));
 	}

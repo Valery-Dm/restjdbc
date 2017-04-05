@@ -33,7 +33,7 @@ public interface RoleRestApiDocs {
             @ApiResponse(code = 404, message = "Role with given name does not exist") })
 	ResponseEntity<Resources<UserLinkResource>> getUsers(
 			@ApiParam(value="short role's name: ADM for Administrator, USR for User, DEV for Developer etc.", required=true)
-	        String shortName, 
+	        String shortName,
 	        HttpServletRequest request);
 
 }

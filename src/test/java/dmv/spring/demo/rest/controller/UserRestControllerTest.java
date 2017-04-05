@@ -65,7 +65,7 @@ public class UserRestControllerTest {
 	private UserRepository userRepository;
 
 	@InjectMocks
-	private UserRestApiDocs target;
+	private UserRestController target;
 
 	private static User userWithRoles;
 	private static User userWithoutRoles;

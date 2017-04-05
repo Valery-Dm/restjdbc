@@ -60,14 +60,14 @@ public class ExceptionHandlers {
 			                                  IllegalArgumentException ex) {
 		return new ErrorInfo(req.getRequestURI(), ex);
 	}
-	
+
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	@ResponseStatus(BAD_REQUEST)
 	public @ResponseBody ErrorInfo malformedJSON(HttpServletRequest req,
 			                                     HttpMessageNotReadableException ex) {
 		return new ErrorInfo(req.getRequestURI(), ex.getMostSpecificCause().getLocalizedMessage());
     }
-	
+
 	/*
 	 * Simplify Spring validation error output
 	 */
