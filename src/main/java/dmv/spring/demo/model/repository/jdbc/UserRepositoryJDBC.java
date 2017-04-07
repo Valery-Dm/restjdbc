@@ -1,6 +1,7 @@
 package dmv.spring.demo.model.repository.jdbc;
 
 import static dmv.spring.demo.model.repository.jdbc.Mappers.ROLE_MAPPER;
+import static dmv.spring.demo.model.repository.jdbc.Mappers.USER_AUTH_MAPPER;
 import static dmv.spring.demo.model.repository.jdbc.Mappers.USER_MAPPER;
 import static dmv.spring.demo.model.repository.jdbc.sql.UserQueriesSQL.*;
 
@@ -57,8 +58,18 @@ public class UserRepositoryJDBC {
 		populateUserRoles(user);
 		return user;
 	}
+	
+	/**
+	 * @see UserRepositoryExceptionAdapter#getCredentials(String)
+	 */
+    public User getCredentials(String email) {
+		User user = jdbcTemplate.queryForObject(USER_GET_CREDENTIALS.getQuery(), 
+				                                USER_AUTH_MAPPER, email);
+		populateUserRoles(user);
+		return user;
+	}
 
-    /**
+	/**
 	 * @see UserRepositoryExceptionAdapter#create(User)
 	 */
 	public User create(User user) {
@@ -95,11 +106,14 @@ public class UserRepositoryJDBC {
 	public boolean delete(User user) {
 		/*
 		 * Because REST 'delete' operation is exposed on rest/users/{userId}
-		 * endpoint, therefore findById method is at high priority.
+		 * endpoint, therefore user.getId() is used for identification
 		 */
 		/* With Cascade deletion in ROLE_USERS table */
 		return (jdbcTemplate.update(USER_DELETE.getQuery(), user.getId()) > 0);
 	}
+	
+	
+
 
 	/* Helper methods */
 
@@ -167,9 +181,16 @@ public class UserRepositoryJDBC {
 			password = generatePassword();
 			user.setPassword(password);
 		}
-		String hashedPassword = passwordEncoder.encode(password);
-		return hashedPassword;
+		return getHashedPassword(password);
 	}
+	
+	private String getHashedPassword(String password) {
+		return passwordEncoder.encode(password);
+	}
+	
+//	private boolean matches(String password, String hash) {
+//		return passwordEncoder.matches(password, hash);
+//	}
 
 	private String generatePassword() {
 		return new BigInteger(130, random).toString(32);

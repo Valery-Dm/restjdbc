@@ -1,11 +1,11 @@
 package dmv.spring.demo.model.repository.jdbc;
 
-import static dmv.spring.demo.model.entity.RoleFields.FULL_NAME;
-import static dmv.spring.demo.model.entity.RoleFields.SHORT_NAME;
-import static dmv.spring.demo.model.entity.UserFields.EMAIL;
-import static dmv.spring.demo.model.entity.UserFields.FIRST_NAME;
-import static dmv.spring.demo.model.entity.UserFields.LAST_NAME;
-import static dmv.spring.demo.model.entity.UserFields.MIDDLE_NAME;
+import static dmv.spring.demo.model.entity.sqlfields.RoleFields.FULL_NAME;
+import static dmv.spring.demo.model.entity.sqlfields.RoleFields.SHORT_NAME;
+import static dmv.spring.demo.model.entity.sqlfields.UserFields.EMAIL;
+import static dmv.spring.demo.model.entity.sqlfields.UserFields.FIRST_NAME;
+import static dmv.spring.demo.model.entity.sqlfields.UserFields.LAST_NAME;
+import static dmv.spring.demo.model.entity.sqlfields.UserFields.MIDDLE_NAME;
 import static dmv.spring.demo.model.repository.jdbc.sql.RoleQueriesSQL.ROLE_FIND_BY_SHORT_NAME;
 import static dmv.spring.demo.model.repository.jdbc.sql.RoleQueriesSQL.ROLE_USERS_GET;
 import static org.slf4j.LoggerFactory.getLogger;

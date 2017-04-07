@@ -87,6 +87,16 @@ public interface UserRepository {
 	 */
 	void delete(User user);
 
+	/**
+	 * Find user by email address and return with that email and password
+	 * fields only. For authentication purposes.
+	 * @param email User's identifier, unique email address
+	 * @param password what to compare against User's password
+	 * @return User with email and password if exists
+	 * @throws EntityDoesNotExistException if user can't be found
+	 */
+	User getCredentials(String email);
+
 	/*
 	 * getAllUsers() method and other great possibilities
 	 * are not here because they were not required (say YAGNI)

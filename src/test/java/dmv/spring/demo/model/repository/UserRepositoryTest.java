@@ -73,6 +73,8 @@ public class UserRepositoryTest {
 		try {
 			User testUser = target.findByEmail(email);
 			target.delete(testUser);
+		} catch (EntityDoesNotExistException e) {
+			// we are good
 		} catch (Exception e) {
 			System.out.println("unsuccessful cleanup%n" + e.getMessage());
 		}
@@ -427,5 +429,19 @@ public class UserRepositoryTest {
 	public void deleteNull() {
 		exception.expect(IllegalArgumentException.class);
 		target.delete(null);
+	}
+	
+	@Test
+	public void getCredentials() {
+		target.create(user);
+		User credentials = target.getCredentials(user.getEmail());
+		assertNotNull(credentials.getPassword());
+		assertThat(credentials.getEmail(), is(user.getEmail()));
+	}
+	
+	@Test
+	public void getCredentialsNotExist() {
+		exception.expect(EntityDoesNotExistException.class);
+		target.getCredentials(user.getEmail());
 	}
 }

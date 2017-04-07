@@ -1,4 +1,4 @@
-package dmv.spring.demo;
+package dmv.spring.demo.apidocs;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;

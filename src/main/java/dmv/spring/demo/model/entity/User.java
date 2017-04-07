@@ -12,6 +12,8 @@ import org.hibernate.validator.constraints.Email;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import dmv.spring.demo.model.entity.apidocs.UserApiDocs;
+
 /**
  * User entity POJO
  * @author dmv
@@ -41,6 +43,16 @@ public class User implements UserApiDocs {
 
 	private Set<Role> roles;
 
+	public User() {}
+	public User(User user) {
+		id = user.getId();
+		email = user.getEmail();
+		firstName = user.getFirstName();
+		lastName = user.getLastName();
+		middleName = user.getMiddleName();
+		password = user.getPassword();
+		roles = user.getRoles();
+	}
 	public Long getId() {
 		return id;
 	}

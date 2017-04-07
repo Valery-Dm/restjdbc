@@ -20,6 +20,7 @@ import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.repository.RoleRepository;
 import dmv.spring.demo.model.repository.UserRepository;
+import dmv.spring.demo.rest.controller.apidocs.UserRestApiDocs;
 import dmv.spring.demo.rest.representation.UserDTO;
 import dmv.spring.demo.rest.representation.assembler.UserDTOAsm;
 
@@ -43,7 +44,6 @@ public class UserRestController implements UserRestApiDocs {
 	@Override
 	@GetMapping(path="/{userId}")
 	public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
-
 		User user = userRepository.findById(userId);
 		return ResponseEntity.ok()
 				             .body(userDTOAsm.toResource(user));

@@ -5,6 +5,8 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import dmv.spring.demo.model.entity.apidocs.RoleApiDocs;
+
 /**
  * Role entity POJO. Means what role user has:
  * administrator or user or whatever
@@ -23,9 +25,13 @@ public class Role implements RoleApiDocs {
 	/* Does not contain Set<User> by default */
 
 	public Role() {}
+	public Role(Role role) {
+		setShortName(role.getShortName());
+		setFullName(role.getFullName());
+	}
 	public Role(String shortName, String fullName) {
-		this.shortName = shortName;
-		this.fullName = fullName;
+		setShortName(shortName);
+		setFullName(fullName);
 	}
 	public String getShortName() {
 		return shortName;

@@ -1,4 +1,4 @@
-package dmv.spring.demo.rest.controller;
+package dmv.spring.demo.rest.controller.apidocs;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;

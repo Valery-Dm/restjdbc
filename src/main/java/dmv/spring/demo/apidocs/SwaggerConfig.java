@@ -1,4 +1,4 @@
-package dmv.spring.demo;
+package dmv.spring.demo.apidocs;
 import static com.google.common.collect.Lists.newArrayList;
 import static springfox.documentation.schema.AlternateTypeRules.newRule;
 

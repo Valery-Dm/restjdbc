@@ -15,7 +15,8 @@ public enum UserQueriesSQL {
 	USER_GET_ID("user_get_id"),
 	USER_ROLES_GET("user_roles_get"),
 	USER_ROLES_DELETE("user_roles_delete"),
-	USER_ROLES_ADD("user_roles_add");
+	USER_ROLES_ADD("user_roles_add"),
+	USER_GET_CREDENTIALS("user_get_credentials");
 
 	private String query;
 

@@ -1,4 +1,4 @@
-package dmv.spring.demo.model.entity;
+package dmv.spring.demo.model.entity.sqlfields;
 
 /**
  * SQL Fields (or Columns) that User type has

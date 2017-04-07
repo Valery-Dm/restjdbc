@@ -1,11 +1,8 @@
 package dmv.spring.demo.model.repository.jdbc;
 
-import static dmv.spring.demo.model.entity.RoleFields.FULL_NAME;
-import static dmv.spring.demo.model.entity.RoleFields.SHORT_NAME;
-import static dmv.spring.demo.model.entity.UserFields.EMAIL;
-import static dmv.spring.demo.model.entity.UserFields.FIRST_NAME;
-import static dmv.spring.demo.model.entity.UserFields.LAST_NAME;
-import static dmv.spring.demo.model.entity.UserFields.MIDDLE_NAME;
+import static dmv.spring.demo.model.entity.sqlfields.RoleFields.FULL_NAME;
+import static dmv.spring.demo.model.entity.sqlfields.RoleFields.SHORT_NAME;
+import static dmv.spring.demo.model.entity.sqlfields.UserFields.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,9 +10,9 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
-import dmv.spring.demo.model.entity.EntityFields;
 import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
+import dmv.spring.demo.model.entity.sqlfields.EntityFields;
 
 /**
  * Entity mappers for {@link JdbcTemplate}
@@ -40,11 +37,23 @@ public class Mappers {
 	        (resultSet, rowNum) -> {
 	        	User user = new User();
 	        	user.setId(resultSet.getLong(1));
-	        	user.setEmail(get(resultSet, EMAIL));
-	        	user.setFirstName(get(resultSet, FIRST_NAME));
-	        	user.setLastName(get(resultSet, LAST_NAME));
-	        	user.setMiddleName(get(resultSet, MIDDLE_NAME));
-	        	return user;
-	        };
+				user.setEmail(get(resultSet, EMAIL));
+				user.setFirstName(get(resultSet, FIRST_NAME));
+				user.setLastName(get(resultSet, LAST_NAME));
+				user.setMiddleName(get(resultSet, MIDDLE_NAME));
+				return user;
+			};
+
+	public static final RowMapper<User> USER_AUTH_MAPPER = 
+			(resultSet, rowNum) -> {
+				User user = new User();
+				user.setId(resultSet.getLong(1));
+				user.setEmail(get(resultSet, EMAIL));
+				user.setFirstName(get(resultSet, FIRST_NAME));
+				user.setLastName(get(resultSet, LAST_NAME));
+				user.setMiddleName(get(resultSet, MIDDLE_NAME));
+				user.setPassword(get(resultSet, PASSWORD));
+				return user;
+			};
 
 }

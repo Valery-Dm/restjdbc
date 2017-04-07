@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.repository.RoleRepository;
+import dmv.spring.demo.rest.controller.apidocs.RoleRestApiDocs;
 import dmv.spring.demo.rest.representation.RoleDTO;
 import dmv.spring.demo.rest.representation.UserLinkResource;
 import dmv.spring.demo.rest.representation.assembler.RoleDTOAsm;

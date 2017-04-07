@@ -1,4 +1,4 @@
-package dmv.spring.demo.model.entity;
+package dmv.spring.demo.model.entity.apidocs;
 
 import io.swagger.annotations.ApiModelProperty;
 

@@ -43,7 +43,7 @@ public class ExceptionHandlers {
 			                                EntityAlreadyExistsException ex) {
 		return new ErrorInfo(req.getRequestURI(), ex);
 	}
-
+	
 	/*
 	 * SQL connection problems mostly
 	 */

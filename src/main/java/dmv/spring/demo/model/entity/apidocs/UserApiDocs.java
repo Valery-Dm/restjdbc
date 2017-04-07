@@ -1,7 +1,8 @@
-package dmv.spring.demo.model.entity;
+package dmv.spring.demo.model.entity.apidocs;
 
 import java.util.Set;
 
+import dmv.spring.demo.model.entity.Role;
 import io.swagger.annotations.ApiModelProperty;
 
 /**

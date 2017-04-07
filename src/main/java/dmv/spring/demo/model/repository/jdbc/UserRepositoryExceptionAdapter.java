@@ -70,6 +70,22 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 			throw new AccessDataBaseException(msg, e);
 		}
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public User getCredentials(String email) {
+		Assert.notNull(email, "Email can't be 'null'");
+		try {
+			return userRepository.getCredentials(email);
+		} catch (EmptyResultDataAccessException e) {
+			throw new EntityDoesNotExistException("User " + email + " does not exist");
+		} catch (Exception e) {
+			String msg = "There was a lookup for user " + email
+					+ ", and it was not successful";
+			logger.debug(msg, e);
+			throw new AccessDataBaseException(msg, e);
+		}
+	}
 
 	@Override
 	public User create(User user) {

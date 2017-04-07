@@ -1,4 +1,4 @@
-package dmv.spring.demo.model.entity;
+package dmv.spring.demo.model.entity.sqlfields;
 
 /**
  * 'ROLE_USERS' table and column names
