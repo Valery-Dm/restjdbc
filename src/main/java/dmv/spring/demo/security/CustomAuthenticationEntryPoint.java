@@ -6,6 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -25,13 +26,16 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 	 * @see org.springframework.security.web.AuthenticationEntryPoint#commence(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.springframework.security.core.AuthenticationException)
 	 */
 	@Override
-	public void commence(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException authException) throws IOException, ServletException {
-		ObjectMapper mapper = new ObjectMapper();
+	public void commence(HttpServletRequest request, 
+			             HttpServletResponse response,
+			             AuthenticationException authException) 
+			            		 throws IOException, ServletException {
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
-		httpResponse.setContentType("application/json");
+		httpResponse.addHeader("WWW-Authenticate", "Basic realm=\"Spring Security\"");
+		httpResponse.setContentType(MediaType.APPLICATION_JSON_UTF8.toString());
 		httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	    ErrorInfo info = new ErrorInfo(request.getRequestURI(), authException);
+	    ObjectMapper mapper = new ObjectMapper();
 	    mapper.writeValue(httpResponse.getOutputStream(), info);
 	}
 

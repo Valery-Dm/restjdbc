@@ -14,6 +14,22 @@ public class CustomGrantedAuthority extends Role
 
 	private static final long serialVersionUID = -8751896582717211594L;
 	
+	/**
+	 * Create GrantedAuthority object from minimally required field
+	 * short name of some {@link Role}
+	 * @param role A role's short name to grant an authority to
+	 * @throws IllegalArgumentException if argument is null
+	 */
+	public CustomGrantedAuthority(String shortName) {
+		Assert.notNull(shortName, "Short name cannot be null");
+		setShortName(shortName);
+	}
+
+	/**
+	 * Create GrantedAuthority object from given {@link Role}
+	 * @param role A role to grant an authority to
+	 * @throws IllegalArgumentException if role's short name is null
+	 */
 	public CustomGrantedAuthority(Role role) {
 		super(role);
 		Assert.notNull(getShortName(), "Short name cannot be null");

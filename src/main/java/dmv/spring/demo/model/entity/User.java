@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
+import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -45,6 +46,7 @@ public class User implements UserApiDocs {
 
 	public User() {}
 	public User(User user) {
+		Assert.notNull(user, "User can't be null");
 		id = user.getId();
 		email = user.getEmail();
 		firstName = user.getFirstName();

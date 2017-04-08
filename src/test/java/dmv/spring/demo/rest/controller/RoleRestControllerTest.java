@@ -40,7 +40,7 @@ import dmv.spring.demo.model.repository.RoleRepository;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-@WithMockUser(username="admin",roles={"USER","ADMIN"})
+@WithMockUser(username = "admin", authorities = { "ADM", "USR" })
 public class RoleRestControllerTest {
 
 	private static final String MAP = "/rest/roles/";

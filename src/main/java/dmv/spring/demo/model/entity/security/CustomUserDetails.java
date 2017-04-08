@@ -1,11 +1,13 @@
 package dmv.spring.demo.model.entity.security;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.Assert;
 
 import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
@@ -25,6 +27,7 @@ public class CustomUserDetails extends User implements UserDetails {
 	 * Create new instance of {@link UserDetails} object with
 	 * given User details. Maps {@link Role} to {@link GrantedAuthority}
 	 * @param user User object
+	 * @throws IllegalArgumentException if argument is null
 	 */
 	public CustomUserDetails(User user) {
 		super(user);
@@ -36,6 +39,26 @@ public class CustomUserDetails extends User implements UserDetails {
 								      .map(role -> new CustomGrantedAuthority(role))
 								      .sorted()
 								      .collect(Collectors.toList());
+	}
+
+	/**
+	 * Create new instance of {@link UserDetails} object with
+	 * given User details. Maps {@link Role} to {@link GrantedAuthority}
+	 * @param email user's email
+	 * @param password user's password
+	 * @param roleName {@link Role} short name
+	 * @throws IllegalArgumentException if either of arguments is null
+	 */
+	public CustomUserDetails(String email, String password, String roleName) {
+		Assert.noNullElements(new Object[]{email, password, roleName}, "Null arguments are not supported here");
+		setEmail(email);
+		setPassword(password);
+		/*
+		 * This constructor is for testing purposes so it's perfectly fine
+		 * not to propagate Set<Role> collection further, just create
+		 * GrantedAuthorities at this level.
+		 */
+		authorities = Arrays.asList(new CustomGrantedAuthority(roleName));
 	}
 
 	/* (non-Javadoc)

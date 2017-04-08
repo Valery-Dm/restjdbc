@@ -3,6 +3,8 @@ package dmv.spring.demo.model.entity;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.springframework.util.Assert;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import dmv.spring.demo.model.entity.apidocs.RoleApiDocs;
@@ -26,6 +28,7 @@ public class Role implements RoleApiDocs {
 
 	public Role() {}
 	public Role(Role role) {
+		Assert.notNull(role, "Role can't be null");
 		setShortName(role.getShortName());
 		setFullName(role.getFullName());
 	}
