@@ -3,13 +3,11 @@ package dmv.spring.demo.rest.security;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultMatcher;
 
-//@WithMockUser
-@WithUserDetails("demo.developer@spring.demo")
+@WithMockUser
 public class UserRestSecurityNonAdminTest extends UserRestSecurityTest {
-	
+
 	/*
 	 * All requests made by the NonAdmin (yet authorized) user supposed to be forbidden
 	 */
@@ -19,5 +17,5 @@ public class UserRestSecurityNonAdminTest extends UserRestSecurityTest {
 	protected ResultMatcher getStatus() {
 		return statusMatcher;
 	}
-	
+
 }

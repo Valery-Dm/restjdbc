@@ -7,7 +7,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 
 @WithAnonymousUser
 public class UserRestSecurityAnonymousTest extends UserRestSecurityTest {
-	
+
 	/*
 	 * All requests made by the Anonymous user supposed to be unauthorized.
 	 * All wrong credentials situations also fall in this category.
@@ -18,5 +18,5 @@ public class UserRestSecurityAnonymousTest extends UserRestSecurityTest {
 	protected ResultMatcher getStatus() {
 		return statusMatcher;
 	}
-	
+
 }

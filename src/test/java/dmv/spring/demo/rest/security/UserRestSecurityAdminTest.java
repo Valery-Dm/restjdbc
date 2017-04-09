@@ -2,12 +2,12 @@ package dmv.spring.demo.rest.security;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultMatcher;
 
-@WithUserDetails("demo.admin@spring.demo")
+@WithMockUser(username = "admin", authorities = { "ADM", "USR" })
 public class UserRestSecurityAdminTest extends UserRestSecurityTest {
-	
+
 	/*
 	 * All requests made by the Admin user supposed to be successful
 	 */
@@ -17,5 +17,5 @@ public class UserRestSecurityAdminTest extends UserRestSecurityTest {
 	protected ResultMatcher getStatus() {
 		return statusMatcher;
 	}
-	
+
 }

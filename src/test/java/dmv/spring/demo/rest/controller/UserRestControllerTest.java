@@ -37,6 +37,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.exceptions.EntityAlreadyExistsException;
@@ -213,33 +216,9 @@ public class UserRestControllerTest {
 		return encode(email, "UTF-8");
 	}
 
-	private String createJson(User user) {
-		StringBuilder builder = new StringBuilder("{\n");
-		builder.append("\"id\" : \"")
-		       .append(user.getId())
-		       .append("\",\n\"email\" : \"")
-		       .append(user.getEmail())
-			   .append("\",\n\"firstName\" : \"")
-			   .append(user.getFirstName())
-			   .append("\",\n\"lastName\" : \"")
-			   .append(user.getLastName())
-			   .append("\",\n\"middleName\" : \"")
-			   .append(user.getMiddleName())
-			   .append("\",\n\"password\" : \"")
-			   .append(user.getPassword())
-			   .append("\",\n\"roles\" : [ ");
-		Set<Role> roles = user.getRoles();
-		if (roles != null) {
-			roles.forEach(role -> {
-				builder.append("{\n\"shortName\" : \"")
-				.append(role.getShortName())
-				.append("\",\n\"fullName\" : \"")
-				.append(role.getFullName())
-				.append("\"\n},");
-			});
-		}
-		builder.replace(builder.length() - 1, builder.length(), "]}");
-		return builder.toString();
+	private String createJson(User user) throws JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
+		return mapper.writeValueAsString(user);
 	}
 
 	private static User mockUser(long id) {
@@ -260,7 +239,6 @@ public class UserRestControllerTest {
 			Set<Role> roles = new HashSet<>();
 			roles.add(new Role("ADM", "Administrator"));
 			roles.add(new Role("USR", "User"));
-	//		when(userWithRoles.getRoles()).thenReturn(roles);
 			userWithRoles.setRoles(roles);
 
 			Set<Role> updateRoles = new HashSet<>();
