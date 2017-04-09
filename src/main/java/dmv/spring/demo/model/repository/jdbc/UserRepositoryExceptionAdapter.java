@@ -179,8 +179,6 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 		try {
 
 			deleted = userRepository.delete(user);
-			if (deleted && debug)
-				logger.info("User " + user.getId() + " was removed from DB");
 
 		} catch (Exception e) {
 			String msg = "There was an attempt to remove " + user.getId()
@@ -188,9 +186,12 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 			logger.error(msg, e);
 			throw new AccessDataBaseException(msg, e);
 		}
-
-		String msg = "User " + user.getId() + " does not exist";
-		if (debug) logger.info(msg);
-		throw new EntityDoesNotExistException(msg);
+		if (!deleted) {
+			String msg = "User " + user.getId() + " does not exist";
+			if (debug) logger.info(msg);
+			throw new EntityDoesNotExistException(msg);
+		}
+		if (debug)
+			logger.info("User " + user.getId() + " was removed from DB");
 	}
 }
