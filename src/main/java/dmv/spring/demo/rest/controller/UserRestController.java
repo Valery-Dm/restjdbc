@@ -44,7 +44,9 @@ public class UserRestController implements UserRestApiDocs {
 	@Override
 	@GetMapping(path="/{userId}")
 	public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
+
 		User user = userRepository.findById(userId);
+
 		return ResponseEntity.ok()
 				             .body(userDTOAsm.toResource(user));
 	}
@@ -55,6 +57,7 @@ public class UserRestController implements UserRestApiDocs {
 			                                      throws UnsupportedEncodingException {
 
 		User user = userRepository.findByEmail(decode(email, "UTF-8"));
+
 		return ResponseEntity.ok()
 				             .body(userDTOAsm.toResource(user));
 	}
@@ -67,11 +70,13 @@ public class UserRestController implements UserRestApiDocs {
                                             		  throws URISyntaxException {
 		// It's a Domain Tier's responsibility to provide legal and well formed requests to the Persistence layer.
 		getUserRoles(user);
+
 		// User with generated Id
 		User created = userRepository.create(user);
+
 		URI location = uriBuilder.path(request.getRequestURI() + "/{id}")
-				                 .buildAndExpand(created.getId())
-				                 .toUri();
+				.buildAndExpand(created.getId())
+				.toUri();
 		return ResponseEntity.created(location)
 	                         .body(userDTOAsm.toResource(created));
 	}
@@ -99,10 +104,15 @@ public class UserRestController implements UserRestApiDocs {
 	@DeleteMapping(path="/{userId}")
 	public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
 
+		// find existing user first
 		User user = userRepository.findById(userId);
+
 		userRepository.delete(user);
+
 		return ResponseEntity.noContent().build();
 	}
+
+	/* Helper methods */
 
 	private void getUserRoles(User user) {
 		// Here we are getting real Role objects from an appropriate resource

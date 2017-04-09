@@ -1,6 +1,3 @@
-/**
- *
- */
 package dmv.spring.demo.model.entity;
 
 import java.util.Set;
@@ -20,6 +17,8 @@ import dmv.spring.demo.model.entity.apidocs.UserApiDocs;
  * @author dmv
  */
 public class User implements UserApiDocs {
+
+	private static final String USER_CANNOT_BE_NULL = "User can't be null";
 
 	@JsonIgnore
 	private Long id;
@@ -46,7 +45,7 @@ public class User implements UserApiDocs {
 
 	public User() {}
 	public User(User user) {
-		Assert.notNull(user, "User can't be null");
+		Assert.notNull(user, USER_CANNOT_BE_NULL);
 		id = user.getId();
 		email = user.getEmail();
 		firstName = user.getFirstName();

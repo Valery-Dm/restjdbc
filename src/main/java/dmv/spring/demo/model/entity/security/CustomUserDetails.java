@@ -1,10 +1,13 @@
 package dmv.spring.demo.model.entity.security;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
@@ -19,10 +22,14 @@ import dmv.spring.demo.model.entity.User;
  */
 public class CustomUserDetails extends User implements UserDetails {
 
+	private static final Logger logger = getLogger(CustomUserDetails.class);
+
+	private static final String NULL_NOT_SUPPORTED = "Null arguments are not supported here";
+
 	private static final long serialVersionUID = 5004823702176912214L;
-	
+
 	private final Collection<? extends GrantedAuthority> authorities;
-	
+
 	/**
 	 * Create new instance of {@link UserDetails} object with
 	 * given User details. Maps {@link Role} to {@link GrantedAuthority}
@@ -32,13 +39,15 @@ public class CustomUserDetails extends User implements UserDetails {
 	public CustomUserDetails(User user) {
 		super(user);
 		// must return sorted collection and never null
-		authorities = user.getRoles() == null 
-				                ? Collections.emptyList() 
+		authorities = user.getRoles() == null
+				                ? Collections.emptyList()
 								: user.getRoles()
 								      .stream()
 								      .map(role -> new CustomGrantedAuthority(role))
 								      .sorted()
 								      .collect(Collectors.toList());
+		if (logger.isDebugEnabled())
+			logger.debug(user + " was passed to CustomUserDetails constructor");
 	}
 
 	/**
@@ -50,15 +59,17 @@ public class CustomUserDetails extends User implements UserDetails {
 	 * @throws IllegalArgumentException if either of arguments is null
 	 */
 	public CustomUserDetails(String email, String password, String roleName) {
-		Assert.noNullElements(new Object[]{email, password, roleName}, "Null arguments are not supported here");
+		Assert.noNullElements(new Object[]{email, password, roleName}, NULL_NOT_SUPPORTED);
 		setEmail(email);
 		setPassword(password);
 		/*
 		 * This constructor is for testing purposes so it's perfectly fine
-		 * not to propagate Set<Role> collection further, just create
+		 * not to propagate Set<Role> collection further, will just create
 		 * GrantedAuthorities at this level.
 		 */
 		authorities = Arrays.asList(new CustomGrantedAuthority(roleName));
+		if (logger.isDebugEnabled())
+			logger.debug(email + " was passed to CustomUserDetails constructor");
 	}
 
 	/* (non-Javadoc)

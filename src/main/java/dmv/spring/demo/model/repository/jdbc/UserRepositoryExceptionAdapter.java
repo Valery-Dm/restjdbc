@@ -30,27 +30,41 @@ import dmv.spring.demo.model.repository.UserRepository;
 @Transactional
 public class UserRepositoryExceptionAdapter implements UserRepository {
 
-    private final Logger logger;
+	private static final String USER_NULL = "User can't be 'null'";
+
+	private static final String EMAIL_NULL = "Email can't be 'null'";
+
+	private static final String ID_NULL = "User's id can't be 'null'";
+
+	private static final Logger logger = getLogger(UserRepositoryExceptionAdapter.class);
+
     private final UserRepositoryJDBC userRepository;
 
     @Autowired
     public UserRepositoryExceptionAdapter(JdbcTemplate jdbcTemplate) {
     	userRepository = new UserRepositoryJDBC(jdbcTemplate);
-    	logger = getLogger(getClass());
     }
 
 	@Override
 	@Transactional(readOnly=true)
 	public User findById(Long id) {
-		Assert.notNull(id, "Can't find user with id 'null'");
+		Assert.notNull(id, ID_NULL);
+		boolean debug = logger.isDebugEnabled();
 		try {
-			return userRepository.findById(id);
+
+			User user = userRepository.findById(id);
+			if (debug)
+				logger.debug("User " + id + " was found in DB");
+			return user;
+
 		} catch (EmptyResultDataAccessException e) {
+			if (debug)
+				logger.debug("User " + id + " was not found in DB");
 			throw new EntityDoesNotExistException("User with id " + id + " does not exist");
 		} catch (Exception e) {
 			String msg = "There was a lookup for user with id " + id
 					+ ", and it was not successful";
-			logger.debug(msg, e);
+			logger.error(msg, e);
 			throw new AccessDataBaseException(msg, e);
 		}
 	}
@@ -58,89 +72,125 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 	@Override
 	@Transactional(readOnly=true)
 	public User findByEmail(String email) {
-		Assert.notNull(email, "Email can't be 'null'");
+		Assert.notNull(email, EMAIL_NULL);
+		boolean debug = logger.isDebugEnabled();
 		try {
-			return userRepository.findByEmail(email);
+
+			User user = userRepository.findByEmail(email);
+			if (debug)
+				logger.debug("User " + email + " was found in DB");
+			return user;
+
 		} catch (EmptyResultDataAccessException e) {
+			if (debug)
+				logger.debug("User " + email + " was not found in DB");
 			throw new EntityDoesNotExistException("User " + email + " does not exist");
 		} catch (Exception e) {
 			String msg = "There was a lookup for user " + email
 					+ ", and it was not successful";
-			logger.debug(msg, e);
+			logger.error(msg, e);
 			throw new AccessDataBaseException(msg, e);
 		}
 	}
-	
+
 	@Override
 	@Transactional(readOnly=true)
 	public User getCredentials(String email) {
-		Assert.notNull(email, "Email can't be 'null'");
+		Assert.notNull(email, EMAIL_NULL);
+		boolean debug = logger.isDebugEnabled();
 		try {
-			return userRepository.getCredentials(email);
+
+			User user = userRepository.getCredentials(email);
+			if (debug)
+				logger.debug("User " + email + " credentials was found in DB");
+			return user;
+
 		} catch (EmptyResultDataAccessException e) {
+			if (debug)
+				logger.debug("User " + email + " credentials was not found in DB");
 			throw new EntityDoesNotExistException("User " + email + " does not exist");
 		} catch (Exception e) {
 			String msg = "There was a lookup for user " + email
 					+ ", and it was not successful";
-			logger.debug(msg, e);
+			logger.error(msg, e);
 			throw new AccessDataBaseException(msg, e);
 		}
 	}
 
 	@Override
 	public User create(User user) {
-		Assert.notNull(user, "Can't create user 'null'");
+		Assert.notNull(user, USER_NULL);
+		boolean debug = logger.isDebugEnabled();
 		try {
+
 			User createdUser = userRepository.create(user);
-			logger.info(createdUser.getEmail() + " was added to DB");
+			if (debug) logger.info("User " + createdUser.getEmail() + " was added to DB");
 			return createdUser;
+
 		} catch(DuplicateKeyException e) {
-			throw new EntityAlreadyExistsException(user.getEmail() + " already exists");
+			String msg = "User " + user.getEmail() + " already exists in DB";
+			if (debug) logger.info(msg);
+			throw new EntityAlreadyExistsException(msg);
 		} catch (DataIntegrityViolationException e) {
-			throw new IllegalArgumentException(user.getEmail() + " has wrong information", e);
+			String msg = "User " + user.getEmail() + " has wrong information";
+			if (debug) logger.info(msg);
+			throw new IllegalArgumentException(msg, e);
 		} catch (Exception e) {
 			String msg = "There was an attempt to insert " + user.getEmail()
 					+ ", and something went wrong";
-			logger.debug(msg, e);
+			logger.error(msg, e);
 			throw new AccessDataBaseException(msg, e);
 		}
 	}
 
 	@Override
 	public User update(User user) {
-		Assert.notNull(user, "Can't update user 'null'");
-		Assert.notNull(user.getId(), "Can't update user with id 'null'");
+		Assert.notNull(user, USER_NULL);
+		Assert.notNull(user.getId(), ID_NULL);
+		boolean debug = logger.isDebugEnabled();
 		try {
+
 			User updatedUser = userRepository.update(user);
-			logger.info(updatedUser.getId() + " was updated in DB");
+			if (debug) logger.info("User " + updatedUser.getId() + " was updated in DB");
 			return updatedUser;
+
 		} catch (EmptyResultDataAccessException e) {
-			throw new EntityDoesNotExistException(user.getId() + " does not exist");
+			String msg = "User " + user.getId() + " does not exist";
+			if (debug) logger.info(msg);
+			throw new EntityDoesNotExistException(msg);
 		} catch (DataIntegrityViolationException e) {
-			throw new IllegalArgumentException(user.getId() + " brings wrong information for update", e);
+			String msg = "User " + user.getId() + " brings wrong information for update";
+			if (debug) logger.info(msg);
+			throw new IllegalArgumentException(msg, e);
 		} catch (Exception e) {
 			String msg = "There was an attempt to update " + user.getId()
 					      + ", and something went wrong";
-			logger.debug(msg, e);
+			logger.error(msg, e);
 			throw new AccessDataBaseException(msg, e);
 		}
 	}
 
 	@Override
 	public void delete(User user) {
-		Assert.notNull(user, "Can't delete user 'null'");
-		Assert.notNull(user.getId(), "Can't delete user with id 'null'");
+		Assert.notNull(user, USER_NULL);
+		Assert.notNull(user.getId(), ID_NULL);
+		boolean debug = logger.isDebugEnabled();
 		boolean deleted = false;
 		try {
+
 			deleted = userRepository.delete(user);
+			if (deleted && debug)
+				logger.info("User " + user.getId() + " was removed from DB");
+
 		} catch (Exception e) {
 			String msg = "There was an attempt to remove " + user.getId()
 					      + ", and something went wrong";
-			logger.debug(msg, e);
+			logger.error(msg, e);
 			throw new AccessDataBaseException(msg, e);
 		}
-		if (!deleted)
-			throw new EntityDoesNotExistException(user.getId() + " does not exist");
-		logger.info(user.getId() + " was removed from DB");
+
+		String msg = "User " + user.getId() + " does not exist";
+		if (debug) logger.info(msg);
+		throw new EntityDoesNotExistException(msg);
 	}
 }

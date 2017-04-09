@@ -47,6 +47,7 @@ public class RoleRestController implements RoleRestApiDocs {
 	public ResponseEntity<RoleDTO> getRole(@PathVariable String shortName) {
 
 		Role role = roleRepository.findByShortName(shortName);
+
 		return ResponseEntity.ok(roleDTOAsm.toResource(role));
 	}
 

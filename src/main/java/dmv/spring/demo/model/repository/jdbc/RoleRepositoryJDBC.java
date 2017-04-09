@@ -42,7 +42,13 @@ import dmv.spring.demo.model.repository.RoleRepository;
 @Transactional(readOnly=true)
 public class RoleRepositoryJDBC implements RoleRepository {
 
-	private final Logger logger = getLogger(getClass());
+	private static final String SHORTNAME_NULL = "Can't find Users with role that has shortname 'null'";
+
+	private static final String USERS_WITH_ROLE_NULL = "Can't find Users with role 'null'";
+
+	private static final String ROLE_NULL = "Can't find Role 'null'";
+
+	private static final Logger logger = getLogger(RoleRepositoryJDBC.class);
 
 	/*
 	 * There are just three Roles available.
@@ -58,10 +64,15 @@ public class RoleRepositoryJDBC implements RoleRepository {
 		this.dataSource = dataSource;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see dmv.spring.demo.model.repository.RoleRepository#findByShortName(java.lang.String)
+	 */
 	@Override
 	public Role findByShortName(String shortName) {
-		Assert.notNull(shortName, "Can't find Role 'null'");
+		Assert.notNull(shortName, ROLE_NULL);
 		shortName = shortName.toUpperCase();
+		boolean debug = logger.isDebugEnabled();
 
 		Role role = cache.get(shortName);
 		if (role == null) {
@@ -81,22 +92,29 @@ public class RoleRepositoryJDBC implements RoleRepository {
 					} catch (Exception e) {
 						String msg = "There was a call findByShortName(" + shortName +
 								"), and it was not successful";
-						logger.debug(msg, e);
+						logger.error(msg, e);
 						throw new AccessDataBaseException(msg, e);
 					}
 					if (role == null)
 						throw new EntityDoesNotExistException("Role " + shortName + " does not exist");
 					cache.put(shortName, role);
+					if (debug) logger.debug("Role " + shortName + " has been added to cache");
 				}
 			}
 		}
+		if (debug) logger.debug("Role " + shortName + " has been supplied from findByShortName() method");
 		return role.copy();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see dmv.spring.demo.model.repository.RoleRepository#getUsers(dmv.spring.demo.model.entity.Role)
+	 */
 	@Override
 	public Set<User> getUsers(Role role) {
-		Assert.notNull(role, "Can't find Users with role 'null'");
-		Assert.notNull(role.getShortName(), "Can't find Users with role that has shortname 'null'");
+		Assert.notNull(role, USERS_WITH_ROLE_NULL);
+		Assert.notNull(role.getShortName(), SHORTNAME_NULL);
+		boolean debug = logger.isDebugEnabled();
 
 		Set<User> users = new HashSet<>();
 		try (Connection connection = getConnection();
@@ -110,15 +128,14 @@ public class RoleRepositoryJDBC implements RoleRepository {
 		} catch (Exception e) {
 			String msg = "There was a call for getUsers with role " + role +
 					", and it was not successful";
-			logger.debug(msg, e);
+			logger.error(msg, e);
 			throw new AccessDataBaseException(msg, e);
 		}
-
+		if (debug) logger.debug("getUsers(role) successfully returned Set of users");
 		return users;
 	}
 
 	private Connection getConnection() throws SQLException {
-//		return DataSourceUtils.getConnection(dataSource);
 		return dataSource.getConnection();
 	}
 

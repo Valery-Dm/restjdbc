@@ -26,11 +26,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 	 * @see org.springframework.security.web.AuthenticationEntryPoint#commence(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.springframework.security.core.AuthenticationException)
 	 */
 	@Override
-	public void commence(HttpServletRequest request, 
+	public void commence(HttpServletRequest request,
 			             HttpServletResponse response,
-			             AuthenticationException authException) 
+			             AuthenticationException authException)
 			            		 throws IOException, ServletException {
-		HttpServletResponse httpResponse = (HttpServletResponse) response;
+		HttpServletResponse httpResponse = response;
 		httpResponse.addHeader("WWW-Authenticate", "Basic realm=\"Spring Security\"");
 		httpResponse.setContentType(MediaType.APPLICATION_JSON_UTF8.toString());
 		httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

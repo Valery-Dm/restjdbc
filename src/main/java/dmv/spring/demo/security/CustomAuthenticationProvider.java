@@ -6,15 +6,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * The only purpose for this class is to set custom UserDetailsService
- * and passwordEncoder 
+ * and passwordEncoder
  * @author dmv
  */
 public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
-	
+
 	public CustomAuthenticationProvider(UserDetailsService userDetailsService,
                                         PasswordEncoder passwordEncoder) {
 		setUserDetailsService(userDetailsService);
     	setPasswordEncoder(passwordEncoder);
 	}
-	
+
 }

@@ -430,7 +430,7 @@ public class UserRepositoryTest {
 		exception.expect(IllegalArgumentException.class);
 		target.delete(null);
 	}
-	
+
 	@Test
 	public void getCredentials() {
 		target.create(user);
@@ -438,7 +438,7 @@ public class UserRepositoryTest {
 		assertNotNull(credentials.getPassword());
 		assertThat(credentials.getEmail(), is(user.getEmail()));
 	}
-	
+
 	@Test
 	public void getCredentialsNotExist() {
 		exception.expect(EntityDoesNotExistException.class);

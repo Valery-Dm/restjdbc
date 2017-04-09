@@ -58,12 +58,12 @@ public class UserRepositoryJDBC {
 		populateUserRoles(user);
 		return user;
 	}
-	
+
 	/**
 	 * @see UserRepositoryExceptionAdapter#getCredentials(String)
 	 */
     public User getCredentials(String email) {
-		User user = jdbcTemplate.queryForObject(USER_GET_CREDENTIALS.getQuery(), 
+		User user = jdbcTemplate.queryForObject(USER_GET_CREDENTIALS.getQuery(),
 				                                USER_AUTH_MAPPER, email);
 		populateUserRoles(user);
 		return user;
@@ -111,8 +111,8 @@ public class UserRepositoryJDBC {
 		/* With Cascade deletion in ROLE_USERS table */
 		return (jdbcTemplate.update(USER_DELETE.getQuery(), user.getId()) > 0);
 	}
-	
-	
+
+
 
 
 	/* Helper methods */
@@ -183,11 +183,11 @@ public class UserRepositoryJDBC {
 		}
 		return getHashedPassword(password);
 	}
-	
+
 	private String getHashedPassword(String password) {
 		return passwordEncoder.encode(password);
 	}
-	
+
 //	private boolean matches(String password, String hash) {
 //		return passwordEncoder.matches(password, hash);
 //	}

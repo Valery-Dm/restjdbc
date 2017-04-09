@@ -16,6 +16,8 @@ import dmv.spring.demo.model.entity.apidocs.RoleApiDocs;
  */
 public class Role implements RoleApiDocs {
 
+	private static final String ROLE_CANNOT_BE_NULL = "Role can't be null";
+
 	@NotNull
 	@Size(min=3, max=3)
 	private String shortName;
@@ -28,7 +30,7 @@ public class Role implements RoleApiDocs {
 
 	public Role() {}
 	public Role(Role role) {
-		Assert.notNull(role, "Role can't be null");
+		Assert.notNull(role, ROLE_CANNOT_BE_NULL);
 		setShortName(role.getShortName());
 		setFullName(role.getFullName());
 	}

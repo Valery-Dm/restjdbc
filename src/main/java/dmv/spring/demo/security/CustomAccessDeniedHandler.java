@@ -26,12 +26,12 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 	 * @see org.springframework.security.web.access.AccessDeniedHandler#handle(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.springframework.security.access.AccessDeniedException)
 	 */
 	@Override
-	public void handle(HttpServletRequest request, 
+	public void handle(HttpServletRequest request,
 			           HttpServletResponse response,
-			           AccessDeniedException accessDeniedException) 
+			           AccessDeniedException accessDeniedException)
 			        		   throws IOException, ServletException {
 		ObjectMapper mapper = new ObjectMapper();
-		HttpServletResponse httpResponse = (HttpServletResponse) response;
+		HttpServletResponse httpResponse = response;
 		httpResponse.setContentType(MediaType.APPLICATION_JSON_UTF8.toString());
 		httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
 	    ErrorInfo info = new ErrorInfo(request.getRequestURI(), accessDeniedException);

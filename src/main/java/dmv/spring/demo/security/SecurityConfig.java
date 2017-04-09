@@ -19,18 +19,18 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	
+
 	@Autowired
 	private AuthenticationEntryPoint customAuthenticationEntryPoint;
-	
+
 	@Autowired
 	private AccessDeniedHandler customAccessDeniedHandler;
-	
+
 	@Bean
 	public PasswordEncoder getPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	@Bean
 	@Autowired
 	public DaoAuthenticationProvider getAuthenticationProvider(

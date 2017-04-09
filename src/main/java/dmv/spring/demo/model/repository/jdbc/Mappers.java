@@ -44,7 +44,7 @@ public class Mappers {
 				return user;
 			};
 
-	public static final RowMapper<User> USER_AUTH_MAPPER = 
+	public static final RowMapper<User> USER_AUTH_MAPPER =
 			(resultSet, rowNum) -> {
 				User user = new User();
 				user.setId(resultSet.getLong(1));

@@ -18,7 +18,7 @@ import dmv.spring.demo.model.repository.UserRepository;
  */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-	
+
 	@Autowired
 	private UserRepository userRepository;
 
