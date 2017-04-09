@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
+import dmv.spring.demo.model.exceptions.AccessDataBaseException;
 import dmv.spring.demo.model.exceptions.EntityAlreadyExistsException;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 
@@ -30,10 +32,11 @@ import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 @RestControllerAdvice
 public class ExceptionHandlers {
 
-	@ExceptionHandler(EntityDoesNotExistException.class)
+	@ExceptionHandler({ EntityDoesNotExistException.class,
+		                NoHandlerFoundException.class })
 	@ResponseStatus(NOT_FOUND)
 	public @ResponseBody ErrorInfo notFound(HttpServletRequest req,
-			                                EntityDoesNotExistException ex) {
+			                                Exception ex) {
 		return new ErrorInfo(req.getRequestURI(), ex);
 	}
 
@@ -45,15 +48,28 @@ public class ExceptionHandlers {
 	}
 
 	/*
-	 * SQL connection problems mostly
+	 * SQL connection problems 
 	 */
-	@ExceptionHandler(SQLException.class)
+	@ExceptionHandler({ AccessDataBaseException.class, 
+		                SQLException.class })
 	@ResponseStatus(INTERNAL_SERVER_ERROR)
-	public @ResponseBody ErrorInfo sqlErrors(HttpServletRequest req,
-			                                 SQLException ex) {
-		return new ErrorInfo(req.getRequestURI(), ex);
+	public @ResponseBody ErrorInfo sqlErrors(HttpServletRequest req) {
+		return new ErrorInfo(req.getRequestURI(), "We have Database problems. Please try again later");
 	}
 
+	/*
+	 * We are not exposing internal errors
+	 */
+	@ExceptionHandler(Exception.class)
+	@ResponseStatus(INTERNAL_SERVER_ERROR)
+	public @ResponseBody ErrorInfo otherErrors(HttpServletRequest req) {
+		return new ErrorInfo(req.getRequestURI(), "Something wrong has happened. Please try again later");
+	}
+
+	/*
+	 * Badly formatted HTTP requests may throw IllegalArgumentException
+	 * (This is not for my exceptions - those mean bugs, as they should do)
+	 */
 	@ExceptionHandler(IllegalArgumentException.class)
 	@ResponseStatus(BAD_REQUEST)
 	public @ResponseBody ErrorInfo badRequest(HttpServletRequest req,
@@ -73,7 +89,7 @@ public class ExceptionHandlers {
 	 */
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	@ResponseStatus(BAD_REQUEST)
-	public @ResponseBody ErrorInfo methodArgumentNotValidException(HttpServletRequest req,
+	public @ResponseBody ErrorInfo methodArgumentNotValid(HttpServletRequest req,
                                                    MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
         List<FieldError> fieldErrors = result.getFieldErrors();
