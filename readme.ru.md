@@ -1,8 +1,6 @@
 ## Пользовательский Restful веб-сервис
-Используемые технологии: Spring Boot (on Tomcat), Spring REST, JDBC, 
-MySQL (версия 5.7), Java (версия 1.8)
-
-Пока не применены: Spring Security 
+Используемые технологии: Spring Boot (on Tomcat), Spring Security, Spring REST, 
+JDBC, MySQL (версия 5.7), Java (версия 1.8)
 
 ### Описание задания:
 Спроектировать REST веб-сервис на Spring, выполняющий следующие операции:
@@ -55,3 +53,19 @@ Swagger UI
 
 Swagger REST
 > http://localhost:8080/v2/api-docs
+
+#### Используется Авторизация HTTP Basic:
+
+Каждая операция должна выполняться от имени пользователя с правами Администратора.
+
+Для Swagger UI будет открыто стандартное для браузера окно ввода пароля.
+Для Postman (Chrome плагин) - на вкладке 'Authorization', выберите 'Basic Auth'
+в поле 'Type' и введите следующее:
+
+Username:
+> demo.admin@spring.demo
+
+Password:
+> 123456
+
+В дальнейшем можете создать своего пользователя с ADM ролью.

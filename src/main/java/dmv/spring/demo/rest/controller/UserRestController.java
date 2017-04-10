@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +54,7 @@ public class UserRestController implements UserRestApiDocs {
 
 	@Override
 	@GetMapping
-	public ResponseEntity<UserDTO> getUserByEmail(@RequestParam @Valid String email)
+	public ResponseEntity<UserDTO> getUserByEmail(@RequestParam @NotNull String email)
 			                                      throws UnsupportedEncodingException {
 
 		User user = userRepository.findByEmail(decode(email, "UTF-8"));

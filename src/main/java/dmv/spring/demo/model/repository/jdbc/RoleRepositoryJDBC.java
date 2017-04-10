@@ -48,7 +48,7 @@ public class RoleRepositoryJDBC implements RoleRepository {
 
 	private static final String ROLE_NULL = "Can't find Role 'null'";
 
-	private static final Logger logger = getLogger(RoleRepositoryJDBC.class);
+	private final Logger logger = getLogger(RoleRepositoryJDBC.class);
 
 	/*
 	 * There are just three Roles available.
@@ -72,7 +72,6 @@ public class RoleRepositoryJDBC implements RoleRepository {
 	public Role findByShortName(String shortName) {
 		Assert.notNull(shortName, ROLE_NULL);
 		shortName = shortName.toUpperCase();
-		boolean debug = logger.isDebugEnabled();
 
 		Role role = cache.get(shortName);
 		if (role == null) {
@@ -98,11 +97,11 @@ public class RoleRepositoryJDBC implements RoleRepository {
 					if (role == null)
 						throw new EntityDoesNotExistException("Role " + shortName + " does not exist");
 					cache.put(shortName, role);
-					if (debug) logger.debug("Role " + shortName + " has been added to cache");
+					logger.debug("Role {} has been added to cache", shortName);
 				}
 			}
 		}
-		if (debug) logger.debug("Role " + shortName + " has been supplied from findByShortName() method");
+		logger.debug("Role {} has been supplied from findByShortName() method", shortName);
 		return role.copy();
 	}
 
@@ -114,7 +113,6 @@ public class RoleRepositoryJDBC implements RoleRepository {
 	public Set<User> getUsers(Role role) {
 		Assert.notNull(role, USERS_WITH_ROLE_NULL);
 		Assert.notNull(role.getShortName(), SHORTNAME_NULL);
-		boolean debug = logger.isDebugEnabled();
 
 		Set<User> users = new HashSet<>();
 		try (Connection connection = getConnection();
@@ -131,7 +129,7 @@ public class RoleRepositoryJDBC implements RoleRepository {
 			logger.error(msg, e);
 			throw new AccessDataBaseException(msg, e);
 		}
-		if (debug) logger.debug("getUsers(role) successfully returned Set of users");
+		logger.debug("getUsers(role) successfully returned Set of users");
 		return users;
 	}
 

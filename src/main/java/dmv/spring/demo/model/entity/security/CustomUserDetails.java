@@ -22,7 +22,7 @@ import dmv.spring.demo.model.entity.User;
  */
 public class CustomUserDetails extends User implements UserDetails {
 
-	private static final Logger logger = getLogger(CustomUserDetails.class);
+	private final Logger logger = getLogger(CustomUserDetails.class);
 
 	private static final String NULL_NOT_SUPPORTED = "Null arguments are not supported here";
 
@@ -46,8 +46,7 @@ public class CustomUserDetails extends User implements UserDetails {
 								      .map(role -> new CustomGrantedAuthority(role))
 								      .sorted()
 								      .collect(Collectors.toList());
-		if (logger.isDebugEnabled())
-			logger.debug(user + " was passed to CustomUserDetails constructor");
+		logger.debug("{} was passed to CustomUserDetails constructor", user);
 	}
 
 	/**
@@ -68,8 +67,7 @@ public class CustomUserDetails extends User implements UserDetails {
 		 * GrantedAuthorities at this level.
 		 */
 		authorities = Arrays.asList(new CustomGrantedAuthority(roleName));
-		if (logger.isDebugEnabled())
-			logger.debug(email + " was passed to CustomUserDetails constructor");
+		logger.debug("User {} was passed to CustomUserDetails constructor", email);
 	}
 
 	/* (non-Javadoc)

@@ -36,7 +36,7 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 
 	private static final String ID_NULL = "User's id can't be 'null'";
 
-	private static final Logger logger = getLogger(UserRepositoryExceptionAdapter.class);
+	private final Logger logger = getLogger(UserRepositoryExceptionAdapter.class);
 
     private final UserRepositoryJDBC userRepository;
 
@@ -49,17 +49,14 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 	@Transactional(readOnly=true)
 	public User findById(Long id) {
 		Assert.notNull(id, ID_NULL);
-		boolean debug = logger.isDebugEnabled();
 		try {
 
 			User user = userRepository.findById(id);
-			if (debug)
-				logger.debug("User " + id + " was found in DB");
+			logger.debug("User {} was found in DB", id);
 			return user;
 
 		} catch (EmptyResultDataAccessException e) {
-			if (debug)
-				logger.debug("User " + id + " was not found in DB");
+			logger.debug("User {} was not found in DB", id);
 			throw new EntityDoesNotExistException("User with id " + id + " does not exist");
 		} catch (Exception e) {
 			String msg = "There was a lookup for user with id " + id
@@ -73,17 +70,14 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 	@Transactional(readOnly=true)
 	public User findByEmail(String email) {
 		Assert.notNull(email, EMAIL_NULL);
-		boolean debug = logger.isDebugEnabled();
 		try {
 
 			User user = userRepository.findByEmail(email);
-			if (debug)
-				logger.debug("User " + email + " was found in DB");
+			logger.debug("User {} was found in DB", email);
 			return user;
 
 		} catch (EmptyResultDataAccessException e) {
-			if (debug)
-				logger.debug("User " + email + " was not found in DB");
+			logger.debug("User {} was not found in DB", email);
 			throw new EntityDoesNotExistException("User " + email + " does not exist");
 		} catch (Exception e) {
 			String msg = "There was a lookup for user " + email
@@ -97,17 +91,14 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 	@Transactional(readOnly=true)
 	public User getCredentials(String email) {
 		Assert.notNull(email, EMAIL_NULL);
-		boolean debug = logger.isDebugEnabled();
 		try {
 
 			User user = userRepository.getCredentials(email);
-			if (debug)
-				logger.debug("User " + email + " credentials was found in DB");
+			logger.debug("User {} credentials was found in DB", email);
 			return user;
 
 		} catch (EmptyResultDataAccessException e) {
-			if (debug)
-				logger.debug("User " + email + " credentials was not found in DB");
+			logger.debug("User {} credentials was not found in DB", email);
 			throw new EntityDoesNotExistException("User " + email + " does not exist");
 		} catch (Exception e) {
 			String msg = "There was a lookup for user " + email
@@ -120,20 +111,19 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 	@Override
 	public User create(User user) {
 		Assert.notNull(user, USER_NULL);
-		boolean debug = logger.isDebugEnabled();
 		try {
 
 			User createdUser = userRepository.create(user);
-			if (debug) logger.info("User " + createdUser.getEmail() + " was added to DB");
+			logger.debug("User {} was added to DB", createdUser.getEmail());
 			return createdUser;
 
 		} catch(DuplicateKeyException e) {
 			String msg = "User " + user.getEmail() + " already exists in DB";
-			if (debug) logger.info(msg);
+			logger.debug(msg);
 			throw new EntityAlreadyExistsException(msg);
 		} catch (DataIntegrityViolationException e) {
 			String msg = "User " + user.getEmail() + " has wrong information";
-			if (debug) logger.info(msg);
+			logger.debug(msg);
 			throw new IllegalArgumentException(msg, e);
 		} catch (Exception e) {
 			String msg = "There was an attempt to insert " + user.getEmail()
@@ -147,20 +137,19 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 	public User update(User user) {
 		Assert.notNull(user, USER_NULL);
 		Assert.notNull(user.getId(), ID_NULL);
-		boolean debug = logger.isDebugEnabled();
 		try {
 
 			User updatedUser = userRepository.update(user);
-			if (debug) logger.info("User " + updatedUser.getId() + " was updated in DB");
+			logger.debug("User {} was updated in DB", updatedUser.getId());
 			return updatedUser;
 
 		} catch (EmptyResultDataAccessException e) {
 			String msg = "User " + user.getId() + " does not exist";
-			if (debug) logger.info(msg);
+			logger.debug(msg);
 			throw new EntityDoesNotExistException(msg);
 		} catch (DataIntegrityViolationException e) {
 			String msg = "User " + user.getId() + " brings wrong information for update";
-			if (debug) logger.info(msg);
+			logger.debug(msg);
 			throw new IllegalArgumentException(msg, e);
 		} catch (Exception e) {
 			String msg = "There was an attempt to update " + user.getId()
@@ -174,7 +163,6 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 	public void delete(User user) {
 		Assert.notNull(user, USER_NULL);
 		Assert.notNull(user.getId(), ID_NULL);
-		boolean debug = logger.isDebugEnabled();
 		boolean deleted = false;
 		try {
 
@@ -188,10 +176,9 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
 		}
 		if (!deleted) {
 			String msg = "User " + user.getId() + " does not exist";
-			if (debug) logger.info(msg);
+			logger.debug(msg);
 			throw new EntityDoesNotExistException(msg);
 		}
-		if (debug)
-			logger.info("User " + user.getId() + " was removed from DB");
+		logger.debug("User {} was removed from DB", user.getId());
 	}
 }

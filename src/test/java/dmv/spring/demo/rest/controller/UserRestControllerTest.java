@@ -5,7 +5,6 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
@@ -13,13 +12,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.web.util.UriUtils.encode;
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,24 +31,22 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.exceptions.EntityAlreadyExistsException;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 import dmv.spring.demo.model.repository.UserRepository;
+import dmv.spring.demo.rest.TestHelpers;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @WithMockUser(username = "admin", authorities = { "ADM", "USR" })
-public class UserRestControllerTest {
-
-	private static final String MAP = "/rest/users/";
+public class UserRestControllerTest implements TestHelpers {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -81,11 +75,7 @@ public class UserRestControllerTest {
 	@Test
 	public void getUserById() throws Exception {
 		String selfLink = buildURL(userWithRoles.getId());
-		mockMvc.perform(get(selfLink)
-				       .accept(APPLICATION_JSON))
-		       .andExpect(status().isOk())
-		       .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-		       .andDo(print())
+		perform(get(selfLink), status().isOk())
 		       .andExpect(jsonPath("$.email", is(userWithRoles.getEmail())))
 		       .andExpect(jsonPath("$.firstName", is(userWithRoles.getFirstName())))
 		       .andExpect(jsonPath("$._links[*].href", hasItem(endsWith(selfLink))));
@@ -94,21 +84,13 @@ public class UserRestControllerTest {
 	@Test
 	public void getNotExistedUserById() throws Exception {
 		String selfLink = buildURL(userNotExisted.getId());
-		mockMvc.perform(get(selfLink)
-				       .accept(APPLICATION_JSON))
-		       .andExpect(status().isNotFound())
-		       .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-		       .andDo(print());
+		perform(get(selfLink), status().isNotFound());
 	}
 
 	@Test
 	public void getUserByEmail() throws Exception {
 		String selfLink = buildURL(userWithRoles.getId());
-		mockMvc.perform(get(buildURL(userWithRoles.getEmail()))
-				       .accept(APPLICATION_JSON))
-		       .andExpect(status().isOk())
-		       .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-		       .andDo(print())
+		perform(get(buildURL(userWithRoles.getEmail())), status().isOk())
 		       .andExpect(jsonPath("$.email", is(userWithRoles.getEmail())))
 		       .andExpect(jsonPath("$.firstName", is(userWithRoles.getFirstName())))
 		       .andExpect(jsonPath("$._links[*].href", hasItem(endsWith(selfLink))));
@@ -116,110 +98,52 @@ public class UserRestControllerTest {
 
 	@Test
 	public void getNotExistedUserByEmail() throws Exception {
-		mockMvc.perform(get(buildURL(userNotExisted.getEmail()))
-				       .accept(APPLICATION_JSON))
-		       .andExpect(status().isNotFound())
-		       .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-		       .andDo(print());
+		perform(get(buildURL(userNotExisted.getEmail())), status().isNotFound());
 	}
 
 	@Test
 	public void deleteUser() throws Exception {
-		mockMvc.perform(delete(buildURL(userWithRoles.getId()))
-				       .accept(APPLICATION_JSON))
-		       .andExpect(status().isNoContent())
-		       .andDo(print());
+		performNoContent(delete(buildURL(userWithRoles.getId())), status().isNoContent());
 	}
 
 	@Test
 	public void deleteNotExistedUser() throws Exception {
-		mockMvc.perform(delete(buildURL(userNotExisted.getId()))
-				       .accept(APPLICATION_JSON))
-		       .andExpect(status().isNotFound())
-		       .andDo(print());
+		performNoContent(delete(buildURL(userNotExisted.getId())), status().isNotFound());
 	}
 
 	@Test
 	public void updateUser() throws Exception {
 		when(userRepository.update(any(User.class)))
 		.thenReturn(userUpdated);
-		mockMvc.perform(put(buildURL(userWithRoles.getId()))
-				       .accept(APPLICATION_JSON)
-				       .contentType(APPLICATION_JSON)
-				       .content(createJson(userUpdated)))
-		       .andExpect(status().isCreated())
-		       .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-		       .andDo(print());
+		performWithContent(put(buildURL(userWithRoles.getId())),
+				status().isCreated(), prepareJson(userUpdated));
 	}
 
 	@Test
 	public void updateNotExistedUser() throws Exception {
 		when(userRepository.update(any(User.class)))
 		.thenThrow(new EntityDoesNotExistException());
-		mockMvc.perform(put(buildURL(userNotExisted.getId()))
-				       .accept(APPLICATION_JSON)
-				       .contentType(APPLICATION_JSON)
-				       .content(createJson(userNotExisted)))
-		       .andExpect(status().isNotFound())
-		       .andDo(print());
+		performWithContent(put(buildURL(userNotExisted.getId())),
+				status().isNotFound(), prepareJson(userNotExisted));
 	}
 
 	@Test
 	public void createNewUser() throws Exception {
 		when(userRepository.create(any(User.class)))
 		.thenReturn(userNotExisted);
-		mockMvc.perform(post(buildURL(""))
-				       .accept(APPLICATION_JSON)
-				       .contentType(APPLICATION_JSON)
-				       .content(createJson(userNotExisted)))
-		       .andExpect(status().isCreated())
-		       .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-		       .andDo(print());
-	}
-
-	@Test
-	public void createNewUserIncomplete() throws Exception {
-		doThrow(MethodArgumentNotValidException.class)
-		.when(userRepository).create(any(User.class));
-		mockMvc.perform(post(buildURL(""))
-				       .accept(APPLICATION_JSON)
-				       .contentType(APPLICATION_JSON)
-				       .content(createJson(userNotExisted)))
-		       .andExpect(status().isBadRequest())
-		       .andDo(print());
+		performWithContent(post(buildURL("")),
+				status().isCreated(), prepareJson(userNotExisted));
 	}
 
 	@Test
 	public void createExistedUser() throws Exception {
 		when(userRepository.create(any(User.class)))
 		.thenThrow(new EntityAlreadyExistsException("User is already there"));
-		mockMvc.perform(post(buildURL(""))
-				       .accept(APPLICATION_JSON)
-				       .contentType(APPLICATION_JSON)
-				       .content(createJson(userUpdated)))
-		       .andExpect(status().isConflict())
-		       .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-		       .andDo(print());
+		performWithContent(post(buildURL("")),
+				status().isConflict(), prepareJson(userUpdated));
 	}
 
 	/*     Helper methods     */
-
-	private String buildURL(Long id) {
-		return MAP + id;
-	}
-
-	private String buildURL(String email) throws UnsupportedEncodingException {
-		return MAP + "?email=" + encodeEmail(email);
-	}
-
-	private String encodeEmail(String email) throws UnsupportedEncodingException {
-		return encode(email, "UTF-8");
-	}
-
-	private String createJson(User user) throws JsonProcessingException {
-		ObjectMapper mapper = new ObjectMapper();
-		return mapper.writeValueAsString(user);
-	}
 
 	private static User mockUser(long id) {
 		User user = new User();
@@ -228,6 +152,30 @@ public class UserRestControllerTest {
 		user.setFirstName("Name" + id);
 		user.setLastName("Surname" + id);
 		return user;
+	}
+
+	private ResultActions perform(MockHttpServletRequestBuilder request,
+			                      ResultMatcher status) throws Exception {
+		return mockMvc.perform(request.accept(APPLICATION_JSON))
+					//.andDo(print())
+					.andExpect(status)
+				    .andExpect(content().contentType(APPLICATION_JSON_UTF8));
+	}
+
+	private ResultActions performWithContent(MockHttpServletRequestBuilder request,
+			ResultMatcher status, String content) throws Exception {
+		return mockMvc.perform(request.accept(APPLICATION_JSON)
+				                      .contentType(APPLICATION_JSON)
+			                          .content(content))
+				//.andDo(print())
+				.andExpect(status);
+	}
+
+	private ResultActions performNoContent(MockHttpServletRequestBuilder request,
+			ResultMatcher status) throws Exception {
+		return mockMvc.perform(request.accept(APPLICATION_JSON))
+				//.andDo(print())
+				.andExpect(status);
 	}
 
 	private static void createUsers() {

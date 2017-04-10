@@ -19,7 +19,7 @@ public class SQLResourceReader {
 
 	public static final SQLResourceReader READER = new SQLResourceReader();
 
-	private static final Logger logger = getLogger(SQLResourceReader.class);
+	private final Logger logger = getLogger(SQLResourceReader.class);
 
 	public String readSQLFile(String filename) {
 		String query = null;

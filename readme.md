@@ -1,8 +1,6 @@
 ## User's directory Restful web-service
-Technologies used: Spring Boot (on Tomcat), Spring REST, JDBC, 
-MySQL (vesrion 5.7), Java (version 1.8)
-
-Not yet implemented: Spring Security 
+Technologies used: Spring Boot (on Tomcat), Spring Security, Spring REST, 
+JDBC, MySQL (vesrion 5.7), Java (version 1.8)
 
 ### Initial task:
 Create REST service on Spring with following operations:
@@ -54,3 +52,19 @@ Swagger UI
 
 Swagger REST
 > http://localhost:8080/v2/api-docs
+
+#### HTTP Basic Authorization is implemented:
+
+Every operation must be done by the user with Administrator role.
+
+For Swagger UI there will be a standard browser's login window.
+In Postman (Chrome's plugin) - on 'Authorization' tab, select 'Basic Auth'
+for the field 'Type' and then enter the following:
+
+Username:
+> demo.admin@spring.demo
+
+Password:
+> 123456
+
+You may create your own user with ADM role granted with the same result.

@@ -15,7 +15,7 @@ import dmv.spring.demo.model.entity.Role;
 public class CustomGrantedAuthority extends Role
         implements GrantedAuthority, Comparable<CustomGrantedAuthority> {
 
-	private static final Logger logger = getLogger(CustomGrantedAuthority.class);
+	private final Logger logger = getLogger(CustomGrantedAuthority.class);
 
 	private static final String SHORT_NAME_CANNOT_BE_NULL = "Short name cannot be null";
 
@@ -30,8 +30,7 @@ public class CustomGrantedAuthority extends Role
 	public CustomGrantedAuthority(String shortName) {
 		Assert.notNull(shortName, SHORT_NAME_CANNOT_BE_NULL);
 		setShortName(shortName);
-		if (logger.isDebugEnabled())
-			logger.debug("role " + shortName + " was passed to CustomGrantedAuthority constructor");
+		logger.debug("role {} was passed to CustomGrantedAuthority constructor", shortName);
 	}
 
 	/**
@@ -42,8 +41,7 @@ public class CustomGrantedAuthority extends Role
 	public CustomGrantedAuthority(Role role) {
 		super(role);
 		Assert.notNull(getShortName(), SHORT_NAME_CANNOT_BE_NULL);
-		if (logger.isDebugEnabled())
-			logger.debug(role + " was passed to CustomGrantedAuthority constructor");
+		logger.debug("{} was passed to CustomGrantedAuthority constructor",role);
 	}
 
 	// Natural ordering is needed for GrantedAuthorities collection.

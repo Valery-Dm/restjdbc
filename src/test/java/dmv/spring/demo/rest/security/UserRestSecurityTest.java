@@ -3,7 +3,6 @@ package dmv.spring.demo.rest.security;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -21,21 +20,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import dmv.spring.demo.model.entity.User;
-import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 import dmv.spring.demo.model.repository.UserRepository;
+import dmv.spring.demo.rest.TestHelpers;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public abstract class UserRestSecurityTest {
+public abstract class UserRestSecurityTest implements TestHelpers {
 
-	private static final String MAP = "/rest/users";
-	private static final String USER_EMAIL = "test.user@demo";
-	private static final String USER_EMAIL_QUERY = "/?email=" + USER_EMAIL;
 	private Long userId;
 	private User user;
 
@@ -51,24 +44,14 @@ public abstract class UserRestSecurityTest {
 
 	@Before
 	public void setUp() {
-		user = new User();
-		user.setEmail(USER_EMAIL);
-		user.setFirstName("test");
-		user.setLastName("test");
+		user = prepareUser();
 		user = repository.create(user);
 		userId = user.getId();
 	}
 
 	@After
 	public void cleanUp() {
-		try {
-			repository.delete(
-					repository.findByEmail(USER_EMAIL));
-		} catch (EntityDoesNotExistException e) {
-			// we are good
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		deleteUser(repository);
 	}
 
 	/*
@@ -79,49 +62,52 @@ public abstract class UserRestSecurityTest {
 	 */
 
 	@Test
+	public void getRole() throws Exception {
+		performWith(createGetRequest(MAP_ROLES + USR_ROLE));
+	}
+
+	@Test
+	public void getRoleUsers() throws Exception {
+		performWith(createGetRequest(MAP_ROLES + USR_ROLE_USERS));
+	}
+
+	@Test
 	public void getUserById() throws Exception {
-		performWith(createGetRequest("/" + userId));
+		performWith(createGetRequest(MAP_USERS + "/" + userId));
 	}
 
 	@Test
 	public void getUserByEmail() throws Exception {
-		performWith(createGetRequest(USER_EMAIL_QUERY));
+		performWith(createGetRequest(MAP_USERS + USER_EMAIL_QUERY));
 	}
 
 	@Test
 	public void createUser() throws Exception {
 		// Make sure user does not exist
 		cleanUp();
-		performWith(post(MAP)
+		performWith(post(MAP_USERS)
 		        .contentType(APPLICATION_JSON)
-				.content(createJson(user))
+				.content(prepareJson(user))
 				.accept(APPLICATION_JSON));
 	}
 
 	@Test
 	public void updateUser() throws Exception {
 		user.setFirstName("modified");
-		performWith(put(MAP + "/" + userId)
+		performWith(put(MAP_USERS + "/" + userId)
 		        .contentType(APPLICATION_JSON)
-				.content(createJson(user))
+				.content(prepareJson(user))
 				.accept(APPLICATION_JSON));
 	}
 
 	@Test
 	public void deleteUser() throws Exception {
-		mockMvc.perform(delete(MAP + "/" + userId))
+		mockMvc.perform(delete(MAP_USERS + "/" + userId))
 		       .andDo(print())
 		       .andExpect(getStatus());
 	}
 
-	private String createJson(User user) throws JsonProcessingException {
-		ObjectMapper mapper = new ObjectMapper();
-		return mapper.writeValueAsString(user);
-	}
-
-	private MockHttpServletRequestBuilder createGetRequest(String path) {
-		return get(MAP + path).accept(APPLICATION_JSON);
-	}
+	/* Helper methods */
 
 	private void performWith(MockHttpServletRequestBuilder request) throws Exception {
 		mockMvc.perform(request)
