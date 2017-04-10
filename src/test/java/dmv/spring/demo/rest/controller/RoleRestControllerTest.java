@@ -6,13 +6,12 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,28 +26,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 
 import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 import dmv.spring.demo.model.repository.RoleRepository;
+import dmv.spring.demo.rest.TestHelpers;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @WithMockUser(username = "admin", authorities = { "ADM", "USR" })
-public class RoleRestControllerTest {
-
-	private static final String MAP = "/rest/roles/";
-	private static final String USERS = "/users";
-	private static final MediaType contentType =
-			new MediaType(APPLICATION_JSON.getType(),
-            APPLICATION_JSON.getSubtype(),
-            Charset.forName("utf8"));
+public class RoleRestControllerTest implements TestHelpers {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -86,49 +80,53 @@ public class RoleRestControllerTest {
 
 	private void checkGetRole(Role role) throws Exception {
 		Matcher<String> roleLink = endsWith("/" + role.getShortName());
-		mockMvc.perform(get(MAP + role.getShortName())
-				       .accept(APPLICATION_JSON))
-		       .andExpect(status().isOk())
-		       .andExpect(content().contentType(contentType))
-		       .andDo(print())
+		performGet(rolePath(role.getShortName()), status().isOk())
 		       .andExpect(jsonPath("$.shortName", is(role.getShortName())))
 		       .andExpect(jsonPath("$.fullName", is(role.getFullName())))
 		       .andExpect(jsonPath("$._links[*].href", hasItem(roleLink)));
 	}
-
+	
 	@Test
 	public void getAbsentRole() throws Exception {
-		mockMvc.perform(get(MAP + roleAbs.getShortName())
-			       .accept(APPLICATION_JSON))
-	       .andExpect(status().isNotFound())
-	       .andExpect(content().contentType(contentType))
-	       .andDo(print());
+		performGet(rolePath(roleAbs.getShortName()), status().isNotFound());
 	}
-
+	
 	@Test
 	public void getRoleUsers() throws Exception {
-		mockMvc.perform(get(MAP + roleAdm.getShortName() + USERS)
-			       .accept(APPLICATION_JSON))
-	       .andExpect(status().isOk())
-	       .andExpect(content().contentType(contentType))
-	       .andDo(print());
+		performGet(roleUsersPath(roleAdm.getShortName()), status().isOk());
 	}
 
 	@Test
 	public void getRoleUsersEmpty() throws Exception {
-		mockMvc.perform(get(MAP + roleDev.getShortName() + USERS)
-			       .accept(APPLICATION_JSON))
-		   .andExpect(status().isNoContent())
-	       .andDo(print());
+		performGetNoContent(roleUsersPath(roleDev.getShortName()), status().isNoContent());
 	}
 
 	@Test
 	public void getAbsentRoleUsers() throws Exception {
-		mockMvc.perform(get(MAP + roleAbs.getShortName() + USERS)
-			       .accept(APPLICATION_JSON))
-	       .andExpect(status().isNotFound())
-	       .andExpect(content().contentType(contentType))
-	       .andDo(print());
+		performGet(roleUsersPath(roleAbs.getShortName()), status().isNotFound());
+	}
+
+	/* Helper methods */
+	
+	private String roleUsersPath(String shortName) {
+		return MAP_ROLES + "/" + shortName + USERS;
+	}
+
+	private String rolePath(String shortName) {
+		return MAP_ROLES + "/" + shortName;
+	}
+
+	private ResultActions performGet(String path, ResultMatcher status) throws Exception {
+		return mockMvc.perform(get(path).accept(APPLICATION_JSON))
+				//.andDo(print())
+				.andExpect(status)
+			    .andExpect(content().contentType(APPLICATION_JSON_UTF8));
+	}
+
+	private ResultActions performGetNoContent(String path, ResultMatcher status) throws Exception {
+		return mockMvc.perform(get(path).accept(APPLICATION_JSON))
+				//.andDo(print())
+				.andExpect(status);
 	}
 
 	private void configureRepository() {

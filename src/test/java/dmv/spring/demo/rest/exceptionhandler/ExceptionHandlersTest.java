@@ -75,15 +75,6 @@ public class ExceptionHandlersTest implements TestHelpers {
 
 	@Test
 	public void noHandlerFound() {
-		/*
-		 * I have configuration setting
-		 * spring.mvc.throw-exception-if-no-handler-found=true
-		 *
-		 * And it seems working fine within mocked context,
-		 *
-		 * but on real system this exception is handled before
-		 * my ExceptionHandlers class
-		 */
 		perform(get("some/nonexisting/path"),
 				status().isNotFound(), "No handler found");
 	}
@@ -107,9 +98,6 @@ public class ExceptionHandlersTest implements TestHelpers {
 
 	@Test
 	public void wrongMediaType() {
-		when(userRepository.create(user))
-		.thenThrow(new EntityAlreadyExistsException(ERROR_MSG));
-
 		perform(post(MAP_USERS)
 				// media type not specified
 				.content(prepareJson(user)),

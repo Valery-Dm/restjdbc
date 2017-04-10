@@ -24,6 +24,7 @@ public interface TestHelpers {
 
 	static final String MAP_USERS = "/rest/users";
 	static final String MAP_ROLES = "/rest/roles";
+	static final String USERS = "/users";
 	static final String USR_ROLE = "/USR";
 	static final String USR_ROLE_USERS = "/USR/users";
 	static final String USER_EMAIL = "test.user@demo";
