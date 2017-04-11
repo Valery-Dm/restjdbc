@@ -37,7 +37,7 @@ Create the working schema with tables using
 Create new user for this app using 
 [this file](src/main/resources/sql/db_user_create.sql)
 
-Insert demo entries using file 
+Insert demo entries using  
 [this file](src/main/resources/sql/demo_entries_insert.sql)
 
 Download jar file (latest version) from root directory.
@@ -48,10 +48,10 @@ Then open browser.
 Swagger documentation for REST API is available at:
 
 Swagger UI
-> http://localhost:8080/swagger-ui.html
+> https://localhost:8443/swagger-ui.html
 
 Swagger REST
-> http://localhost:8080/v2/api-docs
+> https://localhost:8443/v2/api-docs
 
 #### HTTP Basic Authorization is implemented:
 

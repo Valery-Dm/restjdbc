@@ -18,7 +18,7 @@ import io.swagger.annotations.ApiResponses;
  */
 public interface RoleRestApiDocs {
 
-	@ApiOperation(value="Find role by its short name", notes="The short name is a special (and unique) acronym for each role.")
+	@ApiOperation(value="Find role by its short name", notes="The short name is a special (and unique) acronym for each role. Right now, there are three predefined roles: ADM for Administrator, USR for User, DEV for Developer")
 	@ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of role", response = RoleDTO.class),
             @ApiResponse(code = 404, message = "Role with given name does not exist") })

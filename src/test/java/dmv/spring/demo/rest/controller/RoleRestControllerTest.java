@@ -85,12 +85,12 @@ public class RoleRestControllerTest implements TestHelpers {
 		       .andExpect(jsonPath("$.fullName", is(role.getFullName())))
 		       .andExpect(jsonPath("$._links[*].href", hasItem(roleLink)));
 	}
-	
+
 	@Test
 	public void getAbsentRole() throws Exception {
 		performGet(rolePath(roleAbs.getShortName()), status().isNotFound());
 	}
-	
+
 	@Test
 	public void getRoleUsers() throws Exception {
 		performGet(roleUsersPath(roleAdm.getShortName()), status().isOk());
@@ -107,7 +107,7 @@ public class RoleRestControllerTest implements TestHelpers {
 	}
 
 	/* Helper methods */
-	
+
 	private String roleUsersPath(String shortName) {
 		return MAP_ROLES + "/" + shortName + USERS;
 	}

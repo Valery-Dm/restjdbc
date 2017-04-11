@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @PropertySource("classpath:UserRestController.properties")
 public class RestjdbcApplication {
 
-
 	public static void main(String[] args) {
 		SpringApplication.run(RestjdbcApplication.class, args);
 	}

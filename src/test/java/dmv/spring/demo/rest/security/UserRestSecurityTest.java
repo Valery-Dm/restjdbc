@@ -5,7 +5,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 import org.junit.After;
@@ -103,7 +102,7 @@ public abstract class UserRestSecurityTest implements TestHelpers {
 	@Test
 	public void deleteUser() throws Exception {
 		mockMvc.perform(delete(MAP_USERS + "/" + userId))
-		       .andDo(print())
+		       //.andDo(print())
 		       .andExpect(getStatus());
 	}
 
@@ -112,7 +111,7 @@ public abstract class UserRestSecurityTest implements TestHelpers {
 	private void performWith(MockHttpServletRequestBuilder request) throws Exception {
 		mockMvc.perform(request)
 	       .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-	       .andDo(print())
+	       //.andDo(print())
 	       .andExpect(getStatus());
 	}
 }

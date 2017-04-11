@@ -49,10 +49,10 @@ JDBC, MySQL (версия 5.7), Java (версия 1.8)
 Документация Swagger для REST API доступна по адресам:
 
 Swagger UI
-> http://localhost:8080/swagger-ui.html
+> https://localhost:8443/swagger-ui.html
 
 Swagger REST
-> http://localhost:8080/v2/api-docs
+> https://localhost:8443/v2/api-docs
 
 #### Используется Авторизация HTTP Basic:
 

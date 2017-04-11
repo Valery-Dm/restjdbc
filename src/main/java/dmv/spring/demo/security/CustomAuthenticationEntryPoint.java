@@ -32,7 +32,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 			            		 throws IOException, ServletException {
 		HttpServletResponse httpResponse = response;
 		httpResponse.addHeader("WWW-Authenticate", "Basic realm=\"Spring Security\"");
-		httpResponse.setContentType(MediaType.APPLICATION_JSON_UTF8.toString());
+		httpResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 		httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	    ErrorInfo info = new ErrorInfo(request.getRequestURI(), authException);
 	    ObjectMapper mapper = new ObjectMapper();
