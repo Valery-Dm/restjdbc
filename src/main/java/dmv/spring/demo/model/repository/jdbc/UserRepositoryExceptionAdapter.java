@@ -2,6 +2,8 @@ package dmv.spring.demo.model.repository.jdbc;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+import java.security.SecureRandom;
+
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -9,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -41,8 +44,10 @@ public class UserRepositoryExceptionAdapter implements UserRepository {
     private final UserRepositoryJDBC userRepository;
 
     @Autowired
-    public UserRepositoryExceptionAdapter(JdbcTemplate jdbcTemplate) {
-    	userRepository = new UserRepositoryJDBC(jdbcTemplate);
+    public UserRepositoryExceptionAdapter(JdbcTemplate jdbcTemplate,
+                                          PasswordEncoder passwordEncoder,
+                                          SecureRandom secureRandom) {
+    	userRepository = new UserRepositoryJDBC(jdbcTemplate, passwordEncoder, secureRandom);
     }
 
 	@Override

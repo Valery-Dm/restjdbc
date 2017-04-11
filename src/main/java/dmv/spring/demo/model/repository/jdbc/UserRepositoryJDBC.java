@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
@@ -28,15 +28,18 @@ import dmv.spring.demo.model.repository.UserRepository;
 public class UserRepositoryJDBC {
 
 	/* For password auto generation */
-	private final SecureRandom random = new SecureRandom();
+	private final SecureRandom random;
 	/* For password hashing */
-	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
+	private final PasswordEncoder passwordEncoder;
 	/* Spring helper class for JDBC queries */
 	private final JdbcTemplate jdbcTemplate;
 
-    public UserRepositoryJDBC(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public UserRepositoryJDBC(JdbcTemplate jdbcTemplate,
+    		                  PasswordEncoder passwordEncoder,
+    		                  SecureRandom random) {
+		this.jdbcTemplate = jdbcTemplate;
+		this.passwordEncoder = passwordEncoder;
+		this.random = random;
     }
 
     /**
@@ -187,10 +190,6 @@ public class UserRepositoryJDBC {
 	private String getHashedPassword(String password) {
 		return passwordEncoder.encode(password);
 	}
-
-//	private boolean matches(String password, String hash) {
-//		return passwordEncoder.matches(password, hash);
-//	}
 
 	private String generatePassword() {
 		return new BigInteger(130, random).toString(32);
