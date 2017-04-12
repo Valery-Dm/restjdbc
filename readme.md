@@ -1,4 +1,5 @@
-## User's directory Restful web-service
+## User's directory Restful web-service 
+#####[На Русском языке](readme.ru.md)
 Technologies used: Spring Boot (on Tomcat), Spring Security, Spring REST, 
 JDBC, MySQL (vesrion 5.7), Java (version 1.8)
 
@@ -67,4 +68,12 @@ Username:
 Password:
 > 123456
 
-You may create your own user with ADM role granted with the same result.
+#### Side note:
+The service works well with special REST clients applications (like Postman), but
+if you are using a browser there could be some problems with Basic Authorization
+mechanism. Browsers are too helpful in remembering user credentials, so for
+logout from one user account and login to the other you will probably need to 
+restart your browser (and even that may not be sufficient as browser can run 
+background processes and never actually restarts). 
+
+It is recommended to use browser's Incognito mode when interacting with the service.
