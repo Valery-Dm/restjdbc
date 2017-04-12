@@ -12,7 +12,7 @@ public enum RoleQueriesSQL {
 	private String query;
 
 	private RoleQueriesSQL(String filename) {
-		query= SQLResourceReader.READER.readSQLFile(filename);
+		query= SQLResourceReader.READER.readSQLFile("role/" + filename);
 	}
 
 	public String getQuery() {

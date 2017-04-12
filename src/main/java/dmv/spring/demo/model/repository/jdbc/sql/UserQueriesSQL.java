@@ -21,7 +21,7 @@ public enum UserQueriesSQL {
 	private String query;
 
 	private UserQueriesSQL(String filename) {
-		query= SQLResourceReader.READER.readSQLFile(filename);
+		query= SQLResourceReader.READER.readSQLFile("user/" + filename);
 	}
 
 	public String getQuery() {
