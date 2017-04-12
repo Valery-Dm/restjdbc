@@ -29,23 +29,31 @@ User fields are:
 No ORM allowed for Persistence layer
 
 ### Usage:
-First, prepare local instance of MySQL database (available at localhost:3306).
+First, prepare local instance of MySQL database (available at http://localhost:3306).
 
+You should manually create the user that this Application will use for connection.
 
-Create the working schema with tables using 
-[this file](src/main/resources/sql/tables_create.sql)
+Run this [this script](src/main/resources/sql/db_user_create.sql) from within MySQL Workbench,
 
-Create new user for this app using 
-[this file](src/main/resources/sql/db_user_create.sql)
+OR type the following in the command line (copy after the prompt sign >):
 
-Insert demo entries using  
-[this file](src/main/resources/sql/demo_entries_insert.sql)
+```
+~> mysql -u root -p
+
+Enter password: type root's password
+
+mysql> CREATE USER 'restjdbc'@'localhost' IDENTIFIED BY 'aA123456'; GRANT ALL ON users_demo.* TO 'restjdbc'@'localhost'; exit;
+```
+
+Existing DB Schema `users_demo` will be dropped and created anew with all the 
+tables and demo entries on Application startup (this is a part of demonstration).
 
 Download jar file (latest version) from root directory.
-And run it from command line 
-> java -jar restjdbc-{version}.jar 
+And run it from command line:
 
-Then open browser.
+`~> java -jar restjdbc-{version}.jar` 
+
+Then open a browser.
 Swagger documentation for REST API is available at:
 
 Swagger UI
@@ -56,7 +64,7 @@ Swagger REST
 
 #### HTTP Basic Authorization is implemented:
 
-Every operation must be done by the user with Administrator role.
+Every operation must be done by the user with role `Administrator`.
 
 For Swagger UI there will be a standard browser's login window.
 In Postman (Chrome's plugin) - on 'Authorization' tab, select 'Basic Auth'

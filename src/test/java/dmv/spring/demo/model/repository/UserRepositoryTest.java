@@ -28,7 +28,6 @@ import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 public class UserRepositoryTest {
 
 	private User user;
-	private Long userId;
 	private String email;
 	private Set<Role> roles;
 	private Role usrRole;
@@ -42,11 +41,9 @@ public class UserRepositoryTest {
 
 	@Before
 	public void setUp() throws Exception {
-		userId = 1L;
 		email = "test.user@mail.address";
 
 		user = new User();
-		user.setId(userId);
 		user.setEmail(email);
 		user.setFirstName("First");
 		user.setLastName("Last");
@@ -87,7 +84,6 @@ public class UserRepositoryTest {
 		target.create(user);
 		found = target.findByEmail(user.getEmail());
 		assertNotNull("user is null", found);
-		assertThat(found.getId(), is(user.getId()));
 		assertThat("wrong email", found.getEmail(), is(user.getEmail()));
 		assertThat("wrong last name", found.getLastName(), is(user.getLastName()));
 
@@ -109,7 +105,6 @@ public class UserRepositoryTest {
 		target.create(user);
 		found = target.findById(user.getId());
 		assertNotNull("user is null", found);
-		assertThat(found.getId(), is(user.getId()));
 		assertThat("wrong email", found.getEmail(), is(user.getEmail()));
 		assertThat("wrong last name", found.getLastName(), is(user.getLastName()));
 		assertThat(found.getRoles(), is(user.getRoles()));
@@ -121,7 +116,6 @@ public class UserRepositoryTest {
 		target.create(user);
 		found = target.findByEmail(user.getEmail());
 		assertNotNull("user is null", found);
-		assertThat(found.getId(), is(user.getId()));
 		assertThat("wrong email", found.getEmail(), is(user.getEmail()));
 		assertThat("wrong last name", found.getFirstName(), is(user.getFirstName()));
 		assertThat(found.getRoles(), is(user.getRoles()));
@@ -414,6 +408,7 @@ public class UserRepositoryTest {
 	@Test
 	public void deleteNotExisted() {
 		exception.expect(EntityDoesNotExistException.class);
+		user.setId(-1L);
 		target.delete(user);
 	}
 
