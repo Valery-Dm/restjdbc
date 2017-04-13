@@ -1,4 +1,4 @@
-#####[На Русском языке](readme.ru.md)
+[На Русском языке](readme.ru.md)
 
 ## User's directory Restful web-service 
 
