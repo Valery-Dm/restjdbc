@@ -32,7 +32,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 			        		   throws IOException, ServletException {
 		ObjectMapper mapper = new ObjectMapper();
 		HttpServletResponse httpResponse = response;
-		httpResponse.setContentType(MediaType.APPLICATION_JSON_UTF8.toString());
+		httpResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 		httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
 	    ErrorInfo info = new ErrorInfo(request.getRequestURI(), accessDeniedException);
 	    mapper.writeValue(httpResponse.getOutputStream(), info);
