@@ -5,11 +5,11 @@
 
 	<groupId>dmv.spring.demo</groupId>
 	<artifactId>restjdbc</artifactId>
-	<version>1.0.8</version>
+	<version>1.1.0</version>
 	<packaging>jar</packaging>
 
 	<name>restjdbc</name>
-	<description>Demo project with Spring REST, JDBC</description>
+	<description>Demo project with Spring REST, JDBC - OpenShift delpoyed</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
