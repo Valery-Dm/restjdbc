@@ -64,8 +64,8 @@ Swagger UI
 Swagger REST
 > https://localhost:8443/v2/api-docs
 
-There will be a warning about untrusted certificate when first entering the site.
-The certificate is custom made, so it's normal behavior. Allow to continue.
+There will be a warning about untrusted certificate when entering the site first time.
+The certificate is custom made, so the behavior is expected. Allow to continue.
 
 To stop the server type Ctrl+C combination in terminal window or just close the terminal.
 

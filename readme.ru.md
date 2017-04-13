@@ -55,7 +55,7 @@ mysql> CREATE USER 'restjdbc'@'localhost' IDENTIFIED BY 'aA123456'; GRANT ALL ON
 Скачайте jar file (последней версии) из корневой директории.
 И запустите его из коммандной строки 
 
-`~> java -jar restjdbc-{version}.jar` 
+`~> java -jar restjdbc-{версия}.jar` 
 
 Затем откройте интернет браузер.
 Документация Swagger для REST API доступна по адресам:
