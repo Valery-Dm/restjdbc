@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author dmv
  */
-@Configuration
+//@Configuration
 public class TomcatHttpsConfig {
 
 	@Bean
