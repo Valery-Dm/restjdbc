@@ -5,6 +5,8 @@
 Technologies used: Spring Boot (on Tomcat), Spring Security, Spring REST, 
 JDBC, MySQL (vesrion 5.7), Java (version 1.8)
 
+... Adding OpenShift cartridge
+
 ### Initial task:
 Create REST service on Spring with following operations:
 - Create user
