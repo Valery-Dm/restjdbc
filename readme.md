@@ -1,5 +1,7 @@
-## User's directory Restful web-service 
 #####[На Русском языке](readme.ru.md)
+
+## User's directory Restful web-service 
+
 Technologies used: Spring Boot (on Tomcat), Spring Security, Spring REST, 
 JDBC, MySQL (vesrion 5.7), Java (version 1.8)
 
@@ -61,6 +63,11 @@ Swagger UI
 
 Swagger REST
 > https://localhost:8443/v2/api-docs
+
+There will be a warning about untrusted certificate when first entering the site.
+The certificate is custom made, so it's normal behavior. Allow to continue.
+
+To stop the server type Ctrl+C combination in terminal window or just close the terminal.
 
 #### HTTP Basic Authorization is implemented:
 
