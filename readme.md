@@ -5,6 +5,19 @@
 Technologies used: Spring Boot (on Tomcat), Spring Security, Spring REST, 
 JDBC, MySQL (vesrion 5.7), Java (version 1.8)
 
+Service is [available online.](http://restjdbc-va1ery.rhcloud.com/swagger-ui.html) 
+Hosted at OpenShift server. Online version run via http (premium account is required for SSL).
+
+See video examples of:
+
+[How to login as administrator](https://youtu.be/hfpowdVp9PU) and check 'get role' endpoint.
+
+[How to enter as user.](https://youtu.be/gw7YLq3aGcU) Operations will be restricted.
+
+[How to create a new user](https://youtu.be/D1isfiq7eXI) (logged in as administrator).
+
+Instructions on how to install a local copy are given below.
+
 ### Initial task:
 Create REST service on Spring with following operations:
 - Create user
@@ -30,12 +43,12 @@ User fields are:
 
 No ORM allowed for Persistence layer
 
-### Usage:
+### How to install locally:
 First, prepare local instance of MySQL database (available at http://localhost:3306).
 
 You should manually create the user that this Application will use for connection.
 
-Run this [this script](src/main/resources/sql/db_user_create.sql) from within MySQL Workbench,
+Run [this script](src/main/resources/sql/db_user_create.sql) from within MySQL Workbench,
 
 OR type the following in the command line (copy after the prompt sign >):
 
@@ -44,7 +57,7 @@ OR type the following in the command line (copy after the prompt sign >):
 
 Enter password: type root's password
 
-mysql> CREATE USER 'restjdbc'@'localhost' IDENTIFIED BY 'aA123456'; GRANT ALL ON users_demo.* TO 'restjdbc'@'localhost'; exit;
+mysql> CREATE USER 'restjdbc'@'localhost' IDENTIFIED BY 'aA123456'; GRANT ALL ON users_demo.* TO 'restjdbc'@'localhost'; FLUSH PRIVILEGES; exit;
 ```
 
 Existing DB Schema `users_demo` will be dropped and created anew with all the 
@@ -92,3 +105,12 @@ restart your browser (and even that may not be sufficient as browser can run
 background processes and never actually restarts). 
 
 It is recommended to use browser's Incognito mode when interacting with the service.
+
+The service that are hosted at OpenShift is not guaranteed to run all the time.
+
+As long as mutator methods are available freely through the RESTful endpoints there are
+some defencive restrictions applied:
+
+It is impossible to delete or mutate the default admin user with id 3.
+
+And the server will be restarted once a day reverting DB entries to their initial state.
