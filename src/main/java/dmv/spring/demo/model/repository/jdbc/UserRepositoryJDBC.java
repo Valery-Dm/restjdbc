@@ -26,6 +26,9 @@ import dmv.spring.demo.model.repository.UserRepository;
  * @author dmv
  */
 public class UserRepositoryJDBC {
+    
+    /* It is prohibit to alter this admin */
+    private static final int adminId = 3;
 
 	/* For password auto generation */
 	private final SecureRandom random;
@@ -92,6 +95,7 @@ public class UserRepositoryJDBC {
 	 * @see UserRepositoryExceptionAdapter#update(User)
 	 */
 	public User update(User user) {
+	    if (user.getId() == adminId) return user;
 		/*
 		 * Because REST 'update' operation is exposed on rest/users/{userId}
 		 * endpoint, therefore findById method is at high priority.
@@ -107,6 +111,7 @@ public class UserRepositoryJDBC {
 	 * @see UserRepositoryExceptionAdapter#delete(User)
 	 */
 	public boolean delete(User user) {
+        if (user.getId() == adminId) return false;
 		/*
 		 * Because REST 'delete' operation is exposed on rest/users/{userId}
 		 * endpoint, therefore user.getId() is used for identification

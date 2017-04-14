@@ -28,9 +28,6 @@ export PATH=$JAVA_HOME/bin:$PATH
 cd $OPENSHIFT_REPO_DIR
 
 $M2/mvn --version
-#$M2/mvn -s settings.xml clean install
-
-# if you get error then un comment the following line
 #$M2/mvn -s settings.xml package
 $M2/mvn -s settings.xml clean install -DskipTests
 
