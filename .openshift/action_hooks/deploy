@@ -27,8 +27,5 @@ export PATH=$JAVA_HOME/bin:$PATH
 
 cd $OPENSHIFT_REPO_DIR
 
-$M2/mvn --version
-#$M2/mvn -s settings.xml package
 $M2/mvn -s settings.xml clean install -DskipTests
 
-#nohup java -Xms384m -Xmx412m -jar target/*.jar --server.port=${OPENSHIFT_DIY_PORT} --server.address=${OPENSHIFT_DIY_IP} --spring.profiles.active=openshift &
