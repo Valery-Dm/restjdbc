@@ -13,8 +13,8 @@ import org.springframework.context.annotation.*;
  *
  * @author dmv
  */
-@Configuration
-@Profile("default")
+//@Configuration
+//@Profile("default")
 public class TomcatHttpsConfig {
 
 	@Bean
