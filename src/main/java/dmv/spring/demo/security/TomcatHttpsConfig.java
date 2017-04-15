@@ -13,8 +13,8 @@ import org.springframework.context.annotation.*;
  *
  * @author dmv
  */
-@Configuration
-@Profile("openshift")
+//@Configuration
+//@Profile("openshift")
 public class TomcatHttpsConfig {
 
 	@Bean
