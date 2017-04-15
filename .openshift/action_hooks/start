@@ -9,6 +9,6 @@ export PATH=$JAVA_HOME/bin:$PATH
 
 cd $OPENSHIFT_REPO_DIR
 
-nohup java -Xms384m -Xmx412m -jar -Dspring.profiles.active=openshift -Dserver.port=${OPENSHIFT_DIY_PORT} -Dserver.address=${OPENSHIFT_DIY_IP} $OPENSHIFT_REPO_DIR/target/*.jar >/dev/null 2>&1 &
+nohup java -jar -Dspring.profiles.active=openshift -Dserver.port=${OPENSHIFT_DIY_PORT} -Dserver.address=${OPENSHIFT_DIY_IP} $OPENSHIFT_REPO_DIR/target/*.jar >/dev/null 2>&1 &
 
 
