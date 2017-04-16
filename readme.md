@@ -5,14 +5,14 @@
 Technologies used: Spring Boot (on Tomcat), Spring Security, Spring REST, 
 JDBC, MySQL (vesrion 5.7), Java (version 1.8)
 
-Service is [available online.](http://restjdbc-va1ery.rhcloud.com/swagger-ui.html) 
+Service is [available online](http://restjdbc-va1ery.rhcloud.com/swagger-ui.html).
 Hosted at OpenShift server. Online version run via http (premium account is required for SSL).
 
 See video examples of:
 
 [How to login as administrator](https://youtu.be/hfpowdVp9PU) and check 'get role' endpoint.
 
-[How to enter as user.](https://youtu.be/gw7YLq3aGcU) Operations will be restricted.
+[How to enter as user](https://youtu.be/gw7YLq3aGcU). Operations will be restricted.
 
 [How to create a new user](https://youtu.be/D1isfiq7eXI) (logged in as administrator).
 
@@ -63,7 +63,7 @@ mysql> CREATE USER 'restjdbc'@'localhost' IDENTIFIED BY 'aA123456'; GRANT ALL ON
 Existing DB Schema `users_demo` will be dropped and created anew with all the 
 tables and demo entries on Application startup (this is a part of demonstration).
 
-Download jar file (latest version) from root directory.
+Download jar file (latest version) [here](https://www.dropbox.com/sh/e9fv82aeciuzuql/AABnFAJjeEOKMM4Tvv4Wtw08a?dl=0).
 And run it from command line:
 
 `~> java -jar restjdbc-{version}.jar` 
@@ -96,7 +96,7 @@ Username:
 Password:
 > 123456
 
-#### Side note:
+#### Side notes:
 The service works well with special REST clients applications (like Postman), but
 if you are using a browser there could be some problems with Basic Authorization
 mechanism. Browsers are too helpful in remembering user credentials, so for
