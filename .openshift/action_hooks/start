@@ -8,6 +8,7 @@ export JAVA_HOME=/etc/alternatives/java_sdk_1.8.0
 export PATH=$JAVA_HOME/bin:$PATH
 
 cd $OPENSHIFT_REPO_DIR
-nohup java -jar -Dspring.profiles.active=openshift -Dserver.port=${OPENSHIFT_DIY_PORT} -Dserver.address=${OPENSHIFT_DIY_IP} $OPENSHIFT_REPO_DIR/target/*.jar >/dev/null &
+nohup java -jar -Dspring.profiles.active=openshift -Dserver.port=${OPENSHIFT_DIY_PORT} -Dserver.address=${OPENSHIFT_DIY_IP} $OPENSHIFT_REPO_DIR/target/*.jar > 2>&1 &
+#>/dev/null &
 
 
