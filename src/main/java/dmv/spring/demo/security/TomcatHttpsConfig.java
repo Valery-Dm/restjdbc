@@ -18,7 +18,7 @@ import org.springframework.context.annotation.*;
 @Configuration
 @Profile("default")
 public class TomcatHttpsConfig {
-    
+
     private final Logger logger = LoggerFactory.getLogger(TomcatHttpsConfig.class);
 
 	@Bean

@@ -1,13 +1,11 @@
 package dmv.spring.demo.apidocs;
-import static com.google.common.collect.Lists.newArrayList;
 import static springfox.documentation.schema.AlternateTypeRules.newRule;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.async.DeferredResult;
 
@@ -16,14 +14,10 @@ import com.fasterxml.classmate.TypeResolver;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.schema.WildcardType;
-import springfox.documentation.service.ApiKey;
-import springfox.documentation.service.AuthorizationScope;
-import springfox.documentation.service.SecurityReference;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger.web.ApiKeyVehicle;
-import springfox.documentation.swagger.web.SecurityConfiguration;
 import springfox.documentation.swagger.web.UiConfiguration;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -34,15 +28,47 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  */
 @Configuration
 @EnableSwagger2
+@PropertySource("classpath:/apidocs/swagger-config.properties")
 public class SwaggerConfig {
+
+    @Value("${swagger.api.info.title}")
+    private String title;
+
+    @Value("${swagger.api.info.description}")
+    private String description;
+
+    @Value("${swagger.api.info.version}")
+    private String version;
+
+    @Value("${swagger.api.info.license.info}")
+    private String licenseInfo;
+
+    @Value("${swagger.api.info.license.url}")
+    private String licenseUrl;
+
+    @Value("${swagger.api.info.terms}")
+    private String terms;
+
+    @Value("${swagger.api.info.contact.name}")
+    private String contactName;
+
+    @Value("${swagger.api.info.contact.url}")
+    private String contactUrl;
+
+    @Value("${swagger.api.info.contact.email}")
+    private String contactEmail;
+
+    @Autowired
+    private TypeResolver typeResolver;
 
 	@Bean
 	public Docket restJdbcApi() {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.select()
-				.apis(RequestHandlerSelectors.any())
-				.paths(PathSelectors.any())
-				.build()
+    				.apis(RequestHandlerSelectors.any())
+    				.paths(PathSelectors.any())
+    				.build()
+    			.apiInfo(getApiInfo())
 				.pathMapping("/")
 				.directModelSubstitute(LocalDate.class, String.class)
 				.genericModelSubstitutes(ResponseEntity.class)
@@ -51,49 +77,13 @@ public class SwaggerConfig {
 						typeResolver.resolve(ResponseEntity.class, WildcardType.class)),
 						typeResolver.resolve(WildcardType.class)))
 				.useDefaultResponseMessages(false)
-				.securitySchemes(newArrayList(apiKey()))
-				.securityContexts(newArrayList(securityContext()))
 				.enableUrlTemplating(false);
-	}
-
-	@Autowired
-	private TypeResolver typeResolver;
-
-	private ApiKey apiKey() {
-		return new ApiKey("mykey", "api_key", "header");
-	}
-
-	private SecurityContext securityContext() {
-		return SecurityContext.builder()
-				.securityReferences(defaultAuth())
-				.forPaths(PathSelectors.regex("/anyPath.*"))
-				.build();
-	}
-
-	List<SecurityReference> defaultAuth() {
-		AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
-		AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
-		authorizationScopes[0] = authorizationScope;
-		return newArrayList(new SecurityReference("mykey", authorizationScopes));
-	}
-
-	@Bean
-	SecurityConfiguration security() {
-		return new SecurityConfiguration(
-				"test-app-client-id",
-				"test-app-client-secret",
-				"test-app-realm",
-				"test-app",
-				"apiKey",
-				ApiKeyVehicle.HEADER,
-				"api_key",
-				"," /* scope separator */);
 	}
 
 	@Bean
 	UiConfiguration uiConfig() {
 		return new UiConfiguration(
-				"validatorUrl", // url
+				null, // url
 				"none", // docExpansion => none | list
 				"alpha", // apiSorter => alpha
 				"schema", // defaultModelRendering => schema
@@ -103,5 +93,17 @@ public class SwaggerConfig {
 				60000L); // requestTimeout => in milliseconds, defaults to null
 							// (uses jquery xh timeout)
 	}
+
+	private ApiInfo getApiInfo() {
+        return new ApiInfo(
+                title,
+                description,
+                version,
+                terms,
+                new Contact(contactName, contactUrl, contactEmail),
+                licenseInfo,
+                licenseUrl
+        );
+    }
 
 }
