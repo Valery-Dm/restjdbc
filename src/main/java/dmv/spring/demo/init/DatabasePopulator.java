@@ -9,13 +9,10 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.stereotype.Component;
 
-/*
- * It is important that DB user with granted authority ('restjdbc' in this case)
- * is already present in running instance of MySQL DataBase
- */
 /**
  * Pre-populates DB with demo Data.
- *
+ * It is important that DB user with granted authority ('restjdbc' in this case)
+ * is already present in running instance of MySQL DataBase
  * @author dmv
  */
 @Component
@@ -27,7 +24,10 @@ public class DatabasePopulator implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+		// To create Stored Procedures properly
+		populator.setSeparator("^;");
 		populator.addScript(new ClassPathResource("/sql/db_init.sql"));
+		populator.addScript(new ClassPathResource("/sql/stored_procedures/create_user_with_roles_cp.sql"));
 		populator.populate(dataSource.getConnection());
 	}
 

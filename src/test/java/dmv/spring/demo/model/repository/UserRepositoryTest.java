@@ -209,7 +209,9 @@ public class UserRepositoryTest {
 		user.setMiddleName(null);
 		target.create(user);
 		found = target.findByEmail(user.getEmail());
-		assertNull(found.getMiddleName());
+		assertNull("middle name is not null", found.getMiddleName());
+		// we are not expecting provided password to be passed around
+		assertNull("provided password returned back", found.getPassword());
 	}
 
 	@Test
@@ -226,8 +228,14 @@ public class UserRepositoryTest {
 	@Test
 	public void createWithEmptyFirstName() {
 		user.setFirstName(null);
-		exception.expect(IllegalArgumentException.class);
-		target.create(user);
+		try {
+			target.create(user);
+			fail("IllegalArgumentException was expected");
+		} catch (IllegalArgumentException e) {
+			// check that database stay untouched
+			exception.expect(EntityDoesNotExistException.class);
+			target.findByEmail(user.getEmail());
+		}
 	}
 
 	@Test

@@ -5,7 +5,7 @@ package dmv.spring.demo.model.repository.jdbc.sql;
  * into corresponding fields.
  * @author dmv
  */
-public enum UserQueriesSQL {
+public enum UserQueriesSQL implements QueryNativeSQL {
 
 	USER_CREATE("user_create"),
 	USER_UPDARE("user_update"),
@@ -16,7 +16,9 @@ public enum UserQueriesSQL {
 	USER_ROLES_GET("user_roles_get"),
 	USER_ROLES_DELETE("user_roles_delete"),
 	USER_ROLES_ADD("user_roles_add"),
-	USER_GET_CREDENTIALS("user_get_credentials");
+	USER_GET_CREDENTIALS("user_get_credentials"),
+	USER_INSERT_WITH_ROLES("user_insert_with_roles"),
+	USER_INSERT_WITHOUT_ROLES("user_insert_without_roles");
 
 	private String query;
 
@@ -24,6 +26,7 @@ public enum UserQueriesSQL {
 		query= SQLResourceReader.READER.readSQLFile("user/" + filename);
 	}
 
+	@Override
 	public String getQuery() {
 		return query;
 	}

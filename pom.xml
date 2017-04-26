@@ -99,7 +99,8 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			<!-- Exclude DOCKER
+			<!-- I'm not using Docker for deploying to OpenShift.
+			     But I do create the container locally (from time to time).
 			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>

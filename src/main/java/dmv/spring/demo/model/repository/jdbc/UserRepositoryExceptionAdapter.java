@@ -29,7 +29,7 @@ import dmv.spring.demo.model.repository.UserRepository;
  * within {@link Transactional} interface
  * @author dmv
  */
-@Repository
+//@Repository
 @Transactional
 public class UserRepositoryExceptionAdapter implements UserRepository {
 

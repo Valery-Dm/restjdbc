@@ -22,7 +22,8 @@ public class Mappers {
 
 
 	private static String get(ResultSet resultSet, EntityFields field) throws SQLException {
-		return resultSet.getString(field.getName());
+		String result = resultSet.getString(field.getName());
+		return result == null || result.length() == 0 ? null : result;
 	}
 
 	public static final RowMapper<Role> ROLE_MAPPER =

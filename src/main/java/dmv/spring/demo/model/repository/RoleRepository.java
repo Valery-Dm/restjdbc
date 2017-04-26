@@ -12,6 +12,15 @@ import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
  * @author dmv
  */
 public interface RoleRepository {
+	
+	static final int SHORT_NAME_LENGTH = 3;
+	
+	static boolean isValidShortName(String shortName) {
+		// False if name is null or has wrong length or contains non-word characters
+		return shortName != null && 
+			   shortName.length() == SHORT_NAME_LENGTH &&
+			   !shortName.contains("\\W");
+	}
 
 	/**
 	 * Find and return Role object from database
