@@ -1,5 +1,6 @@
 package dmv.spring.demo.model.entity;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -16,9 +17,9 @@ import dmv.spring.demo.model.entity.apidocs.UserApiDocs;
  * User entity POJO
  * @author dmv
  */
-public class User implements UserApiDocs {
+public class User implements UserApiDocs, Serializable {
 
-	private static final String USER_CANNOT_BE_NULL = "User can't be null";
+	private static final long serialVersionUID = 1L;
 
 	@JsonIgnore
 	private Long id;
@@ -39,13 +40,15 @@ public class User implements UserApiDocs {
 	@Size(max = 45)
 	private String middleName;
 
+	transient
 	private String password;
 
+	transient
 	private Set<Role> roles;
 
 	public User() {}
 	public User(User user) {
-		Assert.notNull(user, USER_CANNOT_BE_NULL);
+		Assert.notNull(user, "User can't be null");
 		id = user.getId();
 		email = user.getEmail();
 		firstName = user.getFirstName();

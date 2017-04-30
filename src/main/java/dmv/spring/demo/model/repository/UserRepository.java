@@ -8,7 +8,7 @@ import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 /**
  * CRUD operations for {@link User} entity.
  * For all methods where receiving the User object as a parameter
- * user id field is mandatory, otherwise that user can't be treated.
+ * user id field is mandatory, otherwise that user can't be serviced.
  * @author dmv
  */
 public interface UserRepository {
@@ -38,14 +38,14 @@ public interface UserRepository {
 	User findByEmail(String email);
 
 	/**
-	 * Will store new user on persistence layer. Id will be generated and returned.
+	 * Store new user on persistence layer. Id will be generated and returned.
 	 * <p>
 	 * User constraints: fields 'email', 'first name' and 'last name'
 	 * must be provided; 'email' must be unique.
 	 * If password was not given it will be generated and returned with
-	 * the created object.
+	 * the created object, otherwise password field will be null (for safety reasons).
 	 * <p>
-	 * For user's roles only 'shortName' parameter is needed.
+	 * For user's roles the 'shortName' parameter is needed.
 	 * If it is absent or the role with given name does not exist
 	 * in database the {@link IllegalArgumentException} will be thrown.
 	 * @param user A new user to persist
@@ -60,11 +60,11 @@ public interface UserRepository {
 	User create(User user);
 
 	/**
-	 * Will update existing user (found by id) with given
+	 * Update existing user (found by id) with given
 	 * user details (password and email fields are omitted,
 	 * these are different operations).
 	 * <p>
-	 * For user's roles only 'shortName' parameter is needed.
+	 * For user's roles the 'shortName' parameter is needed.
 	 * If it is absent or the role with given name does not exist
 	 * in database the {@link IllegalArgumentException} will be thrown.
 	 * @param user An existing user with new details
@@ -78,7 +78,7 @@ public interface UserRepository {
 	User update(User user);
 
 	/**
-	 * Will delete existing user (found by id) from persistence layer
+	 * Delete existing user (found by id) from persistence layer
 	 * @param user A user to be removed
 	 * @throws IllegalArgumentException if user or its id is null
 	 * @throws EntityDoesNotExistException if user can't be found
@@ -88,13 +88,14 @@ public interface UserRepository {
 	void delete(User user);
 
 	/**
-	 * Find user by email address and return with that email and password
-	 * fields only. For authentication purposes.
-	 * @param email User's identifier, unique email address
-	 * @return User with email and password if exists
+	 * Delete existing user (found by id) from persistence layer
+	 * @param id An id of user that needs to be removed
+	 * @throws IllegalArgumentException if id is null
 	 * @throws EntityDoesNotExistException if user can't be found
+	 * @throws AccessDataBaseException if operation was unsuccessful
+	 *                                     due to internal error
 	 */
-	User getCredentials(String email);
+	void deleteById(Long id);
 
 	/*
 	 * getAllUsers() method and other great possibilities

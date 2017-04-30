@@ -9,7 +9,7 @@ import org.springframework.util.Assert;
 import dmv.spring.demo.model.entity.Role;
 
 /**
- * Comparable {@link Role} wrapper with {@link GrantedAuthority} specification.
+ * Comparable {@link Role} wrapper with {@link GrantedAuthority} flavor.
  * @author dmv
  */
 public class CustomGrantedAuthority extends Role

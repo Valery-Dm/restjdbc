@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
@@ -107,7 +108,7 @@ public class UserRestControllerTest implements TestHelpers {
 	}
 
 	@Test
-	public void deleteNotExistedUser() throws Exception {
+	public void deleteNotExistingUser() throws Exception {
 		performNoContent(delete(buildURL(userNotExisted.getId())), status().isNotFound());
 	}
 
@@ -179,10 +180,10 @@ public class UserRestControllerTest implements TestHelpers {
 	}
 
 	private static void createUsers() {
-			userWithRoles = mockUser(1L);
-			userUpdated = mockUser(1L);
-			userWithoutRoles = mockUser(2L);
-			userNotExisted = mockUser(3L);
+			userWithRoles = mockUser(111L);
+			userUpdated = mockUser(112L);
+			userWithoutRoles = mockUser(113L);
+			userNotExisted = mockUser(-114L);
 
 			Set<Role> roles = new HashSet<>();
 			roles.add(new Role("ADM", "Administrator"));
@@ -208,6 +209,8 @@ public class UserRestControllerTest implements TestHelpers {
 
 		when(userRepository.findById(userNotExisted.getId()))
 		.thenThrow(new EntityDoesNotExistException());
+		doThrow(new EntityDoesNotExistException())
+		.when(userRepository).deleteById(userNotExisted.getId());
 		when(userRepository.findByEmail(userNotExisted.getEmail()))
 		.thenThrow(new EntityDoesNotExistException());
 

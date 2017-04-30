@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.entity.security.CustomUserDetails;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
-import dmv.spring.demo.model.repository.UserRepository;
+import dmv.spring.demo.model.repository.CredentialsRepository;
 
 /**
  * This service will read existing users from data source with
@@ -20,7 +20,7 @@ import dmv.spring.demo.model.repository.UserRepository;
 public class CustomUserDetailsService implements UserDetailsService {
 
 	@Autowired
-	private UserRepository userRepository;
+	private CredentialsRepository credentialsRepository;
 
 	/* (non-Javadoc)
 	 * @see org.springframework.security.core.userdetails.UserDetailsService#loadUserByUsername(java.lang.String)
@@ -28,7 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		try {
-			User user = userRepository.getCredentials(username);
+			User user = credentialsRepository.getCredentials(username);
 			return new CustomUserDetails(user);
 		} catch (EntityDoesNotExistException e) {
 			throw new UsernameNotFoundException(e.getLocalizedMessage());

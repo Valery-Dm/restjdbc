@@ -109,7 +109,7 @@ It is recommended to use browser's Incognito mode when interacting with the serv
 The service that are hosted at OpenShift is not guaranteed to run all the time.
 
 As long as mutator methods are available freely through the RESTful endpoints there are
-some defencive restrictions applied:
+some defensive restrictions applied:
 
 It is impossible to delete or mutate the default admin user with id 3.
 

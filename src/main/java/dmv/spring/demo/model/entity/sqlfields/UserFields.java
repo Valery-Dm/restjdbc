@@ -9,11 +9,11 @@ import dmv.spring.demo.model.entity.User;
  */
 public enum UserFields implements EntityFields {
 
-	ID("ID"), 
+	ID("ID"),
 	EMAIL("EMAIL_ADRS"),
-	FIRST_NAME("FIRST_NAME"), 
+	FIRST_NAME("FIRST_NAME"),
 	LAST_NAME("LAST_NAME"),
-	MIDDLE_NAME("MIDDLE_NAME"), 
+	MIDDLE_NAME("MIDDLE_NAME"),
 	PASSWORD("PASSWORD");
 
 	private String name;

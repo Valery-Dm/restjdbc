@@ -6,7 +6,7 @@ package dmv.spring.demo.model.exceptions;
  * @author dmv
  */
 public class AccessDataBaseException extends RuntimeException {
-	
+
 	private String laterMsg;
 
 	/**
@@ -17,7 +17,7 @@ public class AccessDataBaseException extends RuntimeException {
 	public AccessDataBaseException() {
 		super();
 	}
-	
+
 	/**
 	 * If exception is prepared early and may not be thrown
 	 * at all, this message may be set (and composed from other strings)

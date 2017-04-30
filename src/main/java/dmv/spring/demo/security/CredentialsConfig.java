@@ -14,12 +14,13 @@ import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.security.CustomGrantedAuthority;
 
 /**
- * Manage beans that work with user passwords
+ * Manage beans and methods that work with user credentials information.
+ *
  * @author dmv
  */
 @Configuration
-public class CredentialConfig {
-	
+public class CredentialsConfig {
+
 	@Bean
 	@Scope("prototype")
 	@Lazy(true)

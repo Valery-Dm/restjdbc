@@ -19,8 +19,8 @@ public class MessageComposer {
 	 * <p>
 	 * Currently there are no support for escape character '\',
 	 * so just don't use curly braces elsewhere except for markers.
-	 * @param baseMsg the base message with <tt>{index}</tt> markers 
-	 * @param args Corresponding arguments. Method toString will be invoked 
+	 * @param baseMsg the base message with <tt>{index}</tt> markers
+	 * @param args Corresponding arguments. Method toString will be invoked
 	 *             on them. If argument is null the word 'null' is printed
 	 * @return composed message
 	 * @throws IllegalArgumentException if incorrect number of arguments or no arguments
@@ -53,7 +53,7 @@ public class MessageComposer {
 					builder.append(ch);
 			}
 		}
-		
+
 		if (i != args.length)
 			throw new IllegalArgumentException("MessageComposer: too many arguments: more than markers");
 		return builder.toString();

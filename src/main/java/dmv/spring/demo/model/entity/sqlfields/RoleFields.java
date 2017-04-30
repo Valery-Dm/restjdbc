@@ -3,7 +3,7 @@ package dmv.spring.demo.model.entity.sqlfields;
 import dmv.spring.demo.model.entity.Role;
 
 /**
- * SQL Fields (or Columns) that ROLE table has. 
+ * SQL Fields (or Columns) that ROLE table has.
  * Representation of {@link Role} entity.
  * @author dmv
  */

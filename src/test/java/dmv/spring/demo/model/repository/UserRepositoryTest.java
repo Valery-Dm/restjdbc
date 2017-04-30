@@ -22,13 +22,13 @@ import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.exceptions.EntityAlreadyExistsException;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
+import dmv.spring.demo.rest.TestHelpers;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class UserRepositoryTest {
+public class UserRepositoryTest implements TestHelpers {
 
 	private User user;
-	private String email;
 	private Set<Role> roles;
 	private Role admRole;
 	private Role usrRole;
@@ -42,14 +42,8 @@ public class UserRepositoryTest {
 
 	@Before
 	public void setUp() throws Exception {
-		email = "test.user@mail.address";
 
-		user = new User();
-		user.setEmail(email);
-		user.setFirstName("First");
-		user.setLastName("Last");
-		user.setMiddleName("Middle");
-		user.setPassword("123456");
+		user = prepareUser();
 
 		roles = new HashSet<>();
 		admRole = new Role("ADM", "Administrator");
@@ -63,28 +57,14 @@ public class UserRepositoryTest {
 
 	@After
 	public void cleanUp() {
-		/*
-		 * These tests were done 'on best effort'.
-		 * We are not expecting test.user to be
-		 * And it should not remain after.
-		 * existed in database at this point.
-		 * So, trying to remove.
-		 */
-		try {
-			User testUser = target.findByEmail(email);
-			target.delete(testUser);
-		} catch (EntityDoesNotExistException e) {
-			// we are good
-		} catch (Exception e) {
-			System.out.println("unsuccessful cleanup%n" + e.getMessage());
-		}
+		deleteUser(target);
 	}
 
 	@Test
 	public void successfulCRUDOperations() {
 		User found = null;
 
-		user = target.create(user);
+		user  = target.create(user);
 		found = target.findByEmail(user.getEmail());
 		compareUsers(found, user);
 
@@ -93,20 +73,19 @@ public class UserRepositoryTest {
 		target.update(user);
 		found = target.findByEmail(user.getEmail());
 		compareUsers(found, user);
-		assertNull(found.getMiddleName());
 
 		target.delete(user);
 		exception.expect(EntityDoesNotExistException.class);
 		target.findByEmail(user.getEmail());
 	}
-	
+
 	private void compareUsers(User act, User exp) {
-		assertNotNull("user is null", act);
-		assertThat("wrong email", act.getEmail(), is(exp.getEmail()));
-		assertThat("wrong first name", act.getFirstName(), is(exp.getFirstName()));
-		assertThat("wrong last name", act.getLastName(), is(exp.getLastName()));
+		assertNotNull("user is null",   act);
+		assertThat("wrong email",       act.getEmail(),      is(exp.getEmail()));
+		assertThat("wrong first name",  act.getFirstName(),  is(exp.getFirstName()));
+		assertThat("wrong last name",   act.getLastName(),   is(exp.getLastName()));
 		assertThat("wrong middle name", act.getMiddleName(), is(exp.getMiddleName()));
-		assertThat("wrong user roles", act.getRoles(), is(exp.getRoles()));
+		assertThat("wrong user roles",  act.getRoles(),      is(exp.getRoles()));
 	}
 
 	@Test
@@ -129,22 +108,22 @@ public class UserRepositoryTest {
 	public void findWithRoles() {
 		Set<Role> roles = user.getRoles();
 		User created = target.create(user);
-		
+
 		User found = target.findById(created.getId());
 		assertThat(found.getRoles(), is(roles));
-		
+
 		found = target.findByEmail(created.getEmail());
 		assertThat(found.getRoles(), is(roles));
 	}
-	
+
 	@Test
 	public void findWithOutRoles() {
 		user.setRoles(null);
 		User created = target.create(user);
-		
+
 		User found = target.findById(created.getId());
 		assertThat(found.getRoles(), is(emptySet()));
-		
+
 		found = target.findByEmail(created.getEmail());
 		assertThat(found.getRoles(), is(emptySet()));
 	}
@@ -312,7 +291,10 @@ public class UserRepositoryTest {
 		 * Although it seems unnatural,
 		 * nothing wrong should happen here
 		 */
-		target.update(user);
+		User updated = target.update(user);
+		compareUsers(updated, user);
+		// Assert that id did not changed
+		assertThat(updated.getId(), is(user.getId()));
 	}
 
 	@Test
@@ -336,7 +318,7 @@ public class UserRepositoryTest {
 		user = target.create(user);
 		user.getRoles().remove(usrRole);
 		user.getRoles().add(admRole);
-		
+
 		updated = target.update(user);
 		Set<Role> updatedRoles = updated.getRoles();
 		assertTrue(updatedRoles.contains(admRole));

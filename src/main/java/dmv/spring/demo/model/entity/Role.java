@@ -1,5 +1,7 @@
 package dmv.spring.demo.model.entity;
 
+import java.io.Serializable;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -14,9 +16,9 @@ import dmv.spring.demo.model.entity.apidocs.RoleApiDocs;
  * administrator or user or whatever
  * @author dmv
  */
-public class Role implements RoleApiDocs {
+public class Role implements RoleApiDocs, Serializable {
 
-	private static final String ROLE_CANNOT_BE_NULL = "Role can't be null";
+	private static final long serialVersionUID = 1L;
 
 	@NotNull
 	@Size(min=3, max=3)
@@ -30,7 +32,7 @@ public class Role implements RoleApiDocs {
 
 	public Role() {}
 	public Role(Role role) {
-		Assert.notNull(role, ROLE_CANNOT_BE_NULL);
+		Assert.notNull(role, "Role can't be null");
 		setShortName(role.getShortName());
 		setFullName(role.getFullName());
 	}

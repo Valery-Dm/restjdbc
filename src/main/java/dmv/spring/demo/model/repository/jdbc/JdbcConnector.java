@@ -35,26 +35,26 @@ import dmv.spring.demo.model.repository.jdbc.sql.QueryNativeSQL;
  * @author dmv
  */
 public class JdbcConnector implements AutoCloseable {
-	
+
 	/* predefined message for AccessDataBaseException exceptions */
 	private static final String exMsg = "There was an attempt to {0} and it failed while {1}";
-	
+
 	/* this is not a Spring Component so we are using static logger */
 	private static final Logger logger = LoggerFactory.getLogger(JdbcConnector.class);
-	
+
 	private DataSource dataSource;
-	
+
 	private Connection connection;
-	
+
 	private PreparedStatement preparedStatement;
-	
+
 	private AccessDataBaseException exception;
-	
+
 	/* what kind of operation we are in */
 	private final String doJob;
-	
+
 	private List<ResultSet> results;
-	
+
 	/**
 	 * Creates {@link Connection} and {@link PreparedStatement} objects from
 	 * given dataSource, using provided query.
@@ -69,18 +69,19 @@ public class JdbcConnector implements AutoCloseable {
 			// will throw SQL Exceptions - exactly as we need here
 			connection = DataSourceUtils.doGetConnection(dataSource);
 			// The statement is scrollable up and down, and it won't keep db connection open
-			preparedStatement = connection.prepareStatement(query.getQuery(), 
-									                   TYPE_SCROLL_INSENSITIVE, 
+			preparedStatement = connection.prepareStatement(query.getQuery(),
+									                   TYPE_SCROLL_INSENSITIVE,
 									                   CONCUR_READ_ONLY);
 		} catch (Exception e) {
 			closeAfter(e, "openning connection");
 		}
 	}
-	
+
 	/**
 	 * Close underlying statement and release connection
 	 * @throws AccessDataBaseException if closing operations were not successful
 	 */
+	@Override
 	public void close() {
 		exception = new AccessDataBaseException();
 		if (!isSuccessfullyClosed()) {
@@ -91,26 +92,29 @@ public class JdbcConnector implements AutoCloseable {
 		}
 		logger.debug("connector {} was closed", doJob);
 	}
-	
+
 	/**
 	 * Returns the first update count after execution.
+	 * <p> This method won't get and store any results
+	 * (i.e. Result Sets are not expected). Use {@link #getResults()}
+	 * method instead if you need a result.
 	 * @return the first update count
 	 * @throws AccessDataBaseException translates SQLExceptions
 	 * @see PreparedStatement#getUpdateCount()
-	 */ 
+	 */
 	public int getUpdateCount() {
 		int count = -1;
 		try {
-			
+
 			preparedStatement.execute();
 			count = preparedStatement.getUpdateCount();
-			
+
 		} catch (Exception e) {
 			closeAfter(e, "getting update count");
 		}
 		return count;
 	}
-	
+
 	/**
 	 * Execute statement and return a list with {@link ResultSet} objects
 	 * @return A list with available results (with {@link RandomAccess RAM})
@@ -120,26 +124,26 @@ public class JdbcConnector implements AutoCloseable {
 		if (results != null) return results;
 		results = new ArrayList<>();
 		try {
-			
+
 			boolean hasNextRS = preparedStatement.execute();
 			while (hasNextRS || preparedStatement.getUpdateCount() != -1) {
 				// skipping updateCounts
-				if (hasNextRS && preparedStatement.getResultSet().next()) 
+				if (hasNextRS && preparedStatement.getResultSet().next())
 					results.add(preparedStatement.getResultSet());
-				// prevent result sets being closed
+				// prevent Result Sets from being closed
 				hasNextRS = preparedStatement.getMoreResults(KEEP_CURRENT_RESULT);
 			}
-			
+
 		} catch (Exception e) {
 			closeAfter(e, "getting results");
 		}
 		return results;
 	}
-	
+
 	/**
 	 * Gets long from resultIndex {@link ResultSet} at
 	 * columnIndex position
-	 * @param resultIndex The results list index (java - 0 based) 
+	 * @param resultIndex The results list index (java - 0 based)
 	 * @param columnIndex The column number (sql - 1 based)
 	 * @return long result
 	 * @throws AccessDataBaseException translates SQLExceptions,
@@ -149,20 +153,20 @@ public class JdbcConnector implements AutoCloseable {
 		getResults();
 		long result = 0;
 		try {
-			
+
 			if (results.size() > resultIndex) {
 				ResultSet resultSet = results.get(resultIndex);
-				// we are expecting a single row here
+				// we are expecting just a single row here
 				resultSet.first();
 				result = resultSet.getLong(columnIndex);
 			}
-			
+
 		} catch (Exception e) {
 			closeAfter(e, "getting long");
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Retrieves an object from {@link ResultSet} found in a list of results
 	 * at given index, using provided {@link RowMapper mapper}
@@ -176,18 +180,18 @@ public class JdbcConnector implements AutoCloseable {
 	public <T> T getObject(int resultIndex, RowMapper<T> mapper) {
 		getResults();
 		try {
-			
+
 			if (results.size() > resultIndex)
 				return mapper.mapRow(results.get(resultIndex), resultIndex);
-			
+
 		} catch (Exception e) {
 			closeAfter(e, "getting object");
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Retrieves a set of objects from {@link ResultSet results list} 
+	 * Retrieves a set of objects from {@link ResultSet results list}
 	 * at given index, using provided {@link RowMapper mapper}
 	 * @param <T> Entity type is expected (like {@link Role} or {@link User})
 	 * @param resultIndex list index (0 if expecting single result)
@@ -200,14 +204,14 @@ public class JdbcConnector implements AutoCloseable {
 		getResults();
 		Set<T> set = new HashSet<>();
 		try {
-			
+
 			if (results.size() > resultIndex) {
 				ResultSet resultSet = results.get(resultIndex);
 				int i = 1;
 				do set.add(mapper.mapRow(resultSet, i++));
 				while (resultSet.next());
 			}
-			
+
 		} catch (Exception e) {
 			closeAfter(e, "getting objects");
 		}
@@ -218,45 +222,45 @@ public class JdbcConnector implements AutoCloseable {
 	 * Set {@link Long} number at specified position
 	 * @param pos Field's position
 	 * @param num a number to set
-	 * @throws AccessDataBaseException translates 
+	 * @throws AccessDataBaseException translates
 	 *        {@link PreparedStatement#setLong(int, long)} exception
 	 */
 	public void setLong(int pos, long num) {
 		try {
-			
+
 			preparedStatement.setLong(pos, num);
-			
+
 		} catch (Exception e) {
 			closeAfter(e, "setting long");
 		}
 	}
-	
+
 	/**
 	 * Set String that can be null or empty to current statement at given position.
 	 * @param pos Field's position number
 	 * @param field the actual String to be set
-	 * @throws AccessDataBaseException translates 
+	 * @throws AccessDataBaseException translates
 	 *        {@link PreparedStatement#setString(int, String)} exception
 	 */
 	public void setString(int pos, String field) {
 		try {
-			
+
 			preparedStatement.setString(pos, field);
-			
+
 		} catch (Exception e) {
 			closeAfter(e, "setting string");
 		}
 	}
-	
+
 	/**
 	 * Set String which is required for current statement at given position.
 	 * <p>
-	 * It is a helper method, and the exception it could throw when field is 
+	 * It is a helper method, and the exception it could throw when field is
 	 * null or empty may be clarified by a message: '{@code fieldName} is not provided'
 	 * @param pos Field's position
 	 * @param field the actual String to be set
 	 * @param fieldName field name
-	 * @throws AccessDataBaseException translates 
+	 * @throws AccessDataBaseException translates
 	 *        {@link PreparedStatement#setString(int, String)} exception
 	 */
 	public void setRequiredString(int pos, String field, String fieldName) {
@@ -271,9 +275,9 @@ public class JdbcConnector implements AutoCloseable {
 		String msg = compose(exMsg, doJob, stage);
 		exception = new AccessDataBaseException(msg);
 		exception.addSuppressed(e);
-		
+
 		isSuccessfullyClosed();
-		
+
 		logger.error(msg, exception);
 		throw exception;
 	}
@@ -283,9 +287,9 @@ public class JdbcConnector implements AutoCloseable {
 		boolean successful = true;
 		if (preparedStatement != null) {
 			try {
-				
+
 				preparedStatement.close();
-				
+
 			} catch (Exception e1) {
 				exception.addSuppressed(e1);
 				successful = false;
@@ -293,9 +297,9 @@ public class JdbcConnector implements AutoCloseable {
 		}
 		// the Connection is pooled so we need to just release it
 		try {
-			
+
 			DataSourceUtils.doReleaseConnection(connection, dataSource);
-			
+
 		} catch (Exception e2) {
 			exception.addSuppressed(e2);
 			successful = false;

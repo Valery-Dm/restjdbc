@@ -5,8 +5,6 @@ import static org.springframework.web.util.UriUtils.decode;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -17,9 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
-import dmv.spring.demo.model.repository.RoleRepository;
 import dmv.spring.demo.model.repository.UserRepository;
 import dmv.spring.demo.rest.controller.apidocs.UserRestApiDocs;
 import dmv.spring.demo.rest.representation.UserDTO;
@@ -37,9 +33,6 @@ public class UserRestController implements UserRestApiDocs {
 	private UserRepository userRepository;
 
 	@Autowired
-	private RoleRepository roleRepository;
-
-	@Autowired
 	private UserDTOAsm userDTOAsm;
 
 	@Override
@@ -48,8 +41,7 @@ public class UserRestController implements UserRestApiDocs {
 
 		User user = userRepository.findById(userId);
 
-		return ResponseEntity.ok()
-				             .body(userDTOAsm.toResource(user));
+		return ResponseEntity.ok(userDTOAsm.toResource(user));
 	}
 
 	@Override
@@ -59,8 +51,7 @@ public class UserRestController implements UserRestApiDocs {
 
 		User user = userRepository.findByEmail(decode(email, "UTF-8"));
 
-		return ResponseEntity.ok()
-				             .body(userDTOAsm.toResource(user));
+		return ResponseEntity.ok(userDTOAsm.toResource(user));
 	}
 
 	@Override
@@ -69,10 +60,7 @@ public class UserRestController implements UserRestApiDocs {
 			                                  HttpServletRequest request,
                                               UriComponentsBuilder uriBuilder)
                                             		  throws URISyntaxException {
-		// It's a Domain Tier's responsibility to provide legal and well formed requests to the Persistence layer.
-		getUserRoles(user);
-
-		// User with generated Id
+		// User with generated Id, and possibly, generated password
 		User created = userRepository.create(user);
 
 		URI location = uriBuilder.path(request.getRequestURI() + "/{id}")
@@ -91,9 +79,6 @@ public class UserRestController implements UserRestApiDocs {
 		// Simple defense from forgery requests
 		user.setId(userId);
 
-		// It's a Domain Tier's responsibility to provide legal and well formed requests to the Persistence layer.
-		getUserRoles(user);
-
 		User updated = userRepository.update(user);
 
 		String requestUrl = request.getRequestURL().toString();
@@ -105,23 +90,8 @@ public class UserRestController implements UserRestApiDocs {
 	@DeleteMapping(path="/{userId}")
 	public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
 
-		// find existing user first
-		User user = userRepository.findById(userId);
-
-		userRepository.delete(user);
+		userRepository.deleteById(userId);
 
 		return ResponseEntity.noContent().build();
-	}
-
-	/* Helper methods */
-
-	private void getUserRoles(User user) {
-		// Here we are getting real Role objects from an appropriate resource
-		Set<Role> received = user.getRoles();
-		if (received == null || received.size() == 0) return;
-		Set<Role> actual = new HashSet<>();
-		received.forEach(role ->
-		              actual.add(roleRepository.findByShortName(role.getShortName())));
-		user.setRoles(actual);
 	}
 }

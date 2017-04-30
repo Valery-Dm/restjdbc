@@ -28,15 +28,17 @@ BEGIN
 
     SET @found_roles = ROW_COUNT();
 
+    SET @user_id = in_id;
+
     -- Now proceed and find given user id
     IF ( 
 	    SELECT EXISTS (
 		    SELECT 
-				@user_id 
+				`ID` 
 			FROM 
 				`USER`
 		    WHERE 
-				`ID` = in_id 
+				`ID` = @user_id 
             ) 
 	    )
     -- If it's there continue

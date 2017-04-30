@@ -24,8 +24,6 @@ public class CustomUserDetails extends User implements UserDetails {
 
 	private final Logger logger = getLogger(CustomUserDetails.class);
 
-	private static final String NULL_NOT_SUPPORTED = "Null arguments are not supported here";
-
 	private static final long serialVersionUID = 5004823702176912214L;
 
 	private final Collection<? extends GrantedAuthority> authorities;
@@ -58,7 +56,8 @@ public class CustomUserDetails extends User implements UserDetails {
 	 * @throws IllegalArgumentException if either of arguments is null
 	 */
 	public CustomUserDetails(String email, String password, String roleName) {
-		Assert.noNullElements(new Object[]{email, password, roleName}, NULL_NOT_SUPPORTED);
+		Assert.noNullElements(new Object[]{email, password, roleName},
+				             "Null arguments are not supported here");
 		setEmail(email);
 		setPassword(password);
 		/*
