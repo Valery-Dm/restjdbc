@@ -1,22 +1,27 @@
--- GET USER WITH OR WITHOUT USER'S ROLES (WITH NULLS). NEED NOT BE ORDERED.
+USE `users_demo`;
+
+SET @user_id = ?;
 
 SELECT 
-    `USER`.`ID`, 
-    `USER`.`EMAIL_ADRS`, 
-    `USER`.`FIRST_NAME`, 
-    `USER`.`LAST_NAME`, 
-    `USER`.`MIDDLE_NAME`,
-    `ROLE`.`SHORT_NAME`,
-    `ROLE`.`FULL_NAME`
+    `ID`,
+    `EMAIL_ADRS`,
+    `FIRST_NAME`,
+    `LAST_NAME`,
+    `MIDDLE_NAME`
 FROM 
-    `users_demo`.`USER` 
-LEFT JOIN 
-    `users_demo`.`ROLE_USERS` 
-ON 
-    `ROLE_USERS`.`USER_ID` = `USER`.`ID`
-LEFT JOIN 
-    `users_demo`.`ROLE`
-ON 
-    `ROLE_USERS`.`ROLE_ID` = `ROLE`.`SHORT_NAME`
+    `USER` 
 WHERE 
-    `USER`.`ID` = ?;
+    `ID` = @user_id;
+
+SELECT 
+    `SHORT_NAME`, 
+    `FULL_NAME` 
+FROM 
+    `ROLE`
+INNER JOIN 
+    `ROLE_USERS`
+ON 
+    `ROLE_ID` = `SHORT_NAME`
+AND 
+    `USER_ID` = @user_id;
+

@@ -31,7 +31,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 			             AuthenticationException authException)
 			            		 throws IOException, ServletException {
 		HttpServletResponse httpResponse = response;
-		httpResponse.addHeader("WWW-Authenticate", "Basic realm=\"Spring Security\"");
+		httpResponse.addHeader("WWW-Authenticate", "Basic realm=\"restjdbc demo app\"");
 		httpResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 		httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	    ErrorInfo info = new ErrorInfo(request.getRequestURI(), authException);

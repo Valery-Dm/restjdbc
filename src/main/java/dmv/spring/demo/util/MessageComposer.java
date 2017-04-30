@@ -21,6 +21,7 @@ public class MessageComposer {
 	 * so just don't use curly braces elsewhere except for markers.
 	 * @param baseMsg the base message with <tt>{index}</tt> markers 
 	 * @param args Corresponding arguments. Method toString will be invoked 
+	 *             on them. If argument is null the word 'null' is printed
 	 * @return composed message
 	 * @throws IllegalArgumentException if incorrect number of arguments or no arguments
 	 *                                  provided, or unrecognized markers used
@@ -41,7 +42,8 @@ public class MessageComposer {
 				else if (ch - '0' == i) {
 					if (i == args.length)
 						throw new IllegalArgumentException("MessageComposer: incorrect number of arguments " + i);
-					builder.append(args[i++].toString());
+					Object object = args[i++];
+					builder.append(object != null ? object.toString() : "null");
 				} else
 					throw new IllegalArgumentException("MessageComposer: unrecognized position " + ch);
 			} else {

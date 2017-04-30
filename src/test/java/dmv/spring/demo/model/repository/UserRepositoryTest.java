@@ -1,12 +1,12 @@
 package dmv.spring.demo.model.repository;
 
+import static java.util.Collections.emptySet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,6 +30,7 @@ public class UserRepositoryTest {
 	private User user;
 	private String email;
 	private Set<Role> roles;
+	private Role admRole;
 	private Role usrRole;
 	private Role devRole;
 
@@ -51,6 +52,8 @@ public class UserRepositoryTest {
 		user.setPassword("123456");
 
 		roles = new HashSet<>();
+		admRole = new Role("ADM", "Administrator");
+		// don't add admin role for now
 		usrRole = new Role("USR", "User");
 		roles.add(usrRole);
 		devRole = new Role("DEV", "Developer");
@@ -63,8 +66,8 @@ public class UserRepositoryTest {
 		/*
 		 * These tests were done 'on best effort'.
 		 * We are not expecting test.user to be
-		 * existed in database at this point.
 		 * And it should not remain after.
+		 * existed in database at this point.
 		 * So, trying to remove.
 		 */
 		try {
@@ -81,68 +84,69 @@ public class UserRepositoryTest {
 	public void successfulCRUDOperations() {
 		User found = null;
 
-		target.create(user);
+		user = target.create(user);
 		found = target.findByEmail(user.getEmail());
-		assertNotNull("user is null", found);
-		assertThat("wrong email", found.getEmail(), is(user.getEmail()));
-		assertThat("wrong last name", found.getLastName(), is(user.getLastName()));
+		compareUsers(found, user);
 
 		user.setLastName("newLastName");
 		user.setMiddleName(null);
 		target.update(user);
 		found = target.findByEmail(user.getEmail());
-		assertThat("wrong new last name", found.getLastName(), is(user.getLastName()));
+		compareUsers(found, user);
 		assertNull(found.getMiddleName());
 
 		target.delete(user);
 		exception.expect(EntityDoesNotExistException.class);
 		target.findByEmail(user.getEmail());
 	}
+	
+	private void compareUsers(User act, User exp) {
+		assertNotNull("user is null", act);
+		assertThat("wrong email", act.getEmail(), is(exp.getEmail()));
+		assertThat("wrong first name", act.getFirstName(), is(exp.getFirstName()));
+		assertThat("wrong last name", act.getLastName(), is(exp.getLastName()));
+		assertThat("wrong middle name", act.getMiddleName(), is(exp.getMiddleName()));
+		assertThat("wrong user roles", act.getRoles(), is(exp.getRoles()));
+	}
 
 	@Test
 	public void findById() {
 		User found = null;
-		target.create(user);
+		user = target.create(user);
 		found = target.findById(user.getId());
-		assertNotNull("user is null", found);
-		assertThat("wrong email", found.getEmail(), is(user.getEmail()));
-		assertThat("wrong last name", found.getLastName(), is(user.getLastName()));
-		assertThat(found.getRoles(), is(user.getRoles()));
+		compareUsers(found, user);
 	}
 
 	@Test
 	public void findByEmail() throws Exception {
 		User found = null;
-		target.create(user);
+		user = target.create(user);
 		found = target.findByEmail(user.getEmail());
-		assertNotNull("user is null", found);
-		assertThat("wrong email", found.getEmail(), is(user.getEmail()));
-		assertThat("wrong last name", found.getFirstName(), is(user.getFirstName()));
-		assertThat(found.getRoles(), is(user.getRoles()));
+		compareUsers(found, user);
 	}
 
 	@Test
 	public void findWithRoles() {
-		/*
-		 * This test relies on initial demo users
-		 * existence (with corresponding roles).
-		 * We are not aiming DataBase integrity here,
-		 * so, this method can be ignored later on
-		 */
-		User adminDev = target.findByEmail("demo.admin.dev@spring.demo");
-		assertNotNull(adminDev);
-		assertThat(adminDev.getFirstName(), is("Vasily"));
-
-		Set<Role> roles = adminDev.getRoles();
-
-		Set<String> shortNames = roles.stream()
-		     .map(role -> role.getShortName())
-		     .collect(Collectors.toSet());
-
-		assertThat(roles.size(), is(2));
-		assertTrue(shortNames.contains("ADM"));
-		assertTrue(shortNames.contains("DEV"));
-		assertFalse(shortNames.contains("USR"));
+		Set<Role> roles = user.getRoles();
+		User created = target.create(user);
+		
+		User found = target.findById(created.getId());
+		assertThat(found.getRoles(), is(roles));
+		
+		found = target.findByEmail(created.getEmail());
+		assertThat(found.getRoles(), is(roles));
+	}
+	
+	@Test
+	public void findWithOutRoles() {
+		user.setRoles(null);
+		User created = target.create(user);
+		
+		User found = target.findById(created.getId());
+		assertThat(found.getRoles(), is(emptySet()));
+		
+		found = target.findByEmail(created.getEmail());
+		assertThat(found.getRoles(), is(emptySet()));
 	}
 
 	@Test
@@ -159,7 +163,7 @@ public class UserRepositoryTest {
 
 	@Test
 	public void findEmailEmpty() {
-		exception.expect(EntityDoesNotExistException.class);
+		exception.expect(IllegalArgumentException.class);
 		target.findByEmail("");
 	}
 
@@ -177,9 +181,9 @@ public class UserRepositoryTest {
 
 	@Test
 	public void createExisted() {
-		target.create(user);
+		user = target.create(user);
 		exception.expect(EntityAlreadyExistsException.class);
-		target.create(user);
+		user = target.create(user);
 	}
 
 	@Test
@@ -197,21 +201,21 @@ public class UserRepositoryTest {
 
 	@Test
 	public void createWithEmptyEmail() {
-		user.setEmail(null);
+		user.setEmail("");
 		exception.expect(IllegalArgumentException.class);
 		target.create(user);
 	}
 
 	@Test
 	public void createWithoutMiddleName() {
-		User found = null;
+		User created = null;
 
 		user.setMiddleName(null);
-		target.create(user);
-		found = target.findByEmail(user.getEmail());
-		assertNull("middle name is not null", found.getMiddleName());
+		created = target.create(user);
+		compareUsers(created, user);
+		assertNull("middle name is not null", created.getMiddleName());
 		// we are not expecting provided password to be passed around
-		assertNull("provided password returned back", found.getPassword());
+		assertNull("provided password returned back", created.getPassword());
 	}
 
 	@Test
@@ -221,6 +225,7 @@ public class UserRepositoryTest {
 		user.setPassword(null);
 		/* Auto-generated password expected */
 		created = target.create(user);
+		compareUsers(created, user);
 		String password = created.getPassword();
 		assertTrue("no password generated", password != null && password.length() > 0);
 	}
@@ -228,21 +233,13 @@ public class UserRepositoryTest {
 	@Test
 	public void createWithEmptyFirstName() {
 		user.setFirstName(null);
-		try {
-			target.create(user);
-			fail("IllegalArgumentException was expected");
-		} catch (IllegalArgumentException e) {
-			// check that database stay untouched
-			exception.expect(EntityDoesNotExistException.class);
-			target.findByEmail(user.getEmail());
-		}
+		checkDBWasNotAlteredWhenCreateFailed();
 	}
 
 	@Test
 	public void createWithEmptyLastName() {
 		user.setLastName(null);
-		exception.expect(IllegalArgumentException.class);
-		target.create(user);
+		checkDBWasNotAlteredWhenCreateFailed();
 	}
 
 	@Test
@@ -250,7 +247,7 @@ public class UserRepositoryTest {
 		User found = null;
 
 		user.setRoles(null);
-		target.create(user);
+		user = target.create(user);
 		found = target.findByEmail(user.getEmail());
 		assertTrue(found.getRoles().size() == 0);
 		assertThat(found.getRoles(), is(Collections.emptySet()));
@@ -258,34 +255,34 @@ public class UserRepositoryTest {
 
 	@Test
 	public void createWithWrongRoles() {
-		try {
-			Role wrong = new Role("WRG", null);
-			user.getRoles().add(wrong);
-			target.create(user);
-			fail("IllegalArgumentException expected");
-		} catch (IllegalArgumentException e) {
-			// Assert that user was not created
-			exception.expect(EntityDoesNotExistException.class);
-			target.findById(user.getId());
-		}
+		Role wrong = new Role("WRG", null);
+		user.getRoles().add(wrong);
+		checkDBWasNotAlteredWhenCreateFailed();
 	}
 
 	@Test
 	public void createWithNullNameRoles() {
-		exception.expect(IllegalArgumentException.class);
-
 		Role wrong = new Role(null, "some role");
 		user.getRoles().add(wrong);
-		target.create(user);
+		checkDBWasNotAlteredWhenCreateFailed();
 	}
 
 	@Test
 	public void createWithTooLongNameRoles() {
-		exception.expect(IllegalArgumentException.class);
-
 		Role wrong = new Role("THE_NAME_IS_TOO_LONG", "some role");
 		user.getRoles().add(wrong);
-		target.create(user);
+		checkDBWasNotAlteredWhenCreateFailed();
+	}
+
+	private void checkDBWasNotAlteredWhenCreateFailed() {
+		try {
+			target.create(user);
+			fail("IllegalArgumentException was expected");
+		} catch (IllegalArgumentException e) {
+			// check that database stays untouched
+			exception.expect(EntityDoesNotExistException.class);
+			target.findByEmail(user.getEmail());
+		}
 	}
 
 	@Test
@@ -303,14 +300,14 @@ public class UserRepositoryTest {
 
 	@Test
 	public void updateNullId() {
-		user.setId(null);
-		exception.expect(IllegalArgumentException.class);
-		target.update(user);
+		User created = target.create(user);
+		created.setId(null);
+		checkDBWasNotAlteredWhenUpdateFailed(created);
 	}
 
 	@Test
 	public void updateWithSameInfo() {
-		target.create(user);
+		user = target.create(user);
 		/*
 		 * Although it seems unnatural,
 		 * nothing wrong should happen here
@@ -320,29 +317,29 @@ public class UserRepositoryTest {
 
 	@Test
 	public void updateWithEmptyFirstName() {
-		target.create(user);
-		user.setFirstName(null);
-		exception.expect(IllegalArgumentException.class);
-		target.update(user);
+		User created = target.create(user);
+		created.setFirstName(null);
+		checkDBWasNotAlteredWhenUpdateFailed(created);
 	}
 
 	@Test
 	public void updateWithEmptyLastName() {
-		target.create(user);
-		user.setLastName(null);
-		exception.expect(IllegalArgumentException.class);
-		target.update(user);
+		User created = target.create(user);
+		created.setLastName(null);
+		checkDBWasNotAlteredWhenUpdateFailed(created);
 	}
 
 	@Test
 	public void updateWithDifferentRoles() {
 		User updated = null;
 
-		target.create(user);
+		user = target.create(user);
 		user.getRoles().remove(usrRole);
-		target.update(user);
-		updated = target.findByEmail(user.getEmail());
+		user.getRoles().add(admRole);
+		
+		updated = target.update(user);
 		Set<Role> updatedRoles = updated.getRoles();
+		assertTrue(updatedRoles.contains(admRole));
 		assertTrue(updatedRoles.contains(devRole));
 		assertFalse(updatedRoles.contains(usrRole));
 	}
@@ -352,14 +349,14 @@ public class UserRepositoryTest {
 		User updated = null;
 
 		user.getRoles().clear();
-		target.create(user);
+		user = target.create(user);
 
 		Role incomplete = new Role("DEV", null);
 		user.getRoles().add(incomplete);
 		updated = target.update(user);
 
 		Set<Role> updatedRoles = updated.getRoles();
-		// We're expecting complete role in answer
+		// We're expecting complete role in the answer
 		assertTrue(updatedRoles.contains(devRole));
 		// This one was not added
 		assertFalse(updatedRoles.contains(usrRole));
@@ -368,7 +365,7 @@ public class UserRepositoryTest {
 	@Test
 	public void updateWithWrongRoles() {
 		Set<Role> originalRoles = user.getRoles();
-		target.create(user);
+		user = target.create(user);
 		try {
 			Role wrong = new Role("WRG", null);
 			Set<Role> updateRoles = new HashSet<>(originalRoles);
@@ -386,7 +383,7 @@ public class UserRepositoryTest {
 	@Test
 	public void updateWithNullNameRoles() {
 		Set<Role> originalRoles = user.getRoles();
-		target.create(user);
+		user = target.create(user);
 		try {
 			Role wrong = new Role(null, "some role");
 			Set<Role> updateRoles = new HashSet<>(originalRoles);
@@ -403,14 +400,22 @@ public class UserRepositoryTest {
 
 	@Test
 	public void updateWithTooLongNameRoles() {
-		exception.expect(IllegalArgumentException.class);
-
-		user.getRoles();
-		target.create(user);
+		User created = target.create(user);
 
 		Role wrong = new Role("WRONG_BECAUSE_TOO_LONG", null);
-		user.getRoles().add(wrong);
-		target.update(user);
+		created.getRoles().add(wrong);
+		checkDBWasNotAlteredWhenUpdateFailed(created);
+	}
+
+	private void checkDBWasNotAlteredWhenUpdateFailed(User forUpdate) {
+		try {
+			target.update(forUpdate);
+			fail("IllegalArgumentException was expected");
+		} catch (IllegalArgumentException e) {
+			// check that database stays untouched
+			User found = target.findByEmail(user.getEmail());
+			compareUsers(found, user);
+		}
 	}
 
 	@Test
@@ -422,7 +427,7 @@ public class UserRepositoryTest {
 
 	@Test
 	public void deleteWithoutId() {
-		target.create(user);
+		user = target.create(user);
 		exception.expect(IllegalArgumentException.class);
 		user.setId(null);
 		target.delete(user);
@@ -432,19 +437,5 @@ public class UserRepositoryTest {
 	public void deleteNull() {
 		exception.expect(IllegalArgumentException.class);
 		target.delete(null);
-	}
-
-	@Test
-	public void getCredentials() {
-		target.create(user);
-		User credentials = target.getCredentials(user.getEmail());
-		assertNotNull(credentials.getPassword());
-		assertThat(credentials.getEmail(), is(user.getEmail()));
-	}
-
-	@Test
-	public void getCredentialsNotExist() {
-		exception.expect(EntityDoesNotExistException.class);
-		target.getCredentials(user.getEmail());
 	}
 }

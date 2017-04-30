@@ -19,7 +19,7 @@ public interface UserRepository {
 	 * @param id User's id
 	 * @return User with given id
 	 * @throws IllegalArgumentException if argument is null
-	 * @throws EntityDoesNotExistException if user can't be found
+	 * @throws EntityDoesNotExistException if user with the id can't be found
 	 * @throws AccessDataBaseException if operation was unsuccessful
 	 *                                     due to internal error
 	 */
@@ -30,8 +30,8 @@ public interface UserRepository {
 	 * Will return existing user or throw an exception.
 	 * @param email email address
 	 * @return User with given address
-	 * @throws IllegalArgumentException if argument is null
-	 * @throws EntityDoesNotExistException if user can't be found
+	 * @throws IllegalArgumentException if argument is null or empty
+	 * @throws EntityDoesNotExistException if user with the email can't be found
 	 * @throws AccessDataBaseException if operation was unsuccessful
 	 *                                     due to internal error
 	 */
@@ -67,8 +67,8 @@ public interface UserRepository {
 	 * For user's roles only 'shortName' parameter is needed.
 	 * If it is absent or the role with given name does not exist
 	 * in database the {@link IllegalArgumentException} will be thrown.
-	 * @param user An existing user with new profile
-	 * @return true update was successful
+	 * @param user An existing user with new details
+	 * @return Update user (without a password)
 	 * @throws IllegalArgumentException if user or its id is null or user has
 	 *                                  incomplete or wrong information
 	 * @throws EntityDoesNotExistException if user can't be found
@@ -79,7 +79,7 @@ public interface UserRepository {
 
 	/**
 	 * Will delete existing user (found by id) from persistence layer
-	 * @param user An existing user
+	 * @param user A user to be removed
 	 * @throws IllegalArgumentException if user or its id is null
 	 * @throws EntityDoesNotExistException if user can't be found
 	 * @throws AccessDataBaseException if operation was unsuccessful
@@ -91,7 +91,6 @@ public interface UserRepository {
 	 * Find user by email address and return with that email and password
 	 * fields only. For authentication purposes.
 	 * @param email User's identifier, unique email address
-	 * @param password what to compare against User's password
 	 * @return User with email and password if exists
 	 * @throws EntityDoesNotExistException if user can't be found
 	 */

@@ -1,4 +1,4 @@
-package dmv.spring.demo.model.repository;
+package dmv.spring.demo.model.repository.jdbc;
 
 import static dmv.spring.demo.util.MessageComposer.compose;
 import static java.sql.ResultSet.CONCUR_READ_ONLY;
@@ -19,15 +19,19 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
+import dmv.spring.demo.model.entity.Role;
+import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.exceptions.AccessDataBaseException;
 import dmv.spring.demo.model.repository.jdbc.sql.QueryNativeSQL;
 
 /**
  * Custom made manager for {@link Connection} and {@link PreparedStatement},
  * to be used in {@link Repository} classes. Reducing boilerplate code.
+ * The Connection is a pooled Connection from {@link DataSourceUtils} class
  * <p> {@link SQLException} will be converted to {@link AccessDataBaseException}
  * at this level: opening and closing connections, setting parameters.
- * <p> It's not thread safe, and expected to be created and then closed within a single method.
+ * <p> It's not thread safe, and is expected to be created and then closed within a single method.
+ * <p> It implements {@link AutoCloseable} interface and could be used with try-with-resources statement
  * @author dmv
  */
 public class JdbcConnector implements AutoCloseable {
@@ -62,7 +66,7 @@ public class JdbcConnector implements AutoCloseable {
 		doJob = query.toString();
 		this.dataSource = dataSource;
 		try {
-			// will throw SQLExceptions - exactly as we need here
+			// will throw SQL Exceptions - exactly as we need here
 			connection = DataSourceUtils.doGetConnection(dataSource);
 			// The statement is scrollable up and down, and it won't keep db connection open
 			preparedStatement = connection.prepareStatement(query.getQuery(), 
@@ -162,6 +166,7 @@ public class JdbcConnector implements AutoCloseable {
 	/**
 	 * Retrieves an object from {@link ResultSet} found in a list of results
 	 * at given index, using provided {@link RowMapper mapper}
+	 * @param <T> Entity type is expected (like {@link Role} or {@link User})
 	 * @param resultIndex list index (0 if expecting single result)
 	 * @param mapper the {@link RowMapper mapper} to be used for objects creation
 	 * @return a constructed object or null if none found
@@ -184,6 +189,7 @@ public class JdbcConnector implements AutoCloseable {
 	/**
 	 * Retrieves a set of objects from {@link ResultSet results list} 
 	 * at given index, using provided {@link RowMapper mapper}
+	 * @param <T> Entity type is expected (like {@link Role} or {@link User})
 	 * @param resultIndex list index (0 if expecting single result)
 	 * @param mapper the {@link RowMapper mapper} to be used for objects creation
 	 * @return a set of constructed objects or empty set if none found
@@ -209,16 +215,16 @@ public class JdbcConnector implements AutoCloseable {
 	}
 
 	/**
-	 * Set Long at specified position
+	 * Set {@link Long} number at specified position
 	 * @param pos Field's position
-	 * @param i what to set
+	 * @param num a number to set
 	 * @throws AccessDataBaseException translates 
-	 *        {@link PreparedStatement#setInt(int, int)} exception
+	 *        {@link PreparedStatement#setLong(int, long)} exception
 	 */
-	public void setLong(int pos, long i) {
+	public void setLong(int pos, long num) {
 		try {
 			
-			preparedStatement.setLong(pos, i);
+			preparedStatement.setLong(pos, num);
 			
 		} catch (Exception e) {
 			closeAfter(e, "setting long");
@@ -227,9 +233,8 @@ public class JdbcConnector implements AutoCloseable {
 	
 	/**
 	 * Set String that can be null or empty to current statement at given position.
-	 * @param pos Field's position
+	 * @param pos Field's position number
 	 * @param field the actual String to be set
-	 * @param fieldName field name
 	 * @throws AccessDataBaseException translates 
 	 *        {@link PreparedStatement#setString(int, String)} exception
 	 */
@@ -244,14 +249,13 @@ public class JdbcConnector implements AutoCloseable {
 	}
 	
 	/**
-	 * Set String which is required to current statement at given position.
+	 * Set String which is required for current statement at given position.
 	 * <p>
 	 * It is a helper method, and the exception it could throw when field is 
 	 * null or empty may be clarified by a message: '{@code fieldName} is not provided'
 	 * @param pos Field's position
 	 * @param field the actual String to be set
 	 * @param fieldName field name
-	 * @throws SQLException translates PreparedStatement#setString exception
 	 * @throws AccessDataBaseException translates 
 	 *        {@link PreparedStatement#setString(int, String)} exception
 	 */
@@ -274,7 +278,7 @@ public class JdbcConnector implements AutoCloseable {
 		throw exception;
 	}
 
-	// exception object must be instantiated before calling this method
+	// 'exception' object must be instantiated before calling this method
 	private boolean isSuccessfullyClosed() {
 		boolean successful = true;
 		if (preparedStatement != null) {

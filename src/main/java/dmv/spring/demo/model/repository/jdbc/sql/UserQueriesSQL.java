@@ -17,13 +17,16 @@ public enum UserQueriesSQL implements QueryNativeSQL {
 	USER_ROLES_DELETE("user_roles_delete"),
 	USER_ROLES_ADD("user_roles_add"),
 	USER_GET_CREDENTIALS("user_get_credentials"),
+	USER_FIND_BY_ID_WITH_ROLES("user_find_by_id_with_roles"),
+	USER_FIND_BY_EMAIL_WITH_ROLES("user_find_by_email_with_roles"),
 	USER_INSERT_WITH_ROLES("user_insert_with_roles"),
+	USER_UPDATE_WITH_ROLES("user_update_with_roles"),
 	USER_INSERT_WITHOUT_ROLES("user_insert_without_roles");
 
 	private String query;
 
 	private UserQueriesSQL(String filename) {
-		query= SQLResourceReader.READER.readSQLFile("user/" + filename);
+		query = SQLResourceReader.READER.readSQLFile("user/" + filename);
 	}
 
 	@Override

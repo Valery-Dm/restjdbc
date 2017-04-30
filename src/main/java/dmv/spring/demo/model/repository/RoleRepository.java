@@ -36,6 +36,7 @@ public interface RoleRepository {
 
 	/**
 	 * Return all users that share given Role, or empty Set.
+	 * @param role Users with what role need to be found
 	 * @return all users with specified Role or empty Set
 	 * @throws IllegalArgumentException if argument is null
 	 * @throws AccessDataBaseException for DB issues

@@ -6,6 +6,6 @@ SELECT @user_id;
 
 SELECT @found_roles;
 
-SELECT @added_roles;
-
 SELECT * FROM user_roles;
+
+DROP TABLE user_roles;

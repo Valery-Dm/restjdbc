@@ -1,15 +1,20 @@
 package dmv.spring.demo.model.entity.sqlfields;
 
+import dmv.spring.demo.model.entity.User;
+
 /**
- * SQL Fields (or Columns) that User type has
+ * SQL Fields (or Columns) that USER table has.
+ * Representation of {@link User} entity
  * @author dmv
  */
 public enum UserFields implements EntityFields {
 
-	USER_TABLE("`users_demo`.`USER`"),
-	ID("ID"), EMAIL("EMAIL_ADRS"),
-	FIRST_NAME("FIRST_NAME"), LAST_NAME("LAST_NAME"),
-	MIDDLE_NAME("MIDDLE_NAME"), PASSWORD("PASSWORD");
+	ID("ID"), 
+	EMAIL("EMAIL_ADRS"),
+	FIRST_NAME("FIRST_NAME"), 
+	LAST_NAME("LAST_NAME"),
+	MIDDLE_NAME("MIDDLE_NAME"), 
+	PASSWORD("PASSWORD");
 
 	private String name;
 

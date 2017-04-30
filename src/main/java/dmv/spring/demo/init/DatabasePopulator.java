@@ -27,7 +27,9 @@ public class DatabasePopulator implements ApplicationRunner {
 		// To create Stored Procedures properly
 		populator.setSeparator("^;");
 		populator.addScript(new ClassPathResource("/sql/db_init.sql"));
+		populator.addScript(new ClassPathResource("/sql/db_populate.sql"));
 		populator.addScript(new ClassPathResource("/sql/stored_procedures/create_user_with_roles_cp.sql"));
+		populator.addScript(new ClassPathResource("/sql/stored_procedures/update_user_with_roles_cp.sql"));
 		populator.populate(dataSource.getConnection());
 	}
 

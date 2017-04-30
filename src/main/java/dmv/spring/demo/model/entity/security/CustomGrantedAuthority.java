@@ -24,7 +24,7 @@ public class CustomGrantedAuthority extends Role
 	/**
 	 * Create GrantedAuthority object from minimally required field
 	 * short name of some {@link Role}
-	 * @param role A role's short name to grant an authority to
+	 * @param shortName A role's short name to grant an authority to
 	 * @throws IllegalArgumentException if argument is null
 	 */
 	public CustomGrantedAuthority(String shortName) {

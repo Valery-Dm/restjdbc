@@ -15,6 +15,14 @@ public class MessageComposerTest {
 		String exp = "some sample base string with 1  2,    3 arguments";
 		assertTrue(exp.equals(act));
 	}
+
+	@Test
+	public void testInputWithNullArgs() {
+		String act = compose("some {0} base string with {1}{2},    {3} arguments", 
+				                    "sample", 1, null, "");
+		String exp = "some sample base string with 1null,     arguments";
+		assertTrue(exp.equals(act));
+	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testBaseNull() {
