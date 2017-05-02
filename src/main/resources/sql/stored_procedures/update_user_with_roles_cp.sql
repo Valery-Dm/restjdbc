@@ -30,18 +30,21 @@ BEGIN
 
     SET @user_id = in_id;
 
-    -- Now proceed and find given user id
-    IF ( 
-	    SELECT EXISTS (
-		    SELECT 
-				`ID` 
+    -- Now proceed and find user with given id
+    SET @user_email = (
+            SELECT 
+				`EMAIL_ADRS`  
 			FROM 
 				`USER`
 		    WHERE 
-				`ID` = @user_id 
-            ) 
-	    )
+				`ID` = @user_id);
+                
     -- If it's there continue
+    IF (
+		SELECT 
+			@user_email 
+		IS NOT NULL 
+        )
     THEN 
         -- Check if found Roles number equals to the expected number
         IF 

@@ -171,6 +171,33 @@ public class JdbcConnector implements AutoCloseable {
 	}
 
 	/**
+	 * Gets String from resultIndex {@link ResultSet} at
+	 * columnIndex position
+	 * @param resultIndex The results list index (java - 0 based)
+	 * @param columnIndex The column number (sql - 1 based)
+	 * @return String result
+	 * @throws AccessDataBaseException translates SQLExceptions,
+	 *        and 'out of bound' errors  will also fall into this category
+	 */
+	public String getString(int resultIndex, int columnIndex) {
+		getResults();
+		String result = "";
+		try {
+
+			if (results.size() > resultIndex) {
+				ResultSet resultSet = results.get(resultIndex);
+				// we are expecting just a single row here
+				resultSet.first();
+				result = resultSet.getString(columnIndex);
+			}
+
+		} catch (Exception e) {
+			closeAfter(e, "getting string");
+		}
+		return result;
+	}
+
+	/**
 	 * Retrieves an object from {@link ResultSet} found in a list of results
 	 * at given index, using provided {@link RowMapper mapper}
 	 * @param <T> Entity type is expected (like {@link Role} or {@link User})

@@ -8,4 +8,6 @@ SELECT @found_roles;
 
 SELECT * FROM user_roles;
 
+SELECT @user_email;
+
 DROP TABLE user_roles;

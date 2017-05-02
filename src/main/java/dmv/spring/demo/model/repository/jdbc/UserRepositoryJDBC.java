@@ -159,6 +159,11 @@ public class UserRepositoryJDBC implements UserRepository {
 			if (!getResults(updatedUser, connector, preparedRoles))
 				throwNotExist("User", "id", updatedUser.getId());
 
+			// To avoid confusion replace possibly malformed email address
+			// with actually existing one (email was not changed in this method,
+			// and the user should receive original email back from DB)
+			updatedUser.setEmail(connector.getString(3, 1));
+
 			// we have no reason to pass around user's password
 			updatedUser.setPassword(null);
 
