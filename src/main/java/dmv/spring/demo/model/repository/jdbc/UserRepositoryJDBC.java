@@ -161,8 +161,10 @@ public class UserRepositoryJDBC implements UserRepository {
 
 			// To avoid confusion replace possibly malformed email address
 			// with actually existing one (email was not changed in this method,
-			// and the user should receive original email back from DB)
-			updatedUser.setEmail(connector.getString(3, 1));
+			// and the user should receive original email back from DB).
+			// This is the last result and if we have no Roles index needs to be shifted
+			int lastIdx = preparedRoles > 0 ? 3 : 2;
+			updatedUser.setEmail(connector.getString(lastIdx, 1));
 
 			// we have no reason to pass around user's password
 			updatedUser.setPassword(null);
@@ -226,7 +228,7 @@ public class UserRepositoryJDBC implements UserRepository {
 		 * We are expecting next results:
 		 * 0. updatedUserId long
 		 * 1. foundRoles    long
-		 * 3. Roles         table
+		 * 2. Roles         table
 		 */
 		updatedUser.setId(connector.getLong(0, 1));
 		long foundRoles = connector.getLong(1, 1);
