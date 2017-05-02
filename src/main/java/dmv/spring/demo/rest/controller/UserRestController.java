@@ -1,5 +1,6 @@
 package dmv.spring.demo.rest.controller;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.web.util.UriUtils.decode;
 
 import java.io.UnsupportedEncodingException;
@@ -26,7 +27,7 @@ import dmv.spring.demo.rest.representation.assembler.UserDTOAsm;
  * @author dmv
  */
 @RestController
-@RequestMapping(path="/rest/users", produces="application/json")
+@RequestMapping(path="/rest/users", produces=APPLICATION_JSON_UTF8_VALUE)
 public class UserRestController implements UserRestApiDocs {
 
 	@Autowired

@@ -47,14 +47,14 @@ public class RoleRepositoryTest {
 		assertThat(role.getFullName(), is(roleFullName));
 	}
 
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=EntityDoesNotExistException.class)
 	public void findByShortNameNull() {
 		target.findByShortName(null);
 	}
 
 	@Test(expected=EntityDoesNotExistException.class)
 	public void findByShortNameWrong() {
-		target.findByShortName(roleFullName);
+		target.findByShortName("not exsiting" + roleShortName);
 	}
 
 	@Test
@@ -70,18 +70,19 @@ public class RoleRepositoryTest {
 		assertTrue(users.size() > 0);
 	}
 
-	@Test
-	public void getRoleUsersShortNameAbsent() {
-		role = target.findByShortName(roleShortName);
-		role.setShortName(roleFullName);
-		Set<User> users = target.getUsers(role);
-		/*
-		 * Empty list is expected
-		 */
-		assertTrue(users.size() == 0);
+	@Test(expected=IllegalArgumentException.class)
+	public void getRoleUsersNullRole() {
+		target.getUsers(null);
 	}
 
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=EntityDoesNotExistException.class)
+	public void getRoleUsersShortNameAbsent() {
+		role = target.findByShortName(roleShortName);
+		role.setShortName("not exsiting" + roleShortName);
+		target.getUsers(role);
+	}
+
+	@Test(expected=EntityDoesNotExistException.class)
 	public void getRoleUsersShortNameNull() {
 		role = target.findByShortName(roleShortName);
 		role.setShortName(null);

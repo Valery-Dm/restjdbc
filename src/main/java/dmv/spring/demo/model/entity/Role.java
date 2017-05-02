@@ -12,8 +12,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import dmv.spring.demo.model.entity.apidocs.RoleApiDocs;
 
 /**
- * Role entity POJO. Means what role user has:
- * administrator or user or whatever
+ * Role entity POJO. What system access rights some user has:
+ * Administrator or User or whatever.
  * @author dmv
  */
 public class Role implements RoleApiDocs, Serializable {
@@ -53,7 +53,10 @@ public class Role implements RoleApiDocs, Serializable {
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}
-	// For polymorphic defensive copying
+	/**
+	 * For polymorphic defensive copying
+	 * @return a copy of this object
+	 */
 	public Role copy() {
 		return new Role(shortName, fullName);
 	}

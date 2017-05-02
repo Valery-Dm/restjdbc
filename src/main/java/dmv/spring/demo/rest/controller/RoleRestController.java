@@ -1,5 +1,6 @@
 package dmv.spring.demo.rest.controller;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.List;
@@ -30,7 +31,7 @@ import dmv.spring.demo.rest.representation.assembler.UserLinkResourceAsm;
  * @author dmv
  */
 @RestController
-@RequestMapping(path="/rest/roles", produces="application/json")
+@RequestMapping(path="/rest/roles", produces=APPLICATION_JSON_UTF8_VALUE)
 public class RoleRestController implements RoleRestApiDocs {
 
 	@Autowired

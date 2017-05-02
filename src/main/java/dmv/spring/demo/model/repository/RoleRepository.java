@@ -20,7 +20,7 @@ public interface RoleRepository {
 
 	/**
 	 * This method provides quick pre-check for given Short Name
-	 * without looking in DB for existing names. Just naswering questions:
+	 * without looking in DB for existing names. Just answering questions:
 	 * is it not null, has it proper length or does it consist of letters.
 	 *
 	 * @param shortName a Short name to check
@@ -37,7 +37,6 @@ public interface RoleRepository {
 	 * Find and return Role object with given short name (case insensitive).
 	 * @param shortName Special acronym
 	 * @return found Role object
-	 * @throws IllegalArgumentException if argument is null
 	 * @throws AccessDataBaseException for DB issues
 	 * @throws EntityDoesNotExistException if Role with given
 	 *                                     name was not found
@@ -49,6 +48,8 @@ public interface RoleRepository {
 	 * @param role Users with what role need to be found
 	 * @return all users with specified Role or empty Set
 	 * @throws IllegalArgumentException if argument is null
+	 * @throws EntityDoesNotExistException if Role with given
+	 *                                     name was not found
 	 * @throws AccessDataBaseException for DB issues
 	 */
 	Set<User> getUsers(Role role);

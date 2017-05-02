@@ -61,6 +61,8 @@ public class JdbcConnector implements AutoCloseable {
 	 * <p> Don't forget to call {@link #close()} method in the end.
 	 * @param dataSource the {@link DataSource} to be used
 	 * @param query the {@link QueryNativeSQL} query
+	 * @throws AccessDataBaseException if open connection and prepare statement 
+	 *                                 operations were not successful
 	 */
 	public JdbcConnector(DataSource dataSource, QueryNativeSQL query) {
 		doJob = query.toString();
@@ -95,9 +97,9 @@ public class JdbcConnector implements AutoCloseable {
 
 	/**
 	 * Returns the first update count after execution.
-	 * <p> This method won't get and store any results
+	 * <p> This method won't get or cache any results
 	 * (i.e. Result Sets are not expected). Use {@link #getResults()}
-	 * method instead if you need a result.
+	 * method instead if you need them.
 	 * @return the first update count
 	 * @throws AccessDataBaseException translates SQLExceptions
 	 * @see PreparedStatement#getUpdateCount()
@@ -118,6 +120,7 @@ public class JdbcConnector implements AutoCloseable {
 	/**
 	 * Execute statement and return a list with {@link ResultSet} objects
 	 * @return A list with available results (with {@link RandomAccess RAM})
+	 *         or empty list if there were Update Counts only
 	 * @throws AccessDataBaseException translates SQLExceptions
 	 */
 	public List<ResultSet> getResults() {
@@ -220,7 +223,7 @@ public class JdbcConnector implements AutoCloseable {
 
 	/**
 	 * Set {@link Long} number at specified position
-	 * @param pos Field's position
+	 * @param pos The position is SQL 1-based index
 	 * @param num a number to set
 	 * @throws AccessDataBaseException translates
 	 *        {@link PreparedStatement#setLong(int, long)} exception
@@ -237,7 +240,7 @@ public class JdbcConnector implements AutoCloseable {
 
 	/**
 	 * Set String that can be null or empty to current statement at given position.
-	 * @param pos Field's position number
+	 * @param pos The position is SQL 1-based index
 	 * @param field the actual String to be set
 	 * @throws AccessDataBaseException translates
 	 *        {@link PreparedStatement#setString(int, String)} exception
@@ -254,12 +257,10 @@ public class JdbcConnector implements AutoCloseable {
 
 	/**
 	 * Set String which is required for current statement at given position.
-	 * <p>
-	 * It is a helper method, and the exception it could throw when field is
-	 * null or empty may be clarified by a message: '{@code fieldName} is not provided'
-	 * @param pos Field's position
+	 * @param pos The position is SQL 1-based index
 	 * @param field the actual String to be set
-	 * @param fieldName field name
+	 * @param fieldName field name (for logging and error messages)
+	 * @throws IllegalArgumentException if field is null or empty string
 	 * @throws AccessDataBaseException translates
 	 *        {@link PreparedStatement#setString(int, String)} exception
 	 */
