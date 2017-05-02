@@ -159,11 +159,12 @@ public class UserRepositoryJDBC implements UserRepository {
 			if (!getResults(updatedUser, connector, preparedRoles))
 				throwNotExist("User", "id", updatedUser.getId());
 
+
+			// To get the last result when we have no Roles index needs to be shifted
+			int lastIdx = preparedRoles > 0 ? 3 : 2;
 			// To avoid confusion replace possibly malformed email address
 			// with actually existing one (email was not changed in this method,
 			// and the user should receive original email back from DB).
-			// This is the last result and if we have no Roles index needs to be shifted
-			int lastIdx = preparedRoles > 0 ? 3 : 2;
 			updatedUser.setEmail(connector.getString(lastIdx, 1));
 
 			// we have no reason to pass around user's password
