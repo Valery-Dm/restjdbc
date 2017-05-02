@@ -6,7 +6,8 @@ import dmv.spring.demo.model.entity.Role;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * Swagger (API Documentation) annotations
+ * Swagger API Documentation.
+ * Each method is annotated with Springfox annotations (Swagger generator)
  * @author dmv
  */
 public interface UserApiDocs {

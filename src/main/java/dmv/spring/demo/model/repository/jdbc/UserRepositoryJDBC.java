@@ -38,15 +38,19 @@ import dmv.spring.demo.security.CredentialsService;
  */
 @Repository
 @Transactional
-public class UserRepositoryComboQueries implements UserRepository {
+public class UserRepositoryJDBC implements UserRepository {
 
 	private final Logger logger = getLogger(getClass());
 
-	@Autowired
-	private DataSource dataSource;
+	private final DataSource dataSource;
+
+	private final CredentialsService credentialsService;
 
 	@Autowired
-	private CredentialsService credentialsService;
+	public UserRepositoryJDBC(DataSource dataSource, CredentialsService credentialsService) {
+		this.dataSource = dataSource;
+		this.credentialsService = credentialsService;
+	}
 
 	@Override
 	public User findById(Long id) {

@@ -14,7 +14,6 @@ public class RoleLinkResource extends ResourceSupport {
 	private final String fullName;
 
 	public RoleLinkResource(String fullName) {
-		super();
 		this.fullName = fullName;
 	}
 

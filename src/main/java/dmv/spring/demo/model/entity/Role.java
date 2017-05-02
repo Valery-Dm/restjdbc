@@ -1,5 +1,8 @@
 package dmv.spring.demo.model.entity;
 
+import static dmv.spring.demo.model.repository.RoleRepository.FULL_NAME_MAX_LENGTH;
+import static dmv.spring.demo.model.repository.RoleRepository.SHORT_NAME_LENGTH;
+
 import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
@@ -14,6 +17,10 @@ import dmv.spring.demo.model.entity.apidocs.RoleApiDocs;
 /**
  * Role entity POJO. What system access rights some user has:
  * Administrator or User or whatever.
+ * <p>
+ * This object has Validation restrictions on how many characters can be used
+ * to represent the Short and the Full names. Although these constraints are
+ * not checked upon setting and not guaranteed upon getting those fields.
  * @author dmv
  */
 public class Role implements RoleApiDocs, Serializable {
@@ -21,21 +28,34 @@ public class Role implements RoleApiDocs, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@NotNull
-	@Size(min=3, max=3)
+	@Size(min=SHORT_NAME_LENGTH, max=SHORT_NAME_LENGTH)
 	private String shortName;
 
 	@JsonIgnore
 	@NotNull
-	@Size(max=50)
+	@Size(max=FULL_NAME_MAX_LENGTH)
 	private String fullName;
 	/* Does not contain Set<User> by default */
 
+	/**
+	 * Default constructor. Creates empty object
+	 */
 	public Role() {}
+	/**
+	 * Copies over fields from given Role
+	 * @param role A Role to copy from
+	 * @throws IllegalArgumentException if argument is null
+	 */
 	public Role(Role role) {
 		Assert.notNull(role, "Role can't be null");
 		setShortName(role.getShortName());
 		setFullName(role.getFullName());
 	}
+	/**
+	 * Creates new Role with given fields (can be null or empty)
+	 * @param shortName Short name of Role
+	 * @param fullName Full name of Role
+	 */
 	public Role(String shortName, String fullName) {
 		setShortName(shortName);
 		setFullName(fullName);
@@ -54,7 +74,8 @@ public class Role implements RoleApiDocs, Serializable {
 		this.fullName = fullName;
 	}
 	/**
-	 * For polymorphic defensive copying
+	 * For polymorphic defensive copying.
+	 * Creates a new instance with the same fields
 	 * @return a copy of this object
 	 */
 	public Role copy() {

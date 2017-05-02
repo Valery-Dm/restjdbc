@@ -13,6 +13,30 @@ import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
  */
 public interface UserRepository {
 
+	/*
+	 * There is no huge difference between these lengths from
+	 * SQL VARCHAR perspective (if they are not above 255).
+	 * These numbers are just for testing Validation layer
+	 */
+
+	/**
+	 * Logically, correct email address can't contain less
+	 * than 5 characters.
+	 */
+	static final int EMAIL_MIN = 5;
+	/**
+	 * Minimal string length is just not empty - 1 character
+	 */
+	static final int NOT_EMPTY = 1;
+	/**
+	 * Maximal long field (like {@code last name}) length - 70 characters
+	 */
+	static final int LONG_MAX = 70;
+	/**
+	 * Maximal short field (like {@code middle name}) length - 45 characters
+	 */
+	static final int SHORT_MAX = 45;
+
 	/**
 	 * Find user by its unique identifier.
 	 * Will return existing user or throw an exception.

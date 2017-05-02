@@ -34,14 +34,20 @@ import dmv.spring.demo.rest.representation.assembler.UserLinkResourceAsm;
 @RequestMapping(path="/rest/roles", produces=APPLICATION_JSON_UTF8_VALUE)
 public class RoleRestController implements RoleRestApiDocs {
 
-	@Autowired
-	private RoleRepository roleRepository;
+	private final RoleRepository roleRepository;
+
+	private final RoleDTOAsm roleDTOAsm;
+
+	private final UserLinkResourceAsm userLinkAsm;
 
 	@Autowired
-	private RoleDTOAsm roleDTOAsm;
-
-	@Autowired
-	private UserLinkResourceAsm userLinkAsm;
+	public RoleRestController(RoleRepository roleRepository,
+			                  RoleDTOAsm roleDTOAsm,
+			                  UserLinkResourceAsm userLinkAsm) {
+		this.roleRepository = roleRepository;
+		this.roleDTOAsm = roleDTOAsm;
+		this.userLinkAsm = userLinkAsm;
+	}
 
 	@Override
 	@RequestMapping(path="/{shortName}", method = GET)

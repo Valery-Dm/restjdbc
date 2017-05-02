@@ -3,7 +3,6 @@ package dmv.spring.demo.security;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,9 +16,6 @@ import dmv.spring.demo.model.entity.User;
  */
 @Service
 public class CustomCredentialsService implements CredentialsService {
-
-	@Autowired
-	private BeanFactory beanFactory;
 
 	/* For password auto generation */
 	@Autowired

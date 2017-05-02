@@ -2,7 +2,7 @@ package dmv.spring.demo.model.repository.jdbc;
 
 import static dmv.spring.demo.model.repository.jdbc.Mappers.ROLE_MAPPER;
 import static dmv.spring.demo.model.repository.jdbc.Mappers.USER_AUTH_MAPPER;
-import static dmv.spring.demo.model.repository.jdbc.sql.UserQueriesSQL.USER_GET_CREDENTIALS;
+import static dmv.spring.demo.model.repository.jdbc.sql.CredentialsQueriesSQL.USER_GET_CREDENTIALS;
 import static dmv.spring.demo.util.MessageComposer.compose;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -21,12 +21,14 @@ import dmv.spring.demo.model.repository.CredentialsRepository;
 import dmv.spring.demo.security.CredentialsService;
 
 /**
+ * JDBC implementation of {@link CredentialsRepository} interface.
+ * <p>
+ * All methods run within transactions.
  * @author dmv
- *
  */
 @Repository
 @Transactional
-public class CredentialsRepositoryComboQueries implements CredentialsRepository {
+public class CredentialsRepositoryJDBC implements CredentialsRepository {
 
 	private final Logger logger = getLogger(getClass());
 

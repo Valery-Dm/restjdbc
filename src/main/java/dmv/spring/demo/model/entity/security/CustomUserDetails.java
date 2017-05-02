@@ -16,8 +16,8 @@ import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
 
 /**
- * Creates a wrapper for internal {@link User} object to conform to
- * to {@link UserDetails} interface to be used within Authentication Context.
+ * Creates a wrapper for internal {@link User} object to conform
+ * to {@link UserDetails} interface, to be used within Authentication Context.
  * @author dmv
  */
 public class CustomUserDetails extends User implements UserDetails {
@@ -69,54 +69,36 @@ public class CustomUserDetails extends User implements UserDetails {
 		logger.debug("User {} was passed to CustomUserDetails constructor", email);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.security.core.userdetails.UserDetails#getAuthorities()
-	 */
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return authorities;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.security.core.userdetails.UserDetails#getUsername()
-	 */
 	@Override
 	public String getUsername() {
 		return getEmail() == null ? "" : getEmail();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.security.core.userdetails.UserDetails#isAccountNonExpired()
-	 */
 	@Override
 	public boolean isAccountNonExpired() {
 		// this functionality is not implemented
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.security.core.userdetails.UserDetails#isAccountNonLocked()
-	 */
-	@Override
-	public boolean isAccountNonLocked() {
-		// this functionality is not implemented
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.springframework.security.core.userdetails.UserDetails#isCredentialsNonExpired()
-	 */
 	@Override
 	public boolean isCredentialsNonExpired() {
 		// this functionality is not implemented
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.security.core.userdetails.UserDetails#isEnabled()
-	 */
 	@Override
 	public boolean isEnabled() {
+		// this functionality is not implemented
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
 		// this functionality is not implemented
 		return true;
 	}

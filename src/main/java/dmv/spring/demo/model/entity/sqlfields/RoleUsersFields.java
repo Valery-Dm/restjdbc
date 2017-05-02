@@ -1,11 +1,10 @@
 package dmv.spring.demo.model.entity.sqlfields;
 
 /**
- * 'ROLE_USERS' table and column names
+ * 'ROLE_USERS' table - column names
  * @author dmv
  */
-public enum RoleUsersFields {
-	RU_TABLE("`users_demo`.`ROLE_USERS`"),
+public enum RoleUsersFields implements EntityFields {
 	ROLE_ID("ROLE_ID"),
 	USER_ID("USER_ID");
 
@@ -15,6 +14,7 @@ public enum RoleUsersFields {
 		this.name = name;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}

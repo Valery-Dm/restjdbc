@@ -6,8 +6,9 @@ import dmv.spring.demo.model.exceptions.EntityAlreadyExistsException;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 
 /**
- * The main purpose of this interface is to deal with
- * Credentials related queries: getting or updating user's
+ * This repository specifically aims operations upon User Credentials.
+ * The main purpose of this interface is to describe common
+ * Credential related operations: getting or updating user's
  * password and email address (unique identifier).
  * @author dmv
  */

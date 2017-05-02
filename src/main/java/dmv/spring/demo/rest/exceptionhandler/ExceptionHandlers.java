@@ -29,8 +29,7 @@ import dmv.spring.demo.model.exceptions.EntityAlreadyExistsException;
 import dmv.spring.demo.model.exceptions.EntityDoesNotExistException;
 
 /**
- * Maps Persistence Layer Exceptions to HTTP codes.
- * Also other errors will be caught and mapped.
+ * Maps various (Persistence Layer, Controllers) Exceptions to HTTP codes.
  * @author dmv
  */
 @RestControllerAdvice
@@ -54,7 +53,7 @@ public class ExceptionHandlers {
 	}
 
 	/*
-	 * SQL connection problems
+	 * SQL connection problems (raw SQLException should not be possible)
 	 */
 	@ExceptionHandler({ AccessDataBaseException.class,
 		                SQLException.class })
@@ -117,9 +116,6 @@ public class ExceptionHandlers {
 		return new ErrorInfo(req.getRequestURI(), ex);
 	}
 
-	/*
-	 * Simplify Spring validation error output
-	 */
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	@ResponseStatus(BAD_REQUEST)
 	public @ResponseBody ErrorInfo methodArgumentNotValid(HttpServletRequest req,
@@ -130,6 +126,9 @@ public class ExceptionHandlers {
         return new ErrorInfo(req.getRequestURI(), processFieldErrors(fieldErrors));
     }
 
+	/*
+	 * Simplify Spring validation error output
+	 */
     private String processFieldErrors(List<FieldError> fieldErrors) {
     	if (fieldErrors == null || fieldErrors.size() == 0) return "unknown cause";
         StringBuilder builder = new StringBuilder();

@@ -30,11 +30,15 @@ import dmv.spring.demo.rest.representation.assembler.UserDTOAsm;
 @RequestMapping(path="/rest/users", produces=APPLICATION_JSON_UTF8_VALUE)
 public class UserRestController implements UserRestApiDocs {
 
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
+
+	private final UserDTOAsm userDTOAsm;
 
 	@Autowired
-	private UserDTOAsm userDTOAsm;
+	public UserRestController(UserRepository userRepository, UserDTOAsm userDTOAsm) {
+		this.userRepository = userRepository;
+		this.userDTOAsm = userDTOAsm;
+	}
 
 	@Override
 	@GetMapping(path="/{userId}")

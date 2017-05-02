@@ -14,8 +14,14 @@ package dmv.spring.demo.util;
  */
 public class MessageComposer {
 
+	/* Not for instantiation */
+	private MessageComposer() {}
+
 	/**
-	 * Simple message composer, supports up to 10 arguments (0 through 9).
+	 * Simple message composer, supports up to 10 markers (0 through 9),
+	 * represented as numbers in curly braces, like <code>{0} or {1}</code>
+	 * <p>
+	 * See example at the Type level
 	 * <p>
 	 * Currently there are no support for escape character '\',
 	 * so just don't use curly braces elsewhere except for markers.

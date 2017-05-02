@@ -26,7 +26,7 @@ import dmv.spring.demo.model.entity.User;
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @DirtiesContext
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, 
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,
                 properties={ "server.ssl.enabled=false", "logging.level.root=debug" })
 @WithMockUser(username = "admin", authorities = { "ADM", "USR" })
 public class UserEndToEndTest implements TestHelpers {
@@ -41,9 +41,9 @@ public class UserEndToEndTest implements TestHelpers {
 			System.out.println(body);
 			assertThat(body).isEqualTo("Hello World");
 		}
-		
+
 		private List<HttpMessageConverter<?>> getMessageConverters() {
-		    List<HttpMessageConverter<?>> converters = 
+		    List<HttpMessageConverter<?>> converters =
 		      new ArrayList<HttpMessageConverter<?>>();
 		    converters.add(new MappingJackson2HttpMessageConverter());
 		    return converters;

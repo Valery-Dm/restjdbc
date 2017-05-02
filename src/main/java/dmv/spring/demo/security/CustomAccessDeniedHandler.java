@@ -16,15 +16,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dmv.spring.demo.rest.exceptionhandler.ErrorInfo;
 
 /**
- * Handles 403 errors sending JSON-formatted output
+ * Handles 403 errors that occured before Controller, sending JSON-formatted output
  * @author dmv
  */
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
-	/* (non-Javadoc)
-	 * @see org.springframework.security.web.access.AccessDeniedHandler#handle(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.springframework.security.access.AccessDeniedException)
-	 */
 	@Override
 	public void handle(HttpServletRequest request,
 			           HttpServletResponse response,

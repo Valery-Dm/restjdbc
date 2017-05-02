@@ -19,6 +19,11 @@ public interface RoleRepository {
 	static final int SHORT_NAME_LENGTH = 3;
 
 	/**
+	 * Full name may have at most 50 characters
+	 */
+	static final int FULL_NAME_MAX_LENGTH = 50;
+
+	/**
 	 * This method provides quick pre-check for given Short Name
 	 * without looking in DB for existing names. Just answering questions:
 	 * is it not null, has it proper length or does it consist of letters.

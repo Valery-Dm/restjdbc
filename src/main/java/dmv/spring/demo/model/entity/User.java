@@ -1,5 +1,10 @@
 package dmv.spring.demo.model.entity;
 
+import static dmv.spring.demo.model.repository.UserRepository.EMAIL_MIN;
+import static dmv.spring.demo.model.repository.UserRepository.LONG_MAX;
+import static dmv.spring.demo.model.repository.UserRepository.NOT_EMPTY;
+import static dmv.spring.demo.model.repository.UserRepository.SHORT_MAX;
+
 import java.io.Serializable;
 import java.util.Set;
 
@@ -14,7 +19,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import dmv.spring.demo.model.entity.apidocs.UserApiDocs;
 
 /**
- * User entity POJO
+ * User entity POJO. This class has some Validation restrictions
+ * on how many characters can be used to represent various fields,
+ * although these constraints are not enforced inside mutator methods.
  * @author dmv
  */
 public class User implements UserApiDocs, Serializable {
@@ -25,28 +32,42 @@ public class User implements UserApiDocs, Serializable {
 	private Long id;
 
 	@NotNull
-	@Size(min = 5, max = 70)
+	@Size(min = EMAIL_MIN, max = LONG_MAX)
 	@Email
 	private String email;
 
 	@NotNull
-	@Size(min = 1, max = 45)
+	@Size(min = NOT_EMPTY, max = SHORT_MAX)
 	private String firstName;
 
 	@NotNull
-	@Size(min = 1, max = 70)
+	@Size(min = NOT_EMPTY, max = LONG_MAX)
 	private String lastName;
 
-	@Size(max = 45)
+	@Size(max = SHORT_MAX)
 	private String middleName;
 
+	/* Prevent passwords from being serialized to disk */
 	transient
 	private String password;
 
+	/*
+	 * Roles are stored in a HashSet. There are certain problems exist with
+	 * hashes serialization, and I have no intention to deal with them
+	 * in this workflow. User roles could be skipped altogether.
+	 */
 	transient
 	private Set<Role> roles;
 
+	/**
+	 * Default constructor creates an empty object
+	 */
 	public User() {}
+	/**
+	 * Creates a shallow copy instance of given User
+	 * @param user A user to copy fields from
+	 * @throws IllegalArgumentException if given argument is null
+	 */
 	public User(User user) {
 		Assert.notNull(user, "User can't be null");
 		id = user.getId();

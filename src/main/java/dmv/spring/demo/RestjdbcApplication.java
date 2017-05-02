@@ -8,7 +8,10 @@ import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-
+/**
+ * Main Spring Boot class
+ * @author dmv
+ */
 @SpringBootApplication(exclude = {
 		ErrorMvcAutoConfiguration.class,
 		RepositoryRestMvcAutoConfiguration.class })

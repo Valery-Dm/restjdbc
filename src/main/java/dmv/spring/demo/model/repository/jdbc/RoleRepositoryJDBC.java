@@ -35,24 +35,24 @@ import dmv.spring.demo.model.repository.RoleRepository;
  */
 @Repository
 @Transactional(readOnly=true)
-public class RoleRepositorySingleQueries implements RoleRepository {
+public class RoleRepositoryJDBC implements RoleRepository {
 
 	private final Logger logger = getLogger(getClass());
 
 	private final DataSource dataSource;
-	
+
 	/*
 	 * There are just three Roles available.
 	 * Simple caching solution would suffice.
 	 */
 	private final Map<String, Role> cache = new HashMap<>();
-	
+
 	@Autowired
-	public RoleRepositorySingleQueries(DataSource dataSource) {
+	public RoleRepositoryJDBC(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
-	
-	
+
+
 	@Override
 	public Role findByShortName(String shortName) {
 		if (!RoleRepository.isValidShortName(shortName))
@@ -69,15 +69,15 @@ public class RoleRepositorySingleQueries implements RoleRepository {
 			synchronized (cache) {
 				role = cache.get(shortName);
 				if (role == null) {
-					try (JdbcConnector connector = 
+					try (JdbcConnector connector =
 							new JdbcConnector(dataSource, ROLE_FIND_BY_SHORT_NAME)) {
-						
+
 						connector.setRequiredString(1, shortName, "short name");
-						
+
 						role = connector.getObject(0, ROLE_MAPPER);
 						if (role == null)
 							throwNotExist(shortName);
-						
+
 						cache.put(shortName, role);
 						logger.debug("Role {} has been cached", shortName);
 					}
@@ -95,8 +95,8 @@ public class RoleRepositorySingleQueries implements RoleRepository {
 		String shortName = role.getShortName();
 		if (!RoleRepository.isValidShortName(shortName))
 			throwNotExist(shortName);
-		
-		try (JdbcConnector connector = 
+
+		try (JdbcConnector connector =
 				new JdbcConnector(dataSource, ROLE_GET_USERS)) {
 
 			connector.setRequiredString(1, shortName, "short name");

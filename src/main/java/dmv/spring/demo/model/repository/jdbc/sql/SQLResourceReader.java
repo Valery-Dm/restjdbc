@@ -12,15 +12,26 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 
 /**
- * Helper class that reads SQL resources
+ * Helper class that reads SQL resources (queries) from disk
  * @author dmv
  */
 public class SQLResourceReader {
 
+	/**
+	 * Singleton instance of this Reader
+	 */
 	public static final SQLResourceReader READER = new SQLResourceReader();
 
-	private final Logger logger = getLogger(SQLResourceReader.class);
+	private static final Logger logger = getLogger(SQLResourceReader.class);
 
+	private SQLResourceReader() {}
+
+	/**
+	 * Read given file, simplify it (remove unnecessary spaces) and return
+	 * its content as a String
+	 * @param filename File name without extension
+	 * @return Content of given file as a String
+	 */
 	public String readSQLFile(String filename) {
 		String query = null;
 		try (BufferedReader reader = new BufferedReader(

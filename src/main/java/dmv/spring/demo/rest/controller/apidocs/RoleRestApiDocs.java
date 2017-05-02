@@ -13,7 +13,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 /**
- * Swagger (API Documentation) annotations
+ * Swagger API Documentation.
+ * Each method is annotated with Springfox annotations (Swagger generator)
  * @author dmv
  */
 public interface RoleRestApiDocs {
@@ -21,6 +22,8 @@ public interface RoleRestApiDocs {
 	@ApiOperation(value="Find role by its short name", notes="The short name is a special (and unique) acronym for each role. Right now, there are three predefined roles: ADM for Administrator, USR for User, DEV for Developer")
 	@ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of role", response = RoleDTO.class),
+            @ApiResponse(code = 401, message = "Unauthenticated"),
+    		@ApiResponse(code = 403, message = "Unauthorised"),
             @ApiResponse(code = 404, message = "Role with given name does not exist") })
 	ResponseEntity<RoleDTO> getRole(
 			@ApiParam(value="short role's name: ADM for Administrator, USR for User, DEV for Developer etc.", required=true)
@@ -30,6 +33,8 @@ public interface RoleRestApiDocs {
 	@ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of users", response = Resources.class),
             @ApiResponse(code = 204, message = "Users with given role were not found"),
+            @ApiResponse(code = 401, message = "Unauthenticated"),
+    		@ApiResponse(code = 403, message = "Unauthorised"),
             @ApiResponse(code = 404, message = "Role with given name does not exist") })
 	ResponseEntity<Resources<UserLinkResource>> getUsers(
 			@ApiParam(value="short role's name: ADM for Administrator, USR for User, DEV for Developer etc.", required=true)

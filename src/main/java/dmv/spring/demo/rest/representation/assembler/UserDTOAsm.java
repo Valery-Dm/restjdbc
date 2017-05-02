@@ -16,7 +16,8 @@ import dmv.spring.demo.rest.representation.RoleLinkResource;
 import dmv.spring.demo.rest.representation.UserDTO;
 
 /**
- * Assembles {@link UserDTO}
+ * Assembles Data Transfer Object for {@link User} entity that
+ * will be sent over HTTP in JSON form
  * @author dmv
  */
 @Component

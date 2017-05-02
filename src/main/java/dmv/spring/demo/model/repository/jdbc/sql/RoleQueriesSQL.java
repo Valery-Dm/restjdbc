@@ -1,13 +1,13 @@
 package dmv.spring.demo.model.repository.jdbc.sql;
 
-import dmv.spring.demo.model.repository.RoleRepository;
-
 /**
- * Queries to work with 'ROLE' table through the
- * {@link RoleRepository} interface
+ * An enum, that is holding SQL queries as strings.
+ * These are for Role related queries.
+ * SQL native queries located on disk will be read up
+ * into corresponding fields.
  * @author dmv
  */
-public enum RoleQueriesSQL implements QueryNativeSQL {
+public enum RoleQueriesSQL implements NativeSQLQueries {
 
 	ROLE_FIND_BY_SHORT_NAME("role_find_by_shortname"),
 	ROLE_GET_USERS("role_get_users");

@@ -22,7 +22,7 @@ import org.springframework.stereotype.Repository;
 import dmv.spring.demo.model.entity.Role;
 import dmv.spring.demo.model.entity.User;
 import dmv.spring.demo.model.exceptions.AccessDataBaseException;
-import dmv.spring.demo.model.repository.jdbc.sql.QueryNativeSQL;
+import dmv.spring.demo.model.repository.jdbc.sql.NativeSQLQueries;
 
 /**
  * Custom made manager for {@link Connection} and {@link PreparedStatement},
@@ -60,11 +60,11 @@ public class JdbcConnector implements AutoCloseable {
 	 * given dataSource, using provided query.
 	 * <p> Don't forget to call {@link #close()} method in the end.
 	 * @param dataSource the {@link DataSource} to be used
-	 * @param query the {@link QueryNativeSQL} query
-	 * @throws AccessDataBaseException if open connection and prepare statement 
+	 * @param query the {@link NativeSQLQueries} query
+	 * @throws AccessDataBaseException if open connection and prepare statement
 	 *                                 operations were not successful
 	 */
-	public JdbcConnector(DataSource dataSource, QueryNativeSQL query) {
+	public JdbcConnector(DataSource dataSource, NativeSQLQueries query) {
 		doJob = query.toString();
 		this.dataSource = dataSource;
 		try {
