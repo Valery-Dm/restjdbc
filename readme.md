@@ -8,6 +8,8 @@ JDBC, MySQL (vesrion 5.7), Java (version 1.8)
 Service is [available online](http://restjdbc-va1ery.rhcloud.com/swagger-ui.html).
 Hosted at OpenShift server. Online version run via http (premium account is required for SSL).
 
+Javadocs API [here](https://valery-dm.github.io/restjdbc/)
+
 See video examples of:
 
 [How to login as administrator](https://youtu.be/hfpowdVp9PU) and check 'get role' endpoint.

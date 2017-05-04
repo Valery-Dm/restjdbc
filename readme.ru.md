@@ -5,6 +5,8 @@ JDBC, MySQL (версия 5.7), Java (версия 1.8)
 [Доступен онлайн](http://restjdbc-va1ery.rhcloud.com/swagger-ui.html) 
 на OpenShift сервере. Онлайн версия работает через http (для https нужен премиум аккаунт).
 
+Javadocs API [здесь](https://valery-dm.github.io/restjdbc/)
+
 Смотрите видео примеры того:
 
 [Как зайти администратором](https://youtu.be/hfpowdVp9PU) и проверить точку вызова данных о роли.
